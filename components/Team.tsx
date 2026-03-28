@@ -6,7 +6,7 @@ import { Globe, Mail } from "lucide-react";
 const team = [
   {
     name: "Prabhav Kumar",
-    role: "C & Lead Engineer",
+    role: "c & Lead Engineer",
     image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Prabhav&backgroundColor=b6e3f4",
   },
   {

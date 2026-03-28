@@ -4,38 +4,37 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 60 100% 99%;
+    --foreground: 0 0% 4%;
     
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 60 100% 97%;
+    --card-foreground: 0 0% 6%;
     
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 60 100% 97%;
+    --popover-foreground: 0 0% 6%;
     
-    --primary: 252 80% 65%; /* Premium purple-ish primary */
-    --primary-foreground: 0 0% 98%;
+    --primary: 224.7 70.3% 44.9%; /* Blue */
+    --primary-foreground: 0 0% 100%;
     
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 101.9 93.3% 34.9%; /* Green */
+    --secondary-foreground: 0 0% 100%;
     
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 22%;
     
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 101.9 93.3% 34.9%; /* Green accent */
+    --accent-foreground: 0 0% 100%;
     
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --border: 0 0% 88%;
+    --input: 0 0% 96%;
+    --ring: 224.7 70.3% 44.9%;
     
     --radius: 0.75rem;
   }
 
-  /* Force Dark Mode By Default */
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));

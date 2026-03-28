@@ -4,6 +4,7 @@ import HowItWorks from "@/components/HowItWorks";
 import Features from "@/components/Features";
 import Technology from "@/components/Technology";
 import Research from "@/components/Research";
+import AppDownload from "@/components/AppDownload";
 import Team from "@/components/Team";
 import ChatbotDemo from "@/components/ChatbotDemo";
 import Contact from "@/components/Contact";
@@ -19,6 +20,7 @@ export default function Home() {
       <Technology />
       <Research />
       <ChatbotDemo />
+      <AppDownload />
       <Team />
       <Contact />
       <Footer />

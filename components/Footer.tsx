@@ -18,17 +18,17 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-semibold text-foreground tracking-wider uppercase mb-4">Product</h3>
             <ul className="space-y-4">
-              <li><Link href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</Link></li>
-              <li><Link href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</Link></li>
-              <li><Link href="#demo" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Live Demo</Link></li>
+              <li><Link href="/#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</Link></li>
+              <li><Link href="/#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</Link></li>
+              <li><Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="text-sm font-semibold text-foreground tracking-wider uppercase mb-4">Company</h3>
             <ul className="space-y-4">
-              <li><Link href="#team" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Our Team</Link></li>
-              <li><Link href="#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link></li>
-              <li><Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About Us</Link></li>
+              <li><Link href="/#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link></li>
+              <li><Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
         </div>
