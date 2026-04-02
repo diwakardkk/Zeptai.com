@@ -44,9 +44,9 @@ const productHighlights = [
     icon: <Activity className="h-5 w-5 text-primary" />,
   },
   {
-    title: "Browser-based experience",
+    title: "Web-based experience",
     description:
-      "Individuals can access the working model directly in the browser without installing an app.",
+      "Individuals can access the working model directly on the web without installing an app.",
     icon: <Globe2 className="h-5 w-5 text-primary" />,
   },
   {
@@ -86,7 +86,7 @@ const audiences = [
   {
     title: "Individual users",
     description:
-      "Use the browser experience to explain symptoms clearly and prepare a more structured consultation.",
+      "Use the web-based intake experience to explain symptoms clearly and prepare a more structured consultation.",
     icon: <Globe2 className="h-5 w-5 text-primary" />,
   },
 ];
@@ -325,7 +325,7 @@ export default function AboutPageContent() {
               startups that want a conversational intake and screening layer.
             </p>
             <p className="mt-4 text-base leading-8 text-muted-foreground">
-              Our API direction supports browser interaction, patient intake
+              Our API direction supports web-based patient interaction, patient intake
               capture, structured summaries, and workflow integration for
               healthcare teams that need scalable medical AI solutions.
             </p>
@@ -378,7 +378,7 @@ export default function AboutPageContent() {
             conversational, more structured, and more useful for both patients
             and doctors. ZeptAI is building toward that future by making voice
             interaction, patient screening, and clinical summaries easier to
-            access through the browser and easier to integrate through APIs.
+            access through the web and easier to integrate through APIs.
           </p>
 
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">

@@ -1,13 +1,12 @@
 ﻿import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "@/app/api/_firestore";
+import { ContactSubmissionInput } from "@/types/contact";
 
 export const runtime = "nodejs";
 
-type ContactBody = {
-  name?: string;
-  email?: string;
-  message?: string;
-};
+type ContactBody = Partial<ContactSubmissionInput>;
 
 function escapeHtml(input: string) {
   return input
@@ -32,11 +31,12 @@ export async function POST(req: Request) {
 
     const name = clean(body.name ?? "");
     const email = clean((body.email ?? "").toLowerCase());
+    const mobile = clean(body.mobile ?? "");
     const message = (body.message ?? "").trim();
 
-    if (!name || !email || !message) {
+    if (!name || !email || !mobile || !message) {
       return NextResponse.json(
-        { error: "Name, email, and message are required." },
+        { error: "Name, email, mobile, and message are required." },
         { status: 400 },
       );
     }
@@ -51,6 +51,17 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
+
+    await addDoc(collection(db, "contact_submissions"), {
+      name,
+      email,
+      mobile,
+      message,
+      sourcePage: "home_contact",
+      inquiryType: "contact",
+      status: "new",
+      createdAt: serverTimestamp(),
+    });
 
     const smtpHost = process.env.SMTP_HOST ?? "smtp.gmail.com";
     const smtpPort = Number(process.env.SMTP_PORT ?? "465");
@@ -94,11 +105,12 @@ export async function POST(req: Request) {
       to: receiverEmail,
       replyTo: email,
       subject: `New Contact Message from ${name}`,
-      text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+      text: `Name: ${name}\nEmail: ${email}\nMobile: ${mobile}\n\nMessage:\n${message}`,
       html: `
         <h2>New Contact Message</h2>
         <p><strong>Name:</strong> ${safeName}</p>
         <p><strong>Email:</strong> ${safeEmail}</p>
+        <p><strong>Mobile:</strong> ${escapeHtml(mobile)}</p>
         <p><strong>Message:</strong><br/>${safeMessage}</p>
       `,
     });
@@ -121,9 +133,8 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Contact API error:", error);
     return NextResponse.json(
-      { error: "Failed to send email. Please try again." },
+      { error: "Failed to store contact request. Please try again." },
       { status: 500 },
     );
   }
 }
-

@@ -1,4 +1,10 @@
-import { Apple, Smartphone, ArrowDownCircle } from "lucide-react";
+import {
+  ArrowRight,
+  Binary,
+  Building2,
+  Globe2,
+  Layers3,
+} from "lucide-react";
 
 export default function AppDownload() {
   return (
@@ -8,29 +14,58 @@ export default function AppDownload() {
           <div className="grid gap-12 lg:grid-cols-[1.15fr_0.85fr] items-center">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-                <ArrowDownCircle className="h-4 w-4" />
-                Browser Access + Enterprise API
+                <Layers3 className="h-4 w-4" />
+                Web Access + Enterprise API
               </span>
               <h2 className="mt-6 text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-                Use ZeptAI in Two Powerful Ways
+                One intake engine, two clear ways to use ZeptAI
               </h2>
-              <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl">
-                Individuals can use the browser experience to talk with ZeptAI before meeting a doctor, while enterprise teams can integrate the same intake and screening logic through an API-first model for telemedicine and clinical platforms.
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
+                Patients can use ZeptAI through a web-based intake experience,
+                while healthcare platforms can integrate the same intake and
+                screening workflow through an API-first model.
               </p>
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+
+              <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                <div className="rounded-3xl border border-border bg-background/90 p-5">
+                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10">
+                    <Globe2 className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    Web-Based Intake
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    Guided voice intake for patients before consultation.
+                  </p>
+                </div>
+
+                <div className="rounded-3xl border border-border bg-background/90 p-5">
+                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10">
+                    <Building2 className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    Enterprise API
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    Integration-ready intake and summary workflow for healthcare products.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
                 <a
                   href="#demo"
-                  className="inline-flex items-center justify-center gap-3 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:bg-primary/90"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:bg-primary/90"
                 >
-                  <Apple className="h-5 w-5" />
-                  Try in Browser
+                  <Globe2 className="h-5 w-5" />
+                  Try Web Intake
                 </a>
                 <a
                   href="#contact"
-                  className="inline-flex items-center justify-center gap-3 rounded-full border border-primary bg-background px-6 py-3 text-sm font-semibold text-primary shadow-lg shadow-primary/5 transition hover:bg-primary/5"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-primary bg-background px-6 py-3 text-sm font-semibold text-primary shadow-lg shadow-primary/5 transition hover:bg-primary/5"
                 >
-                  <Smartphone className="h-5 w-5 text-primary" />
-                  Discuss API Access
+                  <Binary className="h-5 w-5 text-primary" />
+                  Explore API Access
                 </a>
               </div>
             </div>
@@ -40,24 +75,47 @@ export default function AppDownload() {
               <div className="relative grid gap-6">
                 <div className="rounded-[2rem] bg-gradient-to-br from-primary/90 to-blue-600 p-6 text-primary-foreground shadow-xl shadow-primary/20">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold uppercase tracking-[0.2em]">Enterprise + Browser</span>
-                    <span className="text-xs bg-white/10 px-3 py-1 rounded-full">Production Direction</span>
+                    <span className="text-sm font-semibold uppercase tracking-[0.2em]">
+                      Delivery Model
+                    </span>
+                    <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
+                      Web + API
+                    </span>
                   </div>
-                  <div className="mt-8 space-y-3">
-                    <div className="text-4xl font-bold">ZeptAI</div>
-                    <p className="text-sm text-primary-foreground/90">
-                      Voice-first patient intake with structured doctor-ready summaries.
+                  <div className="mt-8 space-y-4">
+                    <div className="text-3xl font-bold">
+                      Patient conversation in. Structured clinical context out.
+                    </div>
+                    <p className="text-sm leading-6 text-primary-foreground/90">
+                      The same ZeptAI intake workflow can power direct patient
+                      access on the web and embedded clinical intake for partner
+                      platforms.
                     </p>
                   </div>
                 </div>
                 <div className="rounded-[2rem] bg-background p-6 shadow-inner shadow-black/5">
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>Delivery model</span>
-                    <span className="font-semibold text-foreground">API + Browser</span>
+                    <span>Best fit</span>
+                    <span className="font-semibold text-foreground">
+                      Patients and platforms
+                    </span>
                   </div>
                   <div className="mt-6 rounded-3xl border border-border bg-secondary/10 p-5 text-sm text-foreground">
-                    <p>Symptoms, history, vitals, and summary in one workflow</p>
-                    <p className="mt-3 text-xs text-muted-foreground">Designed for telemedicine, clinics, and direct browser use</p>
+                    <p className="font-medium">
+                      Symptoms, history, screening context, and summary in one
+                      workflow.
+                    </p>
+                    <div className="mt-4 grid gap-3 text-xs text-muted-foreground sm:grid-cols-2">
+                      <div className="rounded-2xl bg-background px-3 py-3">
+                        Web intake for individuals
+                      </div>
+                      <div className="rounded-2xl bg-background px-3 py-3">
+                        API delivery for telemedicine and clinics
+                      </div>
+                    </div>
+                    <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary">
+                      See how ZeptAI fits your workflow <ArrowRight className="h-4 w-4" />
+                    </div>
                   </div>
                 </div>
               </div>

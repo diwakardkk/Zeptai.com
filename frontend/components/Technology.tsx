@@ -14,9 +14,9 @@ export default function Technology() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">Browser Experience for Patients, API Infrastructure for Healthcare Platforms</h2>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">Web-Based Patient Intake, API Infrastructure for Healthcare Platforms</h2>
             <p className="text-xl text-muted-foreground mb-8 text-balance">
-              ZeptAI uses the same intake engine for two delivery modes: a browser-based patient experience and an API-first model for telemedicine, clinic, and hospital integration.
+              ZeptAI uses the same intake engine for two delivery modes: a web-based patient intake experience and an API-first model for telemedicine, clinic, and hospital integration.
             </p>
             
             <ul className="space-y-6">
@@ -24,7 +24,7 @@ export default function Technology() {
                 { title: "Voice-First Conversation Engine", desc: "Guided audio interaction collects symptoms, history, and pre-consultation detail in a natural flow.", icon: <Cpu className="w-5 h-5 text-primary" /> },
                 { title: "Research-Led Intake Logic", desc: "Conversation design, summary generation, and clinical structuring are shaped by ZeptAI's research direction.", icon: <Code2 className="w-5 h-5 text-blue-500" /> },
                 { title: "Enterprise FastAPI Backend", desc: "API-first backend services support telemedicine products, clinic workflows, and healthcare integrations.", icon: <Server className="w-5 h-5 text-green-500" /> },
-                { title: "Browser and Report Layer", desc: "The patient browser flow and summary outputs stay accessible for individuals and integration-ready for partners.", icon: <Database className="w-5 h-5 text-yellow-500" /> },
+                { title: "Web Intake and Report Layer", desc: "The patient-facing web flow and summary outputs stay accessible for direct use and integration-ready for partners.", icon: <Database className="w-5 h-5 text-yellow-500" /> },
               ].map((tech, i) => (
                 <li key={i} className="flex gap-4 items-start">
                   <div className="mt-1 bg-muted p-2 rounded-lg shrink-0 border border-border">

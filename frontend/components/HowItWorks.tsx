@@ -6,7 +6,7 @@ import { MessageSquare, Database, Brain, FileText, CalendarClock, Stethoscope } 
 const steps = [
   {
     title: "Patient Starts Voice Conversation",
-    description: "The patient opens ZeptAI in the browser and begins a guided, human-like audio conversation.",
+    description: "The patient opens ZeptAI on the web and begins a guided, human-like audio conversation.",
     icon: <MessageSquare className="w-6 h-6 text-primary" />,
   },
   {

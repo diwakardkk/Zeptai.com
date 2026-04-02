@@ -11,7 +11,7 @@ export default function Footer() {
               <BrandLogo className="h-10 w-auto rounded-full" />
             </Link>
             <p className="text-muted-foreground text-sm max-w-sm">
-              Research-driven healthcare AI for voice-based patient intake, structured screening, browser access, and enterprise API integration.
+              Research-driven healthcare AI for voice-based patient intake, structured screening, web-based patient access, and enterprise API integration.
             </p>
           </div>
           <div>

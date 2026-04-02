@@ -36,16 +36,16 @@ export default function ChatbotDemo() {
               viewport={{ once: true }}
               className="text-primary font-semibold tracking-wider uppercase text-sm mb-2 block"
             >
-              Browser Experience
+              Web Intake Experience
             </motion.span>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">Try ZeptAI in Your Browser</h2>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">Try the ZeptAI Intake Experience</h2>
             <p className="text-xl text-muted-foreground mb-8 text-balance">
-              Experience the working model directly in the browser. Speak with the intake assistant, share your problem naturally, and see how ZeptAI organizes the conversation into structured clinical context.
+              Experience the live intake workflow on the web. Speak with the intake assistant, share your problem naturally, and see how ZeptAI organizes the conversation into structured clinical context.
             </p>
 
             <div className="space-y-4 text-muted-foreground text-sm">
               <p className="flex items-center gap-2 bg-muted p-3 border border-border rounded-xl">
-                <Database className="w-4 h-4 text-primary" /> Built for browser access today and enterprise API integration in telemedicine workflows.
+                <Database className="w-4 h-4 text-primary" /> Built for direct web-based patient access and enterprise API integration in telemedicine workflows.
               </p>
               <p className="flex items-center gap-2 bg-muted p-3 border border-border rounded-xl">
                 <Terminal className="w-4 h-4 text-primary" /> The same intake logic can support patient screening, summary generation, and doctor-side workflow review.
@@ -64,7 +64,7 @@ export default function ChatbotDemo() {
               <div className="bg-muted px-6 py-4 border-b border-border rounded-t-2xl flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-                  <span className="font-semibold text-foreground">ZeptAI Browser Intake</span>
+                  <span className="font-semibold text-foreground">ZeptAI Web Intake</span>
                 </div>
                 <div className="text-xs text-muted-foreground font-mono">Mode: Voice Screening</div>
               </div>

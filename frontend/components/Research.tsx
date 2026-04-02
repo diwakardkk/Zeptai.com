@@ -55,7 +55,7 @@ export default function Research() {
           </h2>
           <p className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">
             ZeptAI is shaped by published healthcare AI research in conversational diagnosis and interpretable medical imaging.
-            That research foundation informs how we design enterprise intake APIs, browser-based patient conversations, and doctor-ready summaries that fit real clinical workflows.
+            That research foundation informs how we design enterprise intake APIs, web-based patient conversations, and doctor-ready summaries that fit real clinical workflows.
           </p>
         </div>
 

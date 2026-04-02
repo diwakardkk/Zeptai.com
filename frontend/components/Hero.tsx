@@ -23,7 +23,7 @@ export default function Hero() {
             Healthcare AI Research + Enterprise API
           </span>
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-foreground mb-6">
-            Voice AI for Patient Intake <br className="hidden sm:block" /> and <span className="text-primary">Clinical Summaries</span>
+            Healthcare AI for Patient Intake,<br className="hidden sm:block" />  Screening, and <span className="text-primary"> Clinical Summaries</span>
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-muted-foreground mb-10">
             ZeptAI helps clinics, hospitals, and telemedicine platforms collect symptoms, history, and pre-consultation context through human-like voice conversations, then turn that intake into doctor-ready summaries patients can share before the visit starts.
@@ -46,7 +46,7 @@ export default function Hero() {
               href="#demo"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-muted text-foreground font-bold hover:bg-muted/80 transition-all border border-border"
             >
-              <PlayCircle className="w-5 h-5" /> Try in Browser
+              <PlayCircle className="w-5 h-5" /> Try Live Intake
             </Link>
           </div>
         </motion.div>

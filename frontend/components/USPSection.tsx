@@ -42,9 +42,9 @@ const usps = [
     icon: <Users className="h-5 w-5 text-primary" />,
   },
   {
-    title: "Browser Access Without an App",
+    title: "Web-Based Access Without an App",
     description:
-      "Patients can start immediately in the browser, reducing friction for individual use and faster enterprise rollout.",
+      "Patients can start immediately through the web interface, reducing friction for direct use and faster enterprise rollout.",
     icon: <Globe2 className="h-5 w-5 text-primary" />,
   },
 ];
@@ -53,7 +53,7 @@ const keywords = [
   "Voice-based patient intake",
   "Clinical screening API",
   "Doctor-ready summaries",
-  "Browser-based healthcare AI",
+  "Web-based healthcare AI",
 ];
 
 export default function USPSection() {

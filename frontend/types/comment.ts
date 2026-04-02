@@ -9,6 +9,6 @@ export interface BlogCommentInput {
 export interface BlogComment extends BlogCommentInput {
   id: string;
   createdAt: string;
-  status?: "visible" | "hidden";
+  status?: "visible" | "hidden" | "pending";
 }
 

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Send, CheckCircle } from "lucide-react";
 
 export default function Contact() {
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", mobile: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -16,7 +16,7 @@ export default function Contact() {
     setError("");
 
     try {
-      if (!formData.name || !formData.email || !formData.message) {
+      if (!formData.name || !formData.email || !formData.mobile || !formData.message) {
         throw new Error("All fields are required.");
       }
 
@@ -32,7 +32,7 @@ export default function Contact() {
       }
 
       setIsSuccess(true);
-      setFormData({ name: "", email: "", message: "" });
+      setFormData({ name: "", email: "", mobile: "", message: "" });
       setTimeout(() => setIsSuccess(false), 5000);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to submit. Please try again.");
@@ -47,7 +47,7 @@ export default function Contact() {
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Request a Demo or Explore API Access</h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Talk with us about browser-based intake, telemedicine integrations, hospital workflows, or enterprise API partnerships.
+            Talk with us about web-based intake, telemedicine integrations, hospital workflows, or enterprise API partnerships.
           </p>
         </div>
 
@@ -107,6 +107,22 @@ export default function Contact() {
               </div>
 
               <div className="space-y-2">
+                <label htmlFor="mobile" className="text-sm font-medium text-foreground">
+                  Mobile Number
+                </label>
+                <input
+                  id="mobile"
+                  type="tel"
+                  required
+                  disabled={isSubmitting}
+                  value={formData.mobile}
+                  onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                  className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  placeholder="+91 98765 43210"
+                />
+              </div>
+
+              <div className="space-y-2">
                 <label htmlFor="message" className="text-sm font-medium text-foreground">
                   Message
                 </label>
@@ -118,7 +134,7 @@ export default function Contact() {
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
-                  placeholder="We want to evaluate ZeptAI for patient screening, browser intake, or API integration in our healthcare platform..."
+                  placeholder="We want to evaluate ZeptAI for patient screening, web-based intake, or API integration in our healthcare platform..."
                 ></textarea>
               </div>
 

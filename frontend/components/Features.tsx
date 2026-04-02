@@ -20,8 +20,8 @@ const features = [
     icon: <Clock className="w-5 h-5 text-primary" />
   },
   {
-    title: "Browser-Based Access",
-    description: "Patients can access the working model instantly in the browser without downloading an app.",
+    title: "Web-Based Patient Access",
+    description: "Patients can access the working model directly on the web without downloading an app.",
     icon: <Globe2 className="w-5 h-5 text-primary" />
   },
   {
