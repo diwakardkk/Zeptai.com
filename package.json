@@ -1,38 +1,11 @@
 {
-  "name": "zeptai",
-  "version": "0.1.0",
+  "name": "zeptai-root",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-"dependencies": {
-  "clsx": "^2.1.1",
-  "firebase": "^12.11.0",
-  "framer-motion": "^12.38.0",
-  "lucide-react": "^1.7.0",
-  "next": "14.2.5",
-  "nodemailer": "^8.0.4",
-  "@types/nodemailer": "^7.0.11",
-  "react": "^18",
-  "react-dom": "^18",
-  "tailwind-merge": "^3.5.0"
-},
-"devDependencies": {
-  "@types/node": "^20",
-  "@types/react": "^18",
-  "@types/react-dom": "^18",
-  "eslint": "^8",
-  "eslint-config-next": "14.2.5",
-  "postcss": "^8",
-  "tailwindcss": "^3.4.1",
-  "typescript": "^5"
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
+    "lint": "npm --prefix frontend run lint",
+    "install:frontend": "npm --prefix frontend install"
+  }
 }
-}
-
-
-
-
-

@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/frontend/node_modules
 /.pnp
 .pnp.js
 .yarn/install-state.gz
@@ -11,6 +12,7 @@
 
 # next.js
 /.next/
+/frontend/.next/
 /out/
 
 # production
@@ -51,4 +53,9 @@ MyNurseAPI/nurse_bot.db
 MyNurseAPI/patient_data/
 MyNurseAPI/data/audio/
 MyNurseAPI/data/vectorstore/
-
+backend/api/venv/
+backend/api/.venv/
+backend/api/nurse_bot.db
+backend/api/patient_data/
+backend/api/data/audio/
+backend/api/data/vectorstore/

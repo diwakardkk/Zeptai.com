@@ -1,0 +1,52 @@
+---
+title: "What ZeptAI's Mental Health Research Actually Shows"
+slug: "what-zeptai-mental-health-research-actually-shows"
+excerpt: "A plain-language interpretation of the key findings from ZeptAI's published mental health AI research."
+date: "2026-03-28"
+author: "ZeptAI Research Team"
+category: "Research"
+tags: ["Peer-Reviewed Research", "Mental Health", "AI", "ZeptAI"]
+coverImage: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1600&q=80"
+seoTitle: "What ZeptAI's Mental Health Research Shows | ZeptAI Blog"
+seoDescription: "A plain-language explanation of the main findings from ZeptAI's published conversational AI mental health paper."
+keywords: ["ZeptAI research", "mental health diagnosis AI", "PeerJ Computer Science"]
+featured: false
+---
+
+Published AI papers often get reduced to one headline number. That misses the real value of the work.
+
+In ZeptAI's PeerJ Computer Science paper, the headline metric is 96.27% accuracy. That is important, but it is not the whole story. The research is more useful when it is understood as a system design result, not just a benchmark result.
+
+## First, the architecture matters
+
+The paper does not rely on a single monolithic model. It combines:
+
+- GPT-3.5 for adaptive, human-like conversation
+- DistilRoBERTa for final multi-class classification
+- t-SNE and Sentence-BERT based sampling to identify representative examples
+
+This is significant because healthcare AI systems often fail when they treat data collection and decision support as unrelated tasks. Your framework treats them as connected parts of one pipeline.
+
+## Second, efficiency matters
+
+The average inference time reported in the paper is 1.67 milliseconds per sample. That matters because real-world screening tools must operate quickly enough to support live workflows. Accuracy without responsiveness is hard to deploy.
+
+## Third, representativeness matters
+
+The paper uses a strategic sampling method rather than naively selecting examples. In healthcare AI, dataset quality is often more important than model size alone. Better representativeness can improve generalization and reduce noise in training.
+
+## What the paper does not claim
+
+The paper does not claim that AI should independently replace clinicians. It presents a lightweight, scalable, explainable framework that can support professionals or be integrated into virtual assistants.
+
+That is the right framing. A good healthcare AI result should expand capability while preserving human oversight.
+
+## Why this is useful for ZeptAI
+
+For product teams, the paper offers a practical lesson: if the system is going to talk like a clinician-facing assistant, it also needs a disciplined downstream model and a thoughtful dataset strategy. That is exactly the kind of bridge from research to product that gives ZeptAI credibility.
+
+## References
+
+1. Diwakar D, Raj D, Prasad A, Ali G, ElAffendi M. *AI-powered conversational framework for mental health diagnosis*. PeerJ Computer Science, 2026. https://peerj.com/articles/cs-3602/
+2. World Health Organization. *Ethics and governance of artificial intelligence for health*. https://www.who.int/publications/i/item/9789240029200
+

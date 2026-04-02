@@ -1,0 +1,51 @@
+---
+title: "From Grad-CAM to PCA: Better Paths to Visual Explainability"
+slug: "from-gradcam-to-pca-better-visual-explainability"
+excerpt: "A simple explanation of why dimensionality-aware methods can improve visual interpretability in medical imaging models."
+date: "2026-03-22"
+author: "ZeptAI Imaging Research"
+category: "Explainable AI"
+tags: ["Grad-CAM", "PCA", "Medical Imaging", "Interpretability"]
+coverImage: "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1600&q=80"
+seoTitle: "From Grad-CAM to PCA: Better Visual Explainability | ZeptAI"
+seoDescription: "Understand why PCA-based feature selection can offer a cleaner route to visual explainability in medical imaging AI."
+keywords: ["Grad-CAM", "PCA explainability", "visual AI interpretability", "medical imaging AI"]
+featured: false
+---
+
+Many teams begin explainable imaging work with saliency or activation-map methods like CAM or Grad-CAM. That makes sense because these tools are accessible and widely discussed. But they are not always sufficient for clinically meaningful localization.
+
+## Where standard activation maps can struggle
+
+Activation-based methods can be:
+
+- noisy
+- spatially broad
+- unstable across examples
+- hard to compare systematically
+
+In medicine, those weaknesses matter. A heatmap is only helpful if it maps onto the clinically relevant region with reasonable consistency.
+
+## Why PCA-based feature selection is interesting
+
+Your chest X-ray paper takes a different route by using principal component-based feature selection. The advantage of PCA in this context is not that it magically creates interpretability. The advantage is that it can help isolate the most informative structure in a high-dimensional feature space.
+
+That can make localization cleaner and faster.
+
+## Why this is useful for practitioners
+
+For teams building medical imaging products, the lesson is practical: explainability methods should be evaluated like model components, not treated as afterthoughts. If a localization method improves overlap metrics and reduces latency, it may have stronger deployment value than a more familiar visualization that looks intuitive but performs inconsistently.
+
+Your paper's reported 95.1% IoU and 97.5% Dice score help make that case.
+
+## A broader product lesson
+
+Healthcare AI products need explanation methods that scale operationally. If an explanation is slow, inconsistent, or visually confusing, it becomes difficult to trust and maintain.
+
+That is why better visual explainability is not a presentation upgrade. It is a systems design question.
+
+## References
+
+1. Diwakar D, Raj D. *Interpretable chest X-ray localization using principal component-based feature selection in deep learning*. Engineering Applications of Artificial Intelligence, 2025. https://doi.org/10.1016/j.engappai.2025.112358
+2. Frasca M, La Torre D, Pravettoni G, et al. *Explainable and interpretable artificial intelligence in medicine: a systematic bibliometric review*. Discover Artificial Intelligence, 2024. https://link.springer.com/article/10.1007/s44163-024-00114-7
+

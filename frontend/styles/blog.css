@@ -1,0 +1,12 @@
+.prose h2 a,
+.prose h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.prose h2 a:hover,
+.prose h3 a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
