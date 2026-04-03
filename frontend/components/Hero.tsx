@@ -23,7 +23,9 @@ export default function Hero() {
             Healthcare AI Research + Enterprise API
           </span>
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-foreground mb-6">
-            Healthcare AI for Patient Intake,<br className="hidden sm:block" />  Screening, and <span className="text-primary"> Clinical Summaries</span>
+            Healthcare AI for<br className="hidden sm:block" />
+            <span className="text-green-500">Voice Patient Intake</span><br className="hidden sm:block" />
+            <span className="text-blue-500">& Clinical Summaries</span>
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-muted-foreground mb-10">
             ZeptAI helps clinics, hospitals, and telemedicine platforms collect symptoms, history, and pre-consultation context through human-like voice conversations, then turn that intake into doctor-ready summaries patients can share before the visit starts.
