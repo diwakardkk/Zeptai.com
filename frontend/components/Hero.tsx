@@ -13,6 +13,26 @@ export default function Hero() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        {/* Video Section */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="mb-12 flex justify-center"
+        >
+          <div className="w-full max-w-2xl">
+            <video
+              autoPlay
+              muted
+              loop
+              className="w-full rounded-xl shadow-lg border border-border"
+            >
+              <source src="/uploads/finalGIF.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
