@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Comment should be at least 8 characters." }, { status: 400 });
     }
 
-    await addDoc(collection(db, "blog_comments"), {
+    const docRef = await addDoc(collection(db, "blog_comments"), {
       postSlug,
       name,
       email,
@@ -36,9 +36,11 @@ export async function POST(req: Request) {
       createdAt: serverTimestamp(),
     });
 
-    return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ error: "Failed to store comment." }, { status: 500 });
+    console.log("Comment saved successfully:", docRef.id);
+    return NextResponse.json({ ok: true, id: docRef.id });
+  } catch (error) {
+    console.error("Comment submission error:", error);
+    return NextResponse.json({ error: "Failed to store comment. Please check Firebase setup." }, { status: 500 });
   }
 }
 

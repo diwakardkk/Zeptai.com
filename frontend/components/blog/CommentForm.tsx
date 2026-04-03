@@ -68,7 +68,8 @@ export default function CommentForm({ postSlug, onSubmitted }: CommentFormProps)
       setEmail("");
       setMobile("");
       setComment("");
-      setStatus("Comment submitted successfully.");
+      setStatus("✓ Comment posted successfully! Refresh to see your comment.");
+      setTimeout(() => setStatus(null), 5000);
       onSubmitted();
     } catch {
       setStatus("Unable to submit comment. Please try again.");
