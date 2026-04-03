@@ -25,9 +25,10 @@ export default function Hero() {
               autoPlay
               muted
               loop
+              playsInline
               className="w-full rounded-xl shadow-lg border border-border"
             >
-              <source src="/uploads/finalGIF.mp4" type="video/mp4" />
+              <source src="/finalGIF.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
