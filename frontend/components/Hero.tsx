@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden pt-32 pb-20 lg:pt-48 lg:pb-32">
+    <section className="relative overflow-hidden pt-16 pb-20 lg:pt-20 lg:pb-32">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full overflow-hidden -z-10 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/20 blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[50%] rounded-full bg-blue-500/10 blur-[100px]" />
@@ -18,7 +18,7 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
-          className="mb-12 flex justify-center"
+          className="flex justify-center"
         >
           <div className="w-full max-w-2xl">
             <video
@@ -26,7 +26,7 @@ export default function Hero() {
               muted
               loop
               playsInline
-              className="w-full rounded-xl shadow-lg border border-border"
+              className="w-full rounded-xl border border-border"
             >
               <source src="/finalGIF.mp4" type="video/mp4" />
               Your browser does not support the video tag.
