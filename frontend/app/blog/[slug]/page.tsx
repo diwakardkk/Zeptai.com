@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarDays, Clock3 } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import ArticleAudioReader from "@/components/blog/ArticleAudioReader";
 import Footer from "@/components/Footer";
 import ArticleContent from "@/components/blog/ArticleContent";
 import BlogSidebar from "@/components/blog/BlogSidebar";
@@ -14,6 +15,8 @@ import TableOfContents from "@/components/blog/TableOfContents";
 import { getAllPosts } from "@/lib/blog/getAllPosts";
 import { getPostBySlug } from "@/lib/blog/getPostBySlug";
 import { getRelatedPosts } from "@/lib/blog/getRelatedPosts";
+import { getArticleListenTime } from "@/lib/audio/articleNarration";
+import { inter } from "@/lib/fonts";
 import { generateBlogPostMetadata } from "@/lib/seo/generateMetadata";
 import { getBlogPostingSchema } from "@/lib/seo/schema";
 
@@ -61,9 +64,10 @@ export default async function BlogArticlePage({ params }: Props) {
   const related = await getRelatedPosts(post.slug, 3);
   const url = `https://www.zeptai.com/blog/${post.slug}`;
   const articleSchema = getBlogPostingSchema(post);
+  const estimatedListenMinutes = getArticleListenTime(post.title, post.content);
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className={`${inter.className} min-h-screen bg-background text-foreground`}>
       <ReadingProgress />
       <Navbar />
 
@@ -73,7 +77,12 @@ export default async function BlogArticlePage({ params }: Props) {
             <p className="inline-flex rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
               {post.category}
             </p>
-            <h1 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight md:text-5xl">{post.title}</h1>
+            <h1
+              data-blog-article-title
+              className="mt-4 text-3xl font-extrabold leading-tight tracking-tight md:text-5xl"
+            >
+              {post.title}
+            </h1>
             <p className="mt-4 text-lg text-muted-foreground">{post.excerpt}</p>
             <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <span>By {post.author}</span>
@@ -86,6 +95,11 @@ export default async function BlogArticlePage({ params }: Props) {
                 {post.readingTimeMinutes} min read
               </span>
             </div>
+            <ArticleAudioReader
+              estimatedListenMinutes={estimatedListenMinutes}
+              slug={post.slug}
+              title={post.title}
+            />
           </div>
         </header>
 

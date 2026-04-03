@@ -27,7 +27,7 @@ export default function Team() {
 
     <section id="team" className="py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Our Top Skilled Experts</h2>
+        <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Our Team</h2>
         <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-16">
           Meet the minds bridging the gap between cutting-edge AI research and clinical practice.
         </p>
