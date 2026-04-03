@@ -47,11 +47,9 @@ export default function HowItWorks() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
-          {/* Connector Line (visible on large screens) */}
-          <div className="hidden lg:block absolute top-12 left-10 right-10 h-0.5 bg-gradient-to-r from-primary/10 via-primary/50 to-primary/10 -z-10" />
-
-          {steps.map((step, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative max-w-6xl mx-auto">
+          {/* Top Row */}
+          {steps.slice(0, 3).map((step, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -68,6 +66,50 @@ export default function HowItWorks() {
               
               <div className="absolute top-6 right-6 text-8xl font-black text-white/5 select-none -z-10 group-hover:text-primary/10 transition-colors">
                 {index + 1}
+              </div>
+            </motion.div>
+          ))}
+
+          {/* Middle Row - Video in Center */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="md:col-start-2 flex justify-center items-center"
+          >
+            <div className="w-full max-w-sm">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full rounded-xl border border-border"
+              >
+                <source src="/finalGIF.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </motion.div>
+
+          {/* Bottom Row */}
+          {steps.slice(3, 6).map((step, index) => (
+            <motion.div
+              key={index + 3}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: (index + 3) * 0.1, duration: 0.5 }}
+              className="glassmorphism rounded-2xl p-6 hover:-translate-y-2 transition-transform duration-300 relative group"
+            >
+              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                {step.icon}
+              </div>
+              <h3 className="text-xl font-bold mb-3">{step.title}</h3>
+              <p className="text-muted-foreground text-sm">{step.description}</p>
+              
+              <div className="absolute top-6 right-6 text-8xl font-black text-white/5 select-none -z-10 group-hover:text-primary/10 transition-colors">
+                {index + 4}
               </div>
             </motion.div>
           ))}
