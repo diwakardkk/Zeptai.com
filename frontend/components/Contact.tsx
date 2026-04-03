@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -45,9 +45,9 @@ export default function Contact() {
     <section id="contact" className="py-24 bg-background border-t border-border">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Request a Demo or Explore API Access</h2>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Request a Demo for Patient Intake AI</h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Talk with us about web-based intake, telemedicine integrations, hospital workflows, or enterprise API partnerships.
+            Talk with us about healthcare AI for voice intake, telemedicine screening, symptom capture, and structured clinical summaries for your care team.
           </p>
         </div>
 
@@ -134,7 +134,7 @@ export default function Contact() {
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
-                  placeholder="We want to evaluate ZeptAI for patient screening, web-based intake, or API integration in our healthcare platform..."
+                    placeholder="We want to evaluate ZeptAI for voice-based patient intake, symptom screening, or structured clinical summaries..."
                 ></textarea>
               </div>
 

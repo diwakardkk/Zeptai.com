@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { BlogPost } from "@/types/blog";
@@ -17,7 +18,14 @@ type BlogCardProps = {
 export default function BlogCard({ post }: BlogCardProps) {
   return (
     <article className="group overflow-hidden rounded-2xl border border-border bg-card/70 transition hover:-translate-y-1 hover:shadow-md">
-      <img src={post.coverImage} alt={post.title} className="h-52 w-full object-cover" />
+      <Image
+        src={post.coverImage}
+        alt={post.title}
+        width={1200}
+        height={720}
+        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+        className="h-52 w-full object-cover"
+      />
       <div className="p-5">
         <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           <span>{formatDate(post.date)}</span>
@@ -46,4 +54,3 @@ export default function BlogCard({ post }: BlogCardProps) {
     </article>
   );
 }
-

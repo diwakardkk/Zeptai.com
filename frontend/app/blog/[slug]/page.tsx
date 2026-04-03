@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarDays, Clock3 } from "lucide-react";
@@ -45,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPostBySlug(params.slug);
   if (!post) {
     return {
-      title: "Blog Not Found | ZeptAI",
+      title: "Blog Not Found",
       description: "The requested blog post was not found.",
     };
   }
@@ -89,7 +90,15 @@ export default async function BlogArticlePage({ params }: Props) {
         </header>
 
         <div className="mx-auto mt-8 max-w-5xl px-4 sm:px-6 lg:px-8">
-          <img src={post.coverImage} alt={post.title} className="h-[280px] w-full rounded-3xl border border-border object-cover md:h-[440px]" />
+          <Image
+            src={post.coverImage}
+            alt={post.title}
+            width={1600}
+            height={900}
+            priority
+            sizes="(max-width: 1024px) 100vw, 960px"
+            className="h-[280px] w-full rounded-3xl border border-border object-cover md:h-[440px]"
+          />
         </div>
 
         <div className="mx-auto mt-10 grid max-w-6xl grid-cols-1 gap-8 px-4 sm:px-6 lg:grid-cols-[220px_1fr_240px] lg:px-8">

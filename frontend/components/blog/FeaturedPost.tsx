@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Clock3 } from "lucide-react";
 import { BlogPost } from "@/types/blog";
@@ -45,10 +46,16 @@ export default function FeaturedPost({ post }: FeaturedPostProps) {
         </div>
 
         <div className="order-1 lg:order-2">
-          <img src={post.coverImage} alt={post.title} className="h-72 w-full object-cover lg:h-full" />
+          <Image
+            src={post.coverImage}
+            alt={post.title}
+            width={1600}
+            height={1000}
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="h-72 w-full object-cover lg:h-full"
+          />
         </div>
       </div>
     </article>
   );
 }
-

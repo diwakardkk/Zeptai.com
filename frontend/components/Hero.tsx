@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import { ArrowRight, PlayCircle, Command } from "lucide-react";
@@ -24,11 +24,11 @@ export default function Hero() {
           </span>
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-foreground mb-6">
             Healthcare AI for<br className="hidden sm:block" />
-            <span className="text-green-500">Voice Patient Intake</span><br className="hidden sm:block" />
-            <span className="text-blue-500">& Clinical Summaries</span>
+            <span className="text-green-500">Voice-Based Patient Intake</span><br className="hidden sm:block" />
+            <span className="text-blue-500">and Clinical Summaries</span>
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-muted-foreground mb-10">
-            ZeptAI helps clinics, hospitals, and telemedicine platforms collect symptoms, history, and pre-consultation context through human-like voice conversations, then turn that intake into doctor-ready summaries patients can share before the visit starts.
+            ZeptAI uses voice AI for healthcare to capture symptoms, history, medications, and visit context through natural patient conversations, then turns the intake into a structured clinical summary teams can review before the consultation begins.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -39,10 +39,10 @@ export default function Hero() {
               Request Demo <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
-              href="#access"
+              href="/blog"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-muted text-foreground font-bold hover:bg-muted/80 transition-all border border-border"
             >
-              Explore API
+              Read AI Insights
             </Link>
             <Link
               href="#demo"

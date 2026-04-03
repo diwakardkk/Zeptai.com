@@ -308,7 +308,7 @@ export default function PricingPageContent() {
             <div className="mt-8 flex flex-col gap-3 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
               <p>Need custom volume pricing or hospital procurement support?</p>
               <a
-                href="/#contact"
+                href="/contact"
                 className="inline-flex items-center gap-2 font-semibold text-primary transition-colors hover:text-primary/80"
               >
                 Talk to ZeptAI <ArrowRight className="h-4 w-4" />

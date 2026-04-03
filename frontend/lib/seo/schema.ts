@@ -1,28 +1,42 @@
 import { BlogPost } from "@/types/blog";
+import { siteConfig } from "@/lib/seo/site";
+
+export function getOrganizationSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteConfig.name,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    logo: siteConfig.ogImage,
+  };
+}
 
 export function getBlogPostingSchema(post: BlogPost) {
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
+    name: post.title,
     description: post.seoDescription ?? post.excerpt,
+    url: `${siteConfig.url}/blog/${post.slug}`,
     image: post.coverImage,
     datePublished: post.date,
-    dateModified: post.date,
+    dateModified: post.updatedAt ?? post.date,
     author: {
       "@type": "Person",
       name: post.author,
     },
     publisher: {
       "@type": "Organization",
-      name: "ZeptAI",
+      name: siteConfig.name,
       logo: {
         "@type": "ImageObject",
-        url: "https://raw.githubusercontent.com/prabhav1800-tech/zeptai_contents/main/uploads/logo.png",
+        url: siteConfig.ogImage,
       },
     },
-    mainEntityOfPage: `https://www.zeptai.com/blog/${post.slug}`,
+    mainEntityOfPage: `${siteConfig.url}/blog/${post.slug}`,
+    articleSection: post.category,
     keywords: (post.keywords ?? post.tags).join(", "),
   };
 }
-

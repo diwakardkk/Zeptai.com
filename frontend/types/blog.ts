@@ -3,6 +3,7 @@ export interface BlogFrontmatter {
   slug: string;
   excerpt: string;
   date: string;
+  updatedAt?: string;
   author: string;
   category: string;
   tags: string[];
@@ -26,4 +27,3 @@ export interface BlogPost extends BlogFrontmatter {
   readingTimeMinutes: number;
   tableOfContents: TableOfContentItem[];
 }
-

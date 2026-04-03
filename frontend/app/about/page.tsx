@@ -2,27 +2,20 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AboutPageContent from "@/components/about/AboutPageContent";
+import { buildPageMetadata } from "@/lib/seo/generateMetadata";
 
-export const metadata: Metadata = {
-  title: "About ZeptAI | Healthcare AI for Patient Intake and Clinical Screening",
+export const metadata: Metadata = buildPageMetadata({
+  title: "About Our Healthcare AI Platform",
   description:
-    "Learn how ZeptAI is building research-driven healthcare AI for patient intake, clinical screening, conversational AI healthcare workflows, and medical AI solutions.",
+    "Learn how ZeptAI builds healthcare AI for voice-based patient intake, structured clinical summaries, and telemedicine-ready screening workflows.",
+  path: "/about",
   keywords: [
-    "healthcare AI",
-    "patient intake AI",
-    "clinical screening AI",
-    "conversational AI healthcare",
-    "medical AI solutions",
+    "healthcare AI company",
+    "patient intake AI platform",
+    "voice AI healthcare company",
+    "clinical summary platform",
   ],
-  openGraph: {
-    title: "About ZeptAI | Healthcare AI for Patient Intake and Clinical Screening",
-    description:
-      "ZeptAI is a research-driven healthcare AI company building conversational patient intake, structured screening, and doctor-ready clinical summaries.",
-    url: "https://www.zeptai.com/about",
-    siteName: "ZeptAI",
-    type: "website",
-  },
-};
+});
 
 export default function AboutPage() {
   return (

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Sora } from "next/font/google";
 import "./globals.css";
 import "../styles/blog.css";
+import { siteConfig } from "@/lib/seo/site";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -10,31 +11,52 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
-  title: "Research-Driven Healthcare AI for Clinical Intake | ZeptAI",
-  description:
-    "ZeptAI builds human-like voice AI for patient intake, screening, structured clinical summaries, browser access, and enterprise healthcare API integration.",
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: siteConfig.defaultTitle,
+    template: "%s | ZeptAI",
+  },
+  description: siteConfig.description,
+  keywords: [...siteConfig.keywords],
+  applicationName: "ZeptAI",
+  authors: [{ name: "ZeptAI Team" }],
+  creator: "ZeptAI",
+  publisher: "ZeptAI",
   icons: {
     icon: "/favicon.ico",
   },
   openGraph: {
-    title: "Research-Driven Healthcare AI for Clinical Intake | ZeptAI",
-    description:
-      "ZeptAI builds human-like voice AI for patient intake, screening, structured clinical summaries, browser access, and enterprise healthcare API integration.",
-    url: "https://www.zeptai.com",
-    siteName: "ZeptAI",
+    title: siteConfig.defaultTitle,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
     images: [
       {
-        url: "https://raw.githubusercontent.com/prabhav1800-tech/zeptai_contents/main/uploads/logo.png",
+        url: siteConfig.ogImage,
         width: 1200,
         height: 630,
+        alt: "ZeptAI healthcare AI platform",
       },
     ],
     locale: "en_US",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.defaultTitle,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
+  },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
 

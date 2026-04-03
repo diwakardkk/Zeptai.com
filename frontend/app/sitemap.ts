@@ -1,26 +1,49 @@
 import { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/blog/getAllPosts";
+import { siteConfig } from "@/lib/seo/site";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://www.zeptai.com";
   const blogPosts = await getAllPosts();
+  const currentDate = new Date();
 
-  return [
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
+      url: siteConfig.url,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: `${baseUrl}/blog`,
-      lastModified: new Date(),
+      url: `${siteConfig.url}/about`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${siteConfig.url}/pricing`,
+      lastModified: currentDate,
       changeFrequency: "weekly",
       priority: 0.9,
     },
+    {
+      url: `${siteConfig.url}/blog`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${siteConfig.url}/contact`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+  ];
+
+  return [
+    ...staticRoutes,
     ...blogPosts.map((post) => ({
-      url: `${baseUrl}/blog/${post.slug}`,
-      lastModified: new Date(post.date),
+      url: `${siteConfig.url}/blog/${post.slug}`,
+      lastModified: new Date(post.updatedAt ?? post.date),
       changeFrequency: "monthly" as const,
       priority: 0.8,
     })),

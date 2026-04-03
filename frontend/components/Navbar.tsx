@@ -35,7 +35,7 @@ export default function Navbar() {
             <Link href="/" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Home</Link>
             <Link href="/about" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">About</Link>
             <Link href="/pricing" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Pricing</Link>
-            <Link href="/blog" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Blog</Link>
+            <Link href="/blog" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Blog</Link>
             <Link href="/#how-it-works" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">How It Works</Link>
             <Link href="/#features" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Features</Link>
             <Link href="/#research" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Research</Link>
@@ -48,7 +48,7 @@ export default function Navbar() {
               Try Live Intake
             </Link>
             <Link
-              href="/#contact"
+              href="/contact"
               className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-full shadow-sm text-sm font-bold text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
             >
               Explore API
@@ -76,11 +76,11 @@ export default function Navbar() {
             <Link href="/" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">Home</Link>
             <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">About</Link>
             <Link href="/pricing" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">Pricing</Link>
-            <Link href="/blog" target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">Blog</Link>
+            <Link href="/blog" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">Blog</Link>
             <Link href="/#how-it-works" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">How It Works</Link>
             <Link href="/#features" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">Features</Link>
             <Link href="/#demo" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">Try Live Intake</Link>
-            <Link href="/#contact" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-primary hover:bg-muted">Explore API</Link>
+            <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-primary hover:bg-muted">Explore API</Link>
           </div>
         </motion.div>
       )}

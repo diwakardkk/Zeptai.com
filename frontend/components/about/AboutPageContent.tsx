@@ -330,7 +330,7 @@ export default function AboutPageContent() {
               healthcare teams that need scalable medical AI solutions.
             </p>
             <Link
-              href="/#contact"
+              href="/contact"
               className="mt-8 inline-flex rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
             >
               Explore API Access
@@ -389,7 +389,7 @@ export default function AboutPageContent() {
               Try in Browser
             </Link>
             <Link
-              href="/#contact"
+              href="/contact"
               className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
             >
               Request Demo

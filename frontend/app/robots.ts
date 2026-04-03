@@ -1,14 +1,15 @@
 import { MetadataRoute } from "next";
+import { siteConfig } from "@/lib/seo/site";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://www.zeptai.com";
-
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: ["/admin/", "/api/"],
-    },
-    sitemap: `${baseUrl}/sitemap.xml`,
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+      },
+    ],
+    sitemap: `${siteConfig.url}/sitemap.xml`,
+    host: siteConfig.url,
   };
 }

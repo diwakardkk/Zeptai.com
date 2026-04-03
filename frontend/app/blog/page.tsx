@@ -17,8 +17,8 @@ export default async function BlogPage() {
     <main className="min-h-screen bg-background text-foreground">
       <Navbar />
       <BlogHero
-        title="The ZeptAI Blog"
-        description="Premium research-led stories on AI healthcare, product innovation, upcoming projects, and company announcements."
+        title="Healthcare AI, Patient Intake AI, and Clinical Summary Insights"
+        description="Research-backed articles on voice AI healthcare workflows, clinical screening, structured summaries, and the operational side of modern patient intake."
       />
 
       <section className="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">

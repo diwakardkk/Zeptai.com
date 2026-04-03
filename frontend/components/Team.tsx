@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Globe, Mail } from "lucide-react";
 
@@ -18,7 +19,7 @@ const team = [
     name: "Diwakar",
     role: "CTO",
     image: "https://raw.githubusercontent.com/prabhav1800-tech/zeptai_contents/main/uploads/Diwakar_photo.PNG",
-  }
+  },
 ];
 
 export default function Team() {
@@ -43,7 +44,14 @@ export default function Team() {
             >
               <div className="relative w-40 h-40 mb-6 rounded-full p-2 bg-gradient-to-tr from-primary to-blue-500 group-hover:scale-105 transition-transform duration-300">
                 <div className="w-full h-full bg-background rounded-full overflow-hidden border-4 border-background">
-                  <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                  <Image
+                    src={member.image}
+                    alt={member.name}
+                    width={320}
+                    height={320}
+                    sizes="160px"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-1">{member.name}</h3>
