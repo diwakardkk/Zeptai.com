@@ -32,6 +32,7 @@ export default function Navbar() {
             </Link>
           </div>
           <nav className="hidden md:flex space-x-8">
+            <Link href="/" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Home</Link>
             <Link href="/about" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">About</Link>
             <Link href="/pricing" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Pricing</Link>
             <Link href="/blog" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Blog</Link>
@@ -72,6 +73,7 @@ export default function Navbar() {
           className="md:hidden bg-background border-b border-border"
         >
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">Home</Link>
             <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">About</Link>
             <Link href="/pricing" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">Pricing</Link>
             <Link href="/blog" target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">Blog</Link>

@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   title: "Research-Driven Healthcare AI for Clinical Intake | ZeptAI",
   description:
     "ZeptAI builds human-like voice AI for patient intake, screening, structured clinical summaries, browser access, and enterprise healthcare API integration.",
+  icons: {
+    icon: "/favicon.ico",
+  },
   openGraph: {
     title: "Research-Driven Healthcare AI for Clinical Intake | ZeptAI",
     description:
