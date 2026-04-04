@@ -17,6 +17,22 @@ import {
 
 export const runtime = "nodejs";
 
+function toPublicFirestoreError(error: unknown): string {
+  if (!(error instanceof Error)) {
+    return "Failed to store lead.";
+  }
+
+  if (error.message.includes("Firebase Admin credentials missing")) {
+    return "Database admin credentials are missing. Set FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in Netlify.";
+  }
+
+  if (error.message.includes("Firebase client config missing")) {
+    return "Firebase environment variables are missing in Netlify.";
+  }
+
+  return "Failed to store lead.";
+}
+
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as Partial<LeadInput>;
@@ -62,7 +78,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ error: "Failed to store lead." }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ error: toPublicFirestoreError(error) }, { status: 500 });
   }
 }

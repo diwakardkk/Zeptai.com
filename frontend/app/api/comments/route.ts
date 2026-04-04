@@ -18,6 +18,22 @@ import {
 
 export const runtime = "nodejs";
 
+function toPublicFirestoreError(error: unknown): string {
+  if (!(error instanceof Error)) {
+    return "Failed to store comment. Please check Firebase setup.";
+  }
+
+  if (error.message.includes("Firebase Admin credentials missing")) {
+    return "Database admin credentials are missing. Set FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in Netlify.";
+  }
+
+  if (error.message.includes("Firebase client config missing")) {
+    return "Firebase environment variables are missing in Netlify.";
+  }
+
+  return "Failed to store comment. Please check Firebase setup.";
+}
+
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as Partial<BlogCommentInput>;
@@ -91,7 +107,7 @@ export async function POST(req: Request) {
     const details = error instanceof Error ? error.message : null;
     return NextResponse.json(
       {
-        error: "Failed to store comment. Please check Firebase setup.",
+        error: toPublicFirestoreError(error),
         ...(process.env.NODE_ENV === "development" && details ? { details } : {}),
       },
       { status: 500 },
@@ -163,7 +179,7 @@ export async function GET(req: Request) {
     const details = error instanceof Error ? error.message : null;
     return NextResponse.json(
       {
-        error: "Failed to fetch comments.",
+        error: toPublicFirestoreError(error),
         ...(process.env.NODE_ENV === "development" && details ? { details } : {}),
       },
       { status: 500 },

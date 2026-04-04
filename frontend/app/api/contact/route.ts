@@ -21,6 +21,22 @@ export const runtime = "nodejs";
 
 type ContactBody = Partial<ContactSubmissionInput>;
 
+function toPublicFirestoreError(error: unknown): string {
+  if (!(error instanceof Error)) {
+    return "Failed to store contact request. Please try again.";
+  }
+
+  if (error.message.includes("Firebase Admin credentials missing")) {
+    return "Database admin credentials are missing. Set FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in Netlify.";
+  }
+
+  if (error.message.includes("Firebase client config missing")) {
+    return "Firebase environment variables are missing in Netlify.";
+  }
+
+  return "Failed to store contact request. Please try again.";
+}
+
 function escapeHtml(input: string) {
   return input
     .replace(/&/g, "&amp;")
@@ -178,7 +194,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Contact API error:", error);
     return NextResponse.json(
-      { error: "Failed to store contact request. Please try again." },
+      { error: toPublicFirestoreError(error) },
       { status: 500 },
     );
   }

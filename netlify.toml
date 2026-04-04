@@ -1,14 +1,8 @@
 [build]
   base = "frontend"
   command = "npm run build"
-  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "22.22.2"
   NPM_VERSION = "10.9.7"
   SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
