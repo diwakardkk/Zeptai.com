@@ -66,3 +66,12 @@ export function getAdminDb(): Firestore {
 export function adminServerTimestamp() {
   return FieldValue.serverTimestamp();
 }
+
+export function isMissingAdminCredentialError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    error.message.includes(
+      "Firebase Admin credentials missing. Set FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON",
+    )
+  );
+}

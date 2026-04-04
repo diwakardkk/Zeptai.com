@@ -1,18 +1,89 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Website form collections are written through server API routes.
-    // Keep direct client access disabled by default.
-    match /contact_submissions/{document=**} {
-      allow read, write: if false;
+    function isString(value) {
+      return value is string;
     }
 
-    match /blog_comments/{document=**} {
-      allow read, write: if false;
+    function validMobile(value) {
+      return isString(value) && value.size() >= 7 && value.size() <= 20;
     }
 
-    match /blog_leads/{document=**} {
-      allow read, write: if false;
+    function onlyKeys(data, keys) {
+      return data.keys().hasOnly(keys);
+    }
+
+    match /contact_submissions/{documentId} {
+      allow create: if
+        onlyKeys(
+          request.resource.data,
+          ["name", "email", "mobile", "message", "sourcePage", "inquiryType", "status", "createdAt"]
+        ) &&
+        isString(request.resource.data.name) &&
+        request.resource.data.name.size() >= 2 &&
+        request.resource.data.name.size() <= 120 &&
+        isString(request.resource.data.email) &&
+        request.resource.data.email.size() >= 5 &&
+        request.resource.data.email.size() <= 320 &&
+        validMobile(request.resource.data.mobile) &&
+        isString(request.resource.data.message) &&
+        request.resource.data.message.size() >= 10 &&
+        request.resource.data.message.size() <= 4000 &&
+        isString(request.resource.data.sourcePage) &&
+        request.resource.data.sourcePage.size() > 0 &&
+        request.resource.data.sourcePage.size() <= 120 &&
+        request.resource.data.inquiryType == "contact" &&
+        request.resource.data.status == "new" &&
+        request.resource.data.createdAt is timestamp;
+
+      allow read, update, delete: if false;
+    }
+
+    match /blog_comments/{documentId} {
+      allow create: if
+        onlyKeys(
+          request.resource.data,
+          ["postSlug", "name", "email", "mobile", "comment", "status", "createdAt"]
+        ) &&
+        isString(request.resource.data.postSlug) &&
+        request.resource.data.postSlug.size() >= 3 &&
+        request.resource.data.postSlug.size() <= 180 &&
+        isString(request.resource.data.name) &&
+        request.resource.data.name.size() >= 2 &&
+        request.resource.data.name.size() <= 120 &&
+        isString(request.resource.data.email) &&
+        request.resource.data.email.size() >= 5 &&
+        request.resource.data.email.size() <= 320 &&
+        validMobile(request.resource.data.mobile) &&
+        isString(request.resource.data.comment) &&
+        request.resource.data.comment.size() >= 8 &&
+        request.resource.data.comment.size() <= 2000 &&
+        request.resource.data.status == "pending" &&
+        request.resource.data.createdAt is timestamp;
+
+      allow read: if resource.data.status == "visible";
+      allow update, delete: if false;
+    }
+
+    match /blog_leads/{documentId} {
+      allow create: if
+        onlyKeys(
+          request.resource.data,
+          ["name", "email", "mobile", "sourcePage", "createdAt"]
+        ) &&
+        isString(request.resource.data.name) &&
+        request.resource.data.name.size() >= 2 &&
+        request.resource.data.name.size() <= 120 &&
+        isString(request.resource.data.email) &&
+        request.resource.data.email.size() >= 5 &&
+        request.resource.data.email.size() <= 320 &&
+        validMobile(request.resource.data.mobile) &&
+        isString(request.resource.data.sourcePage) &&
+        request.resource.data.sourcePage.size() > 0 &&
+        request.resource.data.sourcePage.size() <= 120 &&
+        request.resource.data.createdAt is timestamp;
+
+      allow read, update, delete: if false;
     }
 
     // Deny everything else by default.

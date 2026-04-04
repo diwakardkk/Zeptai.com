@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { adminServerTimestamp, getAdminDb } from "@/app/api/_firestoreAdmin";
+import { addDoc, collection, getDocs, limit, orderBy, query, serverTimestamp, where } from "firebase/firestore";
+import {
+  adminServerTimestamp,
+  getAdminDb,
+  isMissingAdminCredentialError,
+} from "@/app/api/_firestoreAdmin";
+import { db } from "@/app/api/_firestore";
 import { BlogCommentInput } from "@/types/comment";
 import {
   isValidEmail,
@@ -43,21 +49,40 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Comment is too long. Keep it under 2000 characters." }, { status: 400 });
     }
 
-    const adminDb = getAdminDb();
-    const docRef = await adminDb.collection("blog_comments").add({
-      postSlug,
-      name,
-      email,
-      mobile,
-      comment,
-      status: "pending",
-      createdAt: adminServerTimestamp(),
-    });
+    let docId = "";
+    try {
+      const adminDb = getAdminDb();
+      const docRef = await adminDb.collection("blog_comments").add({
+        postSlug,
+        name,
+        email,
+        mobile,
+        comment,
+        status: "pending",
+        createdAt: adminServerTimestamp(),
+      });
+      docId = docRef.id;
+    } catch (adminError) {
+      if (!isMissingAdminCredentialError(adminError)) {
+        throw adminError;
+      }
 
-    console.log("Comment saved successfully:", docRef.id);
+      const docRef = await addDoc(collection(db, "blog_comments"), {
+        postSlug,
+        name,
+        email,
+        mobile,
+        comment,
+        status: "pending",
+        createdAt: serverTimestamp(),
+      });
+      docId = docRef.id;
+    }
+
+    console.log("Comment saved successfully:", docId);
     return NextResponse.json({
       ok: true,
-      id: docRef.id,
+      id: docId,
       moderationStatus: "pending",
       message: "Comment submitted for moderation.",
     });
@@ -82,18 +107,45 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "postSlug is required." }, { status: 400 });
     }
 
-    const adminDb = getAdminDb();
-    const snapshot = await adminDb
-      .collection("blog_comments")
-      .where("postSlug", "==", postSlug)
-      .where("status", "==", "visible")
-      .orderBy("createdAt", "desc")
-      .limit(100)
-      .get();
-    const comments = snapshot.docs
+    let docs:
+      | Array<{ id: string; data: () => Record<string, unknown> }>
+      | { id: string; data: () => Record<string, unknown> }[] = [];
+
+    try {
+      const adminDb = getAdminDb();
+      const snapshot = await adminDb
+        .collection("blog_comments")
+        .where("postSlug", "==", postSlug)
+        .where("status", "==", "visible")
+        .orderBy("createdAt", "desc")
+        .limit(100)
+        .get();
+      docs = snapshot.docs.map((doc) => ({ id: doc.id, data: () => doc.data() as Record<string, unknown> }));
+    } catch (adminError) {
+      if (!isMissingAdminCredentialError(adminError)) {
+        throw adminError;
+      }
+
+      const commentsRef = collection(db, "blog_comments");
+      const q = query(
+        commentsRef,
+        where("postSlug", "==", postSlug),
+        where("status", "==", "visible"),
+        orderBy("createdAt", "desc"),
+        limit(100),
+      );
+      const snapshot = await getDocs(q);
+      docs = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        data: () => doc.data() as Record<string, unknown>,
+      }));
+    }
+
+    const comments = docs
       .map((doc) => {
         const data = doc.data();
-        const createdAt = data.createdAt?.toDate?.() ?? new Date();
+        const createdAtRaw = (data as { createdAt?: { toDate?: () => Date } }).createdAt;
+        const createdAt = createdAtRaw?.toDate?.() ?? new Date();
         return {
           id: doc.id,
           postSlug: String(data.postSlug ?? ""),

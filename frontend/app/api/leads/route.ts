@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { adminServerTimestamp, getAdminDb } from "@/app/api/_firestoreAdmin";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  adminServerTimestamp,
+  getAdminDb,
+  isMissingAdminCredentialError,
+} from "@/app/api/_firestoreAdmin";
+import { db } from "@/app/api/_firestore";
 import { LeadInput } from "@/types/lead";
 import {
   isValidEmail,
@@ -32,14 +38,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Name must be between 2 and 120 characters." }, { status: 400 });
     }
 
-    const adminDb = getAdminDb();
-    await adminDb.collection("blog_leads").add({
-      name,
-      email,
-      mobile,
-      sourcePage,
-      createdAt: adminServerTimestamp(),
-    });
+    try {
+      const adminDb = getAdminDb();
+      await adminDb.collection("blog_leads").add({
+        name,
+        email,
+        mobile,
+        sourcePage,
+        createdAt: adminServerTimestamp(),
+      });
+    } catch (adminError) {
+      if (!isMissingAdminCredentialError(adminError)) {
+        throw adminError;
+      }
+
+      await addDoc(collection(db, "blog_leads"), {
+        name,
+        email,
+        mobile,
+        sourcePage,
+        createdAt: serverTimestamp(),
+      });
+    }
 
     return NextResponse.json({ ok: true });
   } catch {

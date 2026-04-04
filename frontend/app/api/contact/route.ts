@@ -1,6 +1,12 @@
 ﻿import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { adminServerTimestamp, getAdminDb } from "@/app/api/_firestoreAdmin";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  adminServerTimestamp,
+  getAdminDb,
+  isMissingAdminCredentialError,
+} from "@/app/api/_firestoreAdmin";
+import { db } from "@/app/api/_firestore";
 import { ContactSubmissionInput } from "@/types/contact";
 import {
   isValidEmail,
@@ -73,17 +79,34 @@ export async function POST(req: Request) {
       );
     }
 
-    const adminDb = getAdminDb();
-    await adminDb.collection("contact_submissions").add({
-      name,
-      email,
-      mobile,
-      message,
-      sourcePage,
-      inquiryType: "contact",
-      status: "new",
-      createdAt: adminServerTimestamp(),
-    });
+    try {
+      const adminDb = getAdminDb();
+      await adminDb.collection("contact_submissions").add({
+        name,
+        email,
+        mobile,
+        message,
+        sourcePage,
+        inquiryType: "contact",
+        status: "new",
+        createdAt: adminServerTimestamp(),
+      });
+    } catch (adminError) {
+      if (!isMissingAdminCredentialError(adminError)) {
+        throw adminError;
+      }
+
+      await addDoc(collection(db, "contact_submissions"), {
+        name,
+        email,
+        mobile,
+        message,
+        sourcePage,
+        inquiryType: "contact",
+        status: "new",
+        createdAt: serverTimestamp(),
+      });
+    }
 
     const smtpHost = process.env.SMTP_HOST ?? "smtp.gmail.com";
     const smtpPort = Number(process.env.SMTP_PORT ?? "465");
