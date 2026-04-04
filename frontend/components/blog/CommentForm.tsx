@@ -60,7 +60,11 @@ export default function CommentForm({ postSlug, onSubmitted }: CommentFormProps)
 
       const result = await response.json();
       if (!response.ok) {
-        setStatus(result?.error ?? "Unable to submit comment.");
+        const errorMessage =
+          typeof result?.details === "string"
+            ? `${result?.error ?? "Unable to submit comment."} (${result.details})`
+            : (result?.error ?? "Unable to submit comment.");
+        setStatus(errorMessage);
         return;
       }
 

@@ -1,7 +1,6 @@
 ﻿import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/app/api/_firestore";
+import { adminServerTimestamp, getAdminDb } from "@/app/api/_firestoreAdmin";
 import { ContactSubmissionInput } from "@/types/contact";
 import {
   isValidEmail,
@@ -74,7 +73,8 @@ export async function POST(req: Request) {
       );
     }
 
-    await addDoc(collection(db, "contact_submissions"), {
+    const adminDb = getAdminDb();
+    await adminDb.collection("contact_submissions").add({
       name,
       email,
       mobile,
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
       sourcePage,
       inquiryType: "contact",
       status: "new",
-      createdAt: serverTimestamp(),
+      createdAt: adminServerTimestamp(),
     });
 
     const smtpHost = process.env.SMTP_HOST ?? "smtp.gmail.com";

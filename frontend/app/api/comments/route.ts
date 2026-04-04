@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { addDoc, collection, getDocs, limit, orderBy, query, serverTimestamp, where } from "firebase/firestore";
-import { db } from "@/app/api/_firestore";
+import { adminServerTimestamp, getAdminDb } from "@/app/api/_firestoreAdmin";
 import { BlogCommentInput } from "@/types/comment";
 import {
   isValidEmail,
@@ -44,14 +43,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Comment is too long. Keep it under 2000 characters." }, { status: 400 });
     }
 
-    const docRef = await addDoc(collection(db, "blog_comments"), {
+    const adminDb = getAdminDb();
+    const docRef = await adminDb.collection("blog_comments").add({
       postSlug,
       name,
       email,
       mobile,
       comment,
       status: "pending",
-      createdAt: serverTimestamp(),
+      createdAt: adminServerTimestamp(),
     });
 
     console.log("Comment saved successfully:", docRef.id);
@@ -63,7 +63,14 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.error("Comment submission error:", error);
-    return NextResponse.json({ error: "Failed to store comment. Please check Firebase setup." }, { status: 500 });
+    const details = error instanceof Error ? error.message : null;
+    return NextResponse.json(
+      {
+        error: "Failed to store comment. Please check Firebase setup.",
+        ...(process.env.NODE_ENV === "development" && details ? { details } : {}),
+      },
+      { status: 500 },
+    );
   }
 }
 
@@ -75,16 +82,14 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "postSlug is required." }, { status: 400 });
     }
 
-    const commentsRef = collection(db, "blog_comments");
-    const q = query(
-      commentsRef,
-      where("postSlug", "==", postSlug),
-      where("status", "==", "visible"),
-      orderBy("createdAt", "desc"),
-      limit(100),
-    );
-
-    const snapshot = await getDocs(q);
+    const adminDb = getAdminDb();
+    const snapshot = await adminDb
+      .collection("blog_comments")
+      .where("postSlug", "==", postSlug)
+      .where("status", "==", "visible")
+      .orderBy("createdAt", "desc")
+      .limit(100)
+      .get();
     const comments = snapshot.docs
       .map((doc) => {
         const data = doc.data();
@@ -102,7 +107,14 @@ export async function GET(req: Request) {
       });
 
     return NextResponse.json({ comments });
-  } catch {
-    return NextResponse.json({ error: "Failed to fetch comments." }, { status: 500 });
+  } catch (error) {
+    const details = error instanceof Error ? error.message : null;
+    return NextResponse.json(
+      {
+        error: "Failed to fetch comments.",
+        ...(process.env.NODE_ENV === "development" && details ? { details } : {}),
+      },
+      { status: 500 },
+    );
   }
 }

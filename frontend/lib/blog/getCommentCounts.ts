@@ -1,17 +1,17 @@
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/app/api/_firestore";
+import { getAdminDb } from "@/app/api/_firestoreAdmin";
 
 export async function getCommentCounts(): Promise<Record<string, number>> {
   try {
-    const snapshot = await getDocs(collection(db, "blog_comments"));
+    const snapshot = await getAdminDb()
+      .collection("blog_comments")
+      .where("status", "==", "visible")
+      .get();
     const counts: Record<string, number> = {};
 
     snapshot.forEach((doc) => {
       const data = doc.data();
       const postSlug = String(data.postSlug ?? "").trim();
-      const status = String(data.status ?? "visible");
-
-      if (!postSlug || status !== "visible") {
+      if (!postSlug) {
         return;
       }
 

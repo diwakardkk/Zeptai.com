@@ -97,7 +97,19 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 ```
 
-Also set the same values in Netlify (or your deploy platform).
+For server-side API routes, also set Firebase Admin credentials:
+
+```env
+# Option 1 (recommended): full JSON service account
+FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON=
+
+# Option 2: split values
+FIREBASE_ADMIN_PROJECT_ID=
+FIREBASE_ADMIN_CLIENT_EMAIL=
+FIREBASE_ADMIN_PRIVATE_KEY=
+```
+
+Also set all values in Netlify (or your deploy platform).
 
 ## Beginner setup steps
 
@@ -140,6 +152,15 @@ Starter rules file:
 
 Default starter policy blocks direct browser reads/writes for website collections.
 If you later need direct browser reads, update rules carefully.
+
+## Troubleshooting
+
+If blog comment submission fails with `Unable to submit comment. Please try again.`:
+
+1. Confirm Firebase Admin env variables are present in deployment.
+2. Confirm `FIREBASE_ADMIN_PRIVATE_KEY` keeps newlines (or use `FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON`).
+3. Confirm Firestore database is created in the same Firebase project id.
+4. Redeploy after updating env variables.
 
 ## Apply rules and indexes (optional but recommended)
 

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/app/api/_firestore";
+import { adminServerTimestamp, getAdminDb } from "@/app/api/_firestoreAdmin";
 import { LeadInput } from "@/types/lead";
 import {
   isValidEmail,
@@ -33,12 +32,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Name must be between 2 and 120 characters." }, { status: 400 });
     }
 
-    await addDoc(collection(db, "blog_leads"), {
+    const adminDb = getAdminDb();
+    await adminDb.collection("blog_leads").add({
       name,
       email,
       mobile,
       sourcePage,
-      createdAt: serverTimestamp(),
+      createdAt: adminServerTimestamp(),
     });
 
     return NextResponse.json({ ok: true });
