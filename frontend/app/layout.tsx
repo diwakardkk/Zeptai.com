@@ -7,17 +7,20 @@ import { siteConfig } from "@/lib/seo/site";
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: siteConfig.defaultTitle,
+    default: "ZeptAI",
     template: "%s | ZeptAI",
   },
-  description: siteConfig.description,
+  description: "AI for Healthcare Patient Intake and Smart Summaries",
   keywords: [...siteConfig.keywords],
   applicationName: "ZeptAI",
   authors: [{ name: "ZeptAI Team" }],
   creator: "ZeptAI",
   publisher: "ZeptAI",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.png", sizes: "16x16", type: "image/png" },
+    ],
   },
   openGraph: {
     title: siteConfig.defaultTitle,
