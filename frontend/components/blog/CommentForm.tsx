@@ -68,7 +68,7 @@ export default function CommentForm({ postSlug, onSubmitted }: CommentFormProps)
       setEmail("");
       setMobile("");
       setComment("");
-      setStatus("✓ Comment posted successfully! Refresh to see your comment.");
+      setStatus("✓ Comment submitted. It will appear after moderation approval.");
       setTimeout(() => setStatus(null), 5000);
       onSubmitted();
     } catch {
@@ -121,7 +121,7 @@ export default function CommentForm({ postSlug, onSubmitted }: CommentFormProps)
       />
 
       <div className="flex items-center justify-between gap-4">
-        <p className="text-xs text-muted-foreground">{status ?? "Stored per blog slug for easy moderation later."}</p>
+        <p className="text-xs text-muted-foreground">{status ?? "Comments are reviewed before becoming public."}</p>
         <button
           type="submit"
           disabled={loading}
@@ -133,4 +133,3 @@ export default function CommentForm({ postSlug, onSubmitted }: CommentFormProps)
     </form>
   );
 }
-

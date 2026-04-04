@@ -1,3 +1,5 @@
+export type BlogCommentStatus = "visible" | "hidden" | "pending";
+
 export interface BlogCommentInput {
   postSlug: string;
   name: string;
@@ -9,6 +11,5 @@ export interface BlogCommentInput {
 export interface BlogComment extends BlogCommentInput {
   id: string;
   createdAt: string;
-  status?: "visible" | "hidden" | "pending";
+  status: BlogCommentStatus;
 }
-

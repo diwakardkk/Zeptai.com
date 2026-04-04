@@ -1,78 +1,92 @@
-# Firebase Website Database
+# Firebase Firestore Database Guide (Website)
 
-ZeptAI website should use Firebase Firestore for only two collections:
+This website uses Firestore for website forms and engagement data.
 
-1. `contact_submissions`
-2. `blog_comments`
+## Architecture
 
-Do not store patient conversations, reports, payments, or product usage here.
+- Blog article content: MDX files in `frontend/content/blog`
+- Contact form submissions: Firestore `contact_submissions`
+- Blog comments: Firestore `blog_comments`
+- Blog lead capture: Firestore `blog_leads`
 
-## Collection 1: `contact_submissions`
+Do not move blog article content to Firestore in this setup.
 
-Store every homepage contact/demo/API inquiry.
+## Required collections
 
-### Fields
-- `name`: string
-- `email`: string
-- `mobile`: string
-- `message`: string
-- `sourcePage`: string
-- `inquiryType`: string
-- `status`: string
-- `createdAt`: timestamp
+### `contact_submissions`
 
-### Example document
+Written by:
+- `frontend/app/api/contact/route.ts`
+
+Schema:
 ```json
 {
-  "name": "Diwakar Kumar",
-  "email": "hello@clinic.com",
-  "mobile": "+91 9876543210",
-  "message": "We want to evaluate ZeptAI for intake and API integration.",
-  "sourcePage": "home_contact",
+  "name": "string",
+  "email": "string",
+  "mobile": "string",
+  "message": "string",
+  "sourcePage": "string",
   "inquiryType": "contact",
-  "status": "new",
-  "createdAt": "server timestamp"
+  "status": "new | contacted | closed",
+  "createdAt": "timestamp"
 }
 ```
 
-## Collection 2: `blog_comments`
+### `blog_comments`
 
-Store public comments for each blog post.
+Written/read by:
+- `frontend/app/api/comments/route.ts`
+- `frontend/lib/blog/getCommentCounts.ts`
 
-### Fields
-- `postSlug`: string
-- `name`: string
-- `email`: string
-- `mobile`: string
-- `comment`: string
-- `status`: string
-- `createdAt`: timestamp
-
-### Example document
+Schema:
 ```json
 {
-  "postSlug": "ai-healthcare-future-of-patient-intake",
-  "name": "Amit Sharma",
-  "email": "amit@example.com",
-  "mobile": "+91 9988776655",
-  "comment": "Very useful article on intake automation.",
-  "status": "visible",
-  "createdAt": "server timestamp"
+  "postSlug": "string",
+  "name": "string",
+  "email": "string",
+  "mobile": "string",
+  "comment": "string",
+  "status": "pending | visible | hidden",
+  "createdAt": "timestamp"
 }
 ```
 
-## Firebase setup
+Moderation behavior:
+- New comments are now stored as `status: "pending"`.
+- Public API responses only return comments with `status: "visible"`.
 
-1. Create a Firebase project in Firebase Console.
-2. Open `Build -> Firestore Database`.
-3. Click `Create database`.
-4. Start in production mode.
-5. Choose your preferred region.
-6. Create a Web App in Firebase project settings.
-7. Copy the web config values.
-8. Add them to `frontend/.env.local`.
+### `blog_leads`
 
-## Required environment variables
+Written by:
+- `frontend/app/api/leads/route.ts`
+
+Schema:
+```json
+{
+  "name": "string",
+  "email": "string",
+  "mobile": "string",
+  "sourcePage": "string",
+  "createdAt": "timestamp"
+}
+```
+
+## Optional future collections
+
+- `users`
+- `newsletter_subscribers`
+- `demo_requests`
+
+These are optional and not required by the current codebase.
+
+## Firebase connection in this repo
+
+- Shared Firestore init: `frontend/app/api/_firestore.ts`
+- Validation helpers for API input: `frontend/app/api/_validation.ts`
+
+## Environment variables
+
+Set these in `frontend/.env.local`:
 
 ```env
 NEXT_PUBLIC_FIREBASE_API_KEY=
@@ -83,44 +97,57 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 ```
 
-## Connect with project
+Also set the same values in Netlify (or your deploy platform).
 
-Firebase is initialized in:
-- `frontend/app/api/_firestore.ts`
+## Beginner setup steps
 
-Contact submissions are written from:
-- `frontend/app/api/contact/route.ts`
+1. Create a Firebase project in Firebase Console.
+2. Create Firestore Database in production mode.
+3. Choose a region close to your users.
+4. Create a Web App in Project Settings.
+5. Copy Firebase config values into `frontend/.env.local`.
+6. Run locally:
+   - `cd frontend`
+   - `npm install`
+   - `npm run dev`
+7. Submit one contact form, one blog comment, and one lead form.
+8. Firestore will auto-create:
+   - `contact_submissions`
+   - `blog_comments`
+   - `blog_leads`
 
-Blog comments are written/read from:
-- `frontend/app/api/comments/route.ts`
+You do not need to pre-create collections manually.
 
-## Recommended Firestore indexes
+## Firestore index
 
-Create this composite index:
+Create this composite index for comments:
 
 - Collection: `blog_comments`
 - Fields:
   - `postSlug` ascending
+  - `status` ascending
   - `createdAt` descending
 
-## Recommended Firestore rules
+Starter config file:
+- `frontend/firebase/firestore.indexes.json`
 
-Use restrictive rules because writes happen through Next.js API routes:
+## Firestore security rules
 
-```txt
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /contact_submissions/{document=**} {
-      allow read, write: if false;
-    }
+Because writes happen through Next.js API routes, keep direct client writes locked down.
 
-    match /blog_comments/{document=**} {
-      allow read, write: if false;
-    }
-  }
-}
+Starter rules file:
+- `frontend/firebase/firestore.rules`
+
+Default starter policy blocks direct browser reads/writes for website collections.
+If you later need direct browser reads, update rules carefully.
+
+## Apply rules and indexes (optional but recommended)
+
+If you use Firebase CLI, from the `frontend` directory:
+
+```bash
+firebase login
+firebase use <your-firebase-project-id>
+firebase deploy --only firestore:rules --project <your-firebase-project-id>
+firebase deploy --only firestore:indexes --project <your-firebase-project-id>
 ```
-
-If you later want public client-side reads for comments, expose them only through your API routes instead of direct browser Firestore access.
-

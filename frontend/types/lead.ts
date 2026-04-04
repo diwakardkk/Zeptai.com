@@ -5,3 +5,7 @@ export interface LeadInput {
   sourcePage: string;
 }
 
+export interface LeadSubmission extends LeadInput {
+  id: string;
+  createdAt: string;
+}

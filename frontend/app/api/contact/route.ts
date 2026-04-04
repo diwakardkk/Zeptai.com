@@ -3,6 +3,14 @@ import nodemailer from "nodemailer";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "@/app/api/_firestore";
 import { ContactSubmissionInput } from "@/types/contact";
+import {
+  isValidEmail,
+  isValidMobile,
+  normalizeEmail,
+  normalizeMultilineText,
+  normalizeText,
+  sanitizeSourcePage,
+} from "@/app/api/_validation";
 
 export const runtime = "nodejs";
 
@@ -17,22 +25,15 @@ function escapeHtml(input: string) {
     .replace(/'/g, "&#39;");
 }
 
-function clean(input: string) {
-  return input.replace(/\s+/g, " ").trim();
-}
-
-function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as ContactBody;
 
-    const name = clean(body.name ?? "");
-    const email = clean((body.email ?? "").toLowerCase());
-    const mobile = clean(body.mobile ?? "");
-    const message = (body.message ?? "").trim();
+    const name = normalizeText(body.name);
+    const email = normalizeEmail(body.email);
+    const mobile = normalizeText(body.mobile);
+    const message = normalizeMultilineText(body.message);
+    const sourcePage = sanitizeSourcePage(body.sourcePage, "home_contact");
 
     if (!name || !email || !mobile || !message) {
       return NextResponse.json(
@@ -45,9 +46,30 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
     }
 
+    if (!isValidMobile(mobile)) {
+      return NextResponse.json(
+        { error: "Enter a valid mobile number (7-20 chars)." },
+        { status: 400 },
+      );
+    }
+
+    if (name.length < 2 || name.length > 120) {
+      return NextResponse.json(
+        { error: "Name must be between 2 and 120 characters." },
+        { status: 400 },
+      );
+    }
+
     if (message.length < 10) {
       return NextResponse.json(
         { error: "Message must be at least 10 characters." },
+        { status: 400 },
+      );
+    }
+
+    if (message.length > 4000) {
+      return NextResponse.json(
+        { error: "Message is too long. Please keep it under 4000 characters." },
         { status: 400 },
       );
     }
@@ -57,7 +79,7 @@ export async function POST(req: Request) {
       email,
       mobile,
       message,
-      sourcePage: "home_contact",
+      sourcePage,
       inquiryType: "contact",
       status: "new",
       createdAt: serverTimestamp(),
