@@ -107,6 +107,7 @@ export default async function BlogArticlePage({ params }: Props) {
           <Image
             src={post.coverImage}
             alt={post.title}
+            title={post.title}
             width={1600}
             height={900}
             priority

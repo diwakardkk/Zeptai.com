@@ -25,8 +25,10 @@ export default async function BlogPage() {
       </div>
       <Navbar />
       <BlogHero
-        title="Healthcare AI, Patient Intake AI, and Clinical Summary Insights"
-        description="Research-backed articles on voice AI healthcare workflows, clinical screening, structured summaries, and the operational side of modern patient intake."
+        title="ZeptAI Research & Insights"
+        headline="Healthcare AI for Patient Intake and Intelligent Workflows"
+        description="Research-backed insights on voice-based patient intake, AI-driven healthcare workflows, and structured summaries designed to improve how modern care systems operate."
+        tags={["Voice AI Healthcare", "Patient Intake AI", "AI Workflows"]}
       />
 
       <section className="relative mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">

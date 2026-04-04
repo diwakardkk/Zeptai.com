@@ -1,9 +1,10 @@
 export const siteConfig = {
   name: "ZeptAI",
   url: "https://www.zeptai.com",
+  redirectHosts: ["zeptafocusai.netlify.app"],
   description:
-    "ZeptAI delivers healthcare AI for voice-based patient intake, symptom collection, structured clinical summaries, and telemedicine-ready workflow automation.",
-  defaultTitle: "Healthcare AI for Voice-Based Patient Intake",
+    "ZeptAI uses voice-based healthcare AI to capture patient symptoms, history, medications and converts them into clear, structured summaries that save doctors time and improve communication before consultation.",
+  defaultTitle: "Simplify Patient Intake with Healthcare AI",
   ogImage:
     "https://raw.githubusercontent.com/prabhav1800-tech/zeptai_contents/main/uploads/logo.png",
   keywords: [

@@ -20,15 +20,16 @@ export default function Hero() {
         >
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-sm font-medium mb-6">
             <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse w-max"></span>
-            Healthcare AI Research + Enterprise API
+            Healthcare AI Research and Enterprise AI Platform
           </span>
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-foreground mb-6">
-            Healthcare AI for<br className="hidden sm:block" />
-            <span className="text-green-500">Voice-Based Patient Intake</span><br className="hidden sm:block" />
-            <span className="text-blue-500">and Clinical Summaries</span>
+            Simplify Patient Intake<br className="hidden sm:block" />
+            <span className="text-green-500">with Healthcare AI</span>
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-muted-foreground mb-10">
-            ZeptAI uses voice AI for healthcare to capture symptoms, history, medications, and visit context through natural patient conversations, then turns the intake into a structured clinical summary teams can review before the consultation begins.
+            ZeptAI uses voice-based healthcare AI to capture patient symptoms, history,
+            medications and converts them into clear, structured summaries that save
+            doctors time and improve communication before consultation.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

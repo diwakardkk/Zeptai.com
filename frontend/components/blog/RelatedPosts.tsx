@@ -22,6 +22,7 @@ export default function RelatedPosts({ posts }: RelatedPostsProps) {
           <Image
             src={entry.coverImage}
             alt={entry.title}
+            title={entry.title}
             width={1200}
             height={720}
             sizes="(max-width: 768px) 100vw, 33vw"

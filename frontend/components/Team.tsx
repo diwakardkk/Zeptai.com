@@ -9,16 +9,22 @@ const team = [
     name: "Prabhav Kumar",
     role: "CEO",
     image: "https://raw.githubusercontent.com/prabhav1800-tech/zeptai_contents/main/uploads/Prabhav.PNG",
+    email: "Prabhav@zeptai.com",
+    linkedin: "https://www.linkedin.com/in/prabhav-kumar-287ab21b1/",
   },
   {
     name: "Shivam Kumar",
     role: "CFO",
-    image: "https://raw.githubusercontent.com/diwakardkk/Zeptai.com/main/uploads/shivam_DP.png",
+    image: "https://raw.githubusercontent.com/diwakardkk/Zeptai.com/main/uploads/shivam____.png",
+    email: "shivam@zeptai.com",
+    linkedin: "https://www.linkedin.com/in/shivam-kumar-50237ab0/",
   },
   {
     name: "Diwakar",
     role: "CTO",
     image: "https://raw.githubusercontent.com/prabhav1800-tech/zeptai_contents/main/uploads/Diwakar_photo.PNG",
+    email: "diwakar@zeptai.com",
+    linkedin: "https://www.linkedin.com/in/diwakarpro/",
   },
 ];
 
@@ -47,6 +53,7 @@ export default function Team() {
                   <Image
                     src={member.image}
                     alt={member.name}
+                    title={member.name}
                     width={320}
                     height={320}
                     sizes="160px"
@@ -58,10 +65,20 @@ export default function Team() {
               <p className="text-primary font-medium mb-4">{member.role}</p>
               
               <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <a href="#" className="p-2 bg-muted rounded-full hover:bg-primary/20 hover:text-primary transition-colors">
+                <a
+                  href={member.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${member.name} LinkedIn`}
+                  className="p-2 bg-muted rounded-full hover:bg-primary/20 hover:text-primary transition-colors"
+                >
                   <Globe className="w-4 h-4" />
                 </a>
-                <a href="#" className="p-2 bg-muted rounded-full hover:bg-primary/20 hover:text-primary transition-colors">
+                <a
+                  href={`mailto:${member.email}`}
+                  aria-label={`Email ${member.name}`}
+                  className="p-2 bg-muted rounded-full hover:bg-primary/20 hover:text-primary transition-colors"
+                >
                   <Mail className="w-4 h-4" />
                 </a>
               </div>

@@ -39,7 +39,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} ZeptAI. All rights reserved.
           </p>
           <div className="flex space-x-6 text-sm text-muted-foreground">
-            Healthcare AI Research + Enterprise API
+            Healthcare AI Research and Enterprise AI Platform
           </div>
         </div>
       </div>

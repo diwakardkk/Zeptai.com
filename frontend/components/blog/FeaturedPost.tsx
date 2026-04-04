@@ -72,6 +72,7 @@ export default function FeaturedPost({ commentCount, post }: FeaturedPostProps) 
           <Image
             src={post.coverImage}
             alt={post.title}
+            title={post.title}
             width={1600}
             height={1000}
             sizes="(max-width: 1024px) 100vw, 50vw"

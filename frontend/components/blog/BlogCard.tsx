@@ -28,6 +28,7 @@ export default function BlogCard({ commentCount = 0, post }: BlogCardProps) {
           <Image
             src={post.coverImage}
             alt={post.title}
+            title={post.title}
             width={1200}
             height={720}
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
