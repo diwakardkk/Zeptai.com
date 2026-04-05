@@ -3,130 +3,200 @@
 import { motion } from "framer-motion";
 import {
   Activity,
-  CheckCircle2,
+  AudioLines,
+  Brain,
   Clock,
   FileText,
-  Globe2,
+  Stethoscope,
   Users,
 } from "lucide-react";
 
-const usps = [
+const standoutPillars = [
   {
-    title: "Human-Like Voice Interaction",
+    title: "Research-Backed Foundation",
     description:
-      "Patients describe their problem naturally through voice instead of filling rigid forms or typing long responses.",
-    icon: <Activity className="h-5 w-5 text-primary" />,
+      "Evidence-led product design shaped by real patient-intake and clinical handoff needs.",
+    icon: Activity,
+    tone: "from-[#224bc3]/20 to-[#224bc3]/5 text-[#224bc3]",
   },
   {
-    title: "Structured Intake Before Consultation",
+    title: "Voice-First Intake",
     description:
-      "Symptoms, duration, history, and relevant context are captured before the doctor interaction begins.",
-    icon: <CheckCircle2 className="h-5 w-5 text-primary" />,
+      "Patients can speak naturally, so key symptoms and concerns are captured with less friction.",
+    icon: AudioLines,
+    tone: "from-[#38ac06]/20 to-[#38ac06]/5 text-[#2f8f07]",
   },
   {
-    title: "Doctor-Ready Smart Summary",
+    title: "Doctor-Ready Structured Output",
     description:
-      "ZeptAI converts the conversation into a clean clinical summary that is easier to review and act on.",
-    icon: <FileText className="h-5 w-5 text-primary" />,
+      "Conversations are converted into clear, structured summaries ready for clinical review.",
+    icon: FileText,
+    tone: "from-[#224bc3]/15 to-[#38ac06]/10 text-black/80",
   },
   {
-    title: "Built to Save Doctor Time",
+    title: "Built for Real Workflows",
     description:
-      "Doctors can skip repetitive intake questions and start consultations with structured context already available.",
-    icon: <Clock className="h-5 w-5 text-primary" />,
+      "Designed to fit into day-to-day care operations instead of adding another tool burden.",
+    icon: Stethoscope,
+    tone: "from-black/10 to-[#224bc3]/10 text-black/75",
+  },
+];
+
+const supportSignals = [
+  {
+    title: "Clinical Screening Support",
+    description:
+      "Organizes history, symptoms, and relevant context before consultations begin.",
+    icon: Brain,
   },
   {
-    title: "API-First Healthcare Integration",
+    title: "Time-Saving for Care Teams",
     description:
-      "Designed for telemedicine platforms, hospitals, clinics, and digital health products that need an intake layer.",
-    icon: <Users className="h-5 w-5 text-primary" />,
+      "Reduces repetitive intake questioning and helps teams start with context.",
+    icon: Clock,
   },
   {
-    title: "Web-Based Access Without an App",
+    title: "Integration-Ready Deployment",
     description:
-      "Patients can start immediately through the web interface, reducing friction for direct use and faster enterprise rollout.",
-    icon: <Globe2 className="h-5 w-5 text-primary" />,
+      "API-first and web-based experience for clinics, hospitals, and digital health teams.",
+    icon: Users,
   },
 ];
 
 const keywords = [
-  "Voice-based patient intake",
-  "Clinical screening API",
+  "Research-backed architecture",
+  "Voice-first patient intake",
   "Doctor-ready summaries",
-  "Web-based healthcare AI",
+  "Healthcare workflow fit",
+  "API + web deployment",
+  "Clinically usable output",
+  "High-trust product design",
+  "Modern intake layer",
 ];
 
 export default function USPSection() {
   return (
     <section
       id="usp"
-      className="border-y border-border bg-gradient-to-b from-background via-secondary/30 to-background py-20"
+      className="relative overflow-hidden border-y border-black/10 bg-background py-14 md:py-16"
     >
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.95fr,1.35fr] lg:px-8">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-[-10%] top-8 h-52 w-52 rounded-full bg-[#38ac06]/10 blur-[90px]" />
+        <div className="absolute right-[-10%] top-12 h-64 w-64 rounded-full bg-[#224bc3]/10 blur-[110px]" />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="rounded-3xl border border-primary/15 bg-background/90 p-8 shadow-sm"
+          transition={{ duration: 0.45 }}
+          className="rounded-[30px] border border-black/10 bg-[#fffffa]/85 p-5 shadow-[0_24px_56px_-40px_rgba(0,0,0,0.55)] backdrop-blur-sm md:p-7"
         >
-          <span className="mb-4 inline-flex rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
-            Why ZeptAI Stands Out
-          </span>
-          <h2 className="max-w-md text-3xl font-bold tracking-tight text-foreground md:text-5xl">
-            Research-backed voice AI for modern clinical intake
-          </h2>
-          <p className="mt-5 text-base leading-7 text-muted-foreground md:text-lg">
-            ZeptAI helps healthcare teams collect patient concerns, screening
-            details, and history through natural conversation, then turns that
-            information into structured clinical insight before the doctor even
-            starts.
-          </p>
-
-          <div className="mt-6 rounded-2xl border border-border bg-secondary/50 p-5">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-              Product Summary
-            </p>
-            <p className="mt-2 text-lg font-semibold text-foreground">
-              From natural conversation to structured clinical insight before
-              the doctor even starts.
-            </p>
-          </div>
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            {keywords.map((keyword) => (
-              <span
-                key={keyword}
-                className="rounded-full border border-border bg-background px-3 py-2 text-sm text-muted-foreground"
-              >
-                {keyword}
+          <div className="grid gap-6 lg:grid-cols-[1.02fr,1.24fr] lg:items-start">
+            <div>
+              <span className="inline-flex rounded-full border border-[#224bc3]/25 bg-white/85 px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[#224bc3]">
+                Why ZeptAI Stands Out
               </span>
-            ))}
+
+              <h2 className="mt-4 max-w-xl text-2xl font-bold tracking-tight text-black md:text-[2.15rem]">
+                Research-backed voice AI for modern clinical intake
+              </h2>
+
+              <p className="mt-4 max-w-lg text-sm leading-6 text-black/70 md:text-base">
+                ZeptAI combines evidence-driven design with voice-first intake,
+                then delivers structured context doctors can use immediately in
+                real care workflows.
+              </p>
+
+              <div className="mt-5 rounded-2xl border border-black/10 bg-gradient-to-r from-white/85 via-[#fffffa] to-[#224bc3]/[0.08] p-4">
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]">
+                  Product Positioning
+                </p>
+                <p className="mt-2 text-sm font-medium leading-6 text-black/80 md:text-base">
+                  Voice-based intake, clinically structured outputs, and
+                  integration-ready delivery for modern healthcare teams.
+                </p>
+              </div>
+
+              <div className="mt-5 grid grid-cols-2 gap-2">
+                {keywords.map((keyword) => (
+                  <span
+                    key={keyword}
+                    className="rounded-full border border-black/10 bg-white/80 px-3 py-1.5 text-[11px] font-medium text-black/65 sm:text-xs"
+                  >
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="grid gap-3 sm:grid-cols-2">
+                {standoutPillars.map((pillar, index) => {
+                  const Icon = pillar.icon;
+                  return (
+                    <motion.article
+                      key={pillar.title}
+                      initial={{ opacity: 0, y: 14 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.35, delay: index * 0.05 }}
+                      whileHover={{ y: -2 }}
+                      className="group relative overflow-hidden rounded-2xl border border-black/10 bg-white/88 p-4 transition-colors hover:border-[#224bc3]/30"
+                    >
+                      <div
+                        className={`mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${pillar.tone}`}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <h3 className="text-[0.95rem] font-semibold leading-5 text-black">
+                        {pillar.title}
+                      </h3>
+                      <p className="mt-2 text-xs leading-5 text-black/65">
+                        {pillar.description}
+                      </p>
+
+                      <motion.div
+                        className="pointer-events-none absolute inset-x-6 bottom-0 h-px bg-gradient-to-r from-transparent via-[#38ac06]/60 to-transparent"
+                        animate={{ opacity: [0.4, 0.9, 0.4] }}
+                        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+                      />
+                    </motion.article>
+                  );
+                })}
+              </div>
+
+              <div className="grid gap-2.5 sm:grid-cols-3">
+                {supportSignals.map((item, index) => {
+                  const Icon = item.icon;
+                  return (
+                    <motion.div
+                      key={item.title}
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.3, delay: index * 0.04 }}
+                      className="rounded-2xl border border-black/10 bg-white/80 p-3.5"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[#38ac06]/10 text-[#2f8f07]">
+                          <Icon className="h-3.5 w-3.5" />
+                        </span>
+                        <p className="text-xs font-semibold text-black/85">
+                          {item.title}
+                        </p>
+                      </div>
+                      <p className="mt-2 text-[11px] leading-5 text-black/60">
+                        {item.description}
+                      </p>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </motion.div>
-
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {usps.map((usp, index) => (
-            <motion.div
-              key={usp.title}
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.45, delay: index * 0.08 }}
-              className="group rounded-3xl border border-border bg-background/90 p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
-            >
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/15">
-                {usp.icon}
-              </div>
-              <h3 className="text-xl font-semibold text-foreground">
-                {usp.title}
-              </h3>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                {usp.description}
-              </p>
-            </motion.div>
-          ))}
-        </div>
       </div>
     </section>
   );

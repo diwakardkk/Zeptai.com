@@ -1,77 +1,162 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Cpu, Server, Database, Code2 } from "lucide-react";
+import {
+  AudioLines,
+  Code2,
+  Cpu,
+  FileText,
+  Globe2,
+  Server,
+  Users,
+} from "lucide-react";
+
+const branchChips = {
+  web: [
+    { label: "Browser Intake", icon: Globe2 },
+    { label: "Report Layer", icon: FileText },
+  ],
+  api: [
+    { label: "FastAPI Backend", icon: Server },
+    { label: "Platform Integrations", icon: Users },
+  ],
+};
 
 export default function Technology() {
   return (
-    <section id="technology" className="py-24 bg-background border-y border-border overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">Web-Based Patient Intake, API Infrastructure for Healthcare Platforms</h2>
-            <p className="text-xl text-muted-foreground mb-8 text-balance">
-              ZeptAI uses the same intake engine for two delivery modes: a web-based patient intake experience and an API-first model for telemedicine, clinic, and hospital integration.
-            </p>
-            
-            <ul className="space-y-6">
-              {[
-                { title: "Voice-First Conversation Engine", desc: "Guided audio interaction collects symptoms, history, and pre-consultation detail in a natural flow.", icon: <Cpu className="w-5 h-5 text-primary" /> },
-                { title: "Research-Led Intake Logic", desc: "Conversation design, summary generation, and clinical structuring are shaped by ZeptAI's research direction.", icon: <Code2 className="w-5 h-5 text-blue-500" /> },
-                { title: "Enterprise FastAPI Backend", desc: "API-first backend services support telemedicine products, clinic workflows, and healthcare integrations.", icon: <Server className="w-5 h-5 text-green-500" /> },
-                { title: "Web Intake and Report Layer", desc: "The patient-facing web flow and summary outputs stay accessible for direct use and integration-ready for partners.", icon: <Database className="w-5 h-5 text-yellow-500" /> },
-              ].map((tech, i) => (
-                <li key={i} className="flex gap-4 items-start">
-                  <div className="mt-1 bg-muted p-2 rounded-lg shrink-0 border border-border">
-                    {tech.icon}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-foreground text-lg">{tech.title}</h4>
-                    <p className="text-muted-foreground">{tech.desc}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
+    <section
+      id="technology"
+      className="relative overflow-hidden border-y border-black/10 bg-background py-12 md:py-14"
+    >
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-[-12%] top-6 h-52 w-52 rounded-full bg-[#38ac06]/10 blur-[90px]" />
+        <div className="absolute right-[-10%] top-8 h-64 w-64 rounded-full bg-[#224bc3]/10 blur-[110px]" />
+      </div>
 
-          {/* SVG Diagram / Visual */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="relative h-[500px] w-full flex items-center justify-center p-8 glassmorphism rounded-3xl"
-          >
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-blue-500/5 rounded-3xl -z-10" />
-            
-            <div className="grid grid-cols-2 grid-rows-3 gap-4 w-full h-full relative z-10 p-4">
-              <div className="col-span-2 row-span-1 border border-primary/30 rounded-xl bg-background/80 backdrop-blur flex items-center justify-center font-bold text-lg shadow-lg">
-                Browser-Based Patient Intake Experience
-              </div>
-              
-              <div className="col-span-1 row-span-1 border border-border rounded-xl bg-background/80 backdrop-blur flex items-center justify-center font-bold text-blue-500 text-center p-2 shadow-lg">
-                Intake Logic and<br/>Summary Orchestration
-              </div>
-              <div className="col-span-1 row-span-1 border border-border rounded-xl bg-background/80 backdrop-blur flex flex-col items-center justify-center font-bold text-yellow-500 shadow-lg gap-2">
-                <Database className="w-6 h-6" /> History and<br/>Report Layer
-              </div>
-              
-              <div className="col-span-2 row-span-1 border border-green-500/30 rounded-xl bg-background/80 backdrop-blur flex gap-4 items-center justify-center font-bold text-green-500 shadow-lg">
-                <Server className="w-6 h-6" /> Enterprise API and Doctor Workflow Services
-              </div>
-              
-              {/* Connector Lines (Abstracted with pseudo elements) */}
-              <div className="absolute top-1/3 left-1/2 w-0.5 h-8 bg-border -translate-x-1/2" />
-              <div className="absolute bottom-1/3 left-1/2 w-0.5 h-8 bg-border -translate-x-1/2" />
-            </div>
-          </motion.div>
-
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-black md:text-5xl">
+            Web-Based Patient Intake & API Infrastructure
+          </h2>
+          <p className="mt-4 text-sm text-black/65 md:text-base">
+            One unified intake engine powering both web intake and API delivery.
+          </p>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45 }}
+          className="relative mx-auto mt-6 max-w-6xl rounded-3xl border border-black/10 bg-[#fffffa]/85 p-4 shadow-[0_24px_56px_-40px_rgba(0,0,0,0.6)] backdrop-blur-sm md:p-6"
+        >
+          <div className="grid gap-3 md:grid-cols-2">
+            {[
+              { label: "Voice-First", icon: AudioLines, tone: "text-[#2f8f07]" },
+              { label: "Research Logic", icon: Code2, tone: "text-[#224bc3]" },
+            ].map((chip) => {
+              const Icon = chip.icon;
+              return (
+                <motion.div
+                  key={chip.label}
+                  whileHover={{ y: -1 }}
+                  className="rounded-xl border border-black/10 bg-white/85 px-3 py-2"
+                >
+                  <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-black/70">
+                    <Icon className={`h-3.5 w-3.5 ${chip.tone}`} />
+                    {chip.label}
+                  </p>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <div className="mt-3 flex justify-center">
+            <motion.div
+              className="relative w-full max-w-md rounded-2xl border border-[#224bc3]/30 bg-gradient-to-br from-white to-[#224bc3]/[0.08] px-4 py-3.5 text-center"
+              animate={{
+                boxShadow: [
+                  "0 0 0 rgba(34,75,195,0.18)",
+                  "0 0 24px rgba(34,75,195,0.26)",
+                  "0 0 0 rgba(34,75,195,0.18)",
+                ],
+              }}
+              transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <p className="inline-flex items-center gap-2 text-sm font-semibold text-black">
+                <Cpu className="h-4 w-4 text-[#224bc3]" />
+                Unified Intake Engine
+              </p>
+            </motion.div>
+          </div>
+
+          <div className="relative mt-4 pt-5">
+            <div className="pointer-events-none absolute inset-0 hidden md:block">
+              <div className="absolute left-1/2 top-0 h-4 w-px -translate-x-1/2 bg-gradient-to-b from-[#224bc3]/65 to-[#224bc3]/20" />
+              <div className="absolute left-1/4 right-1/4 top-4 h-px bg-gradient-to-r from-[#38ac06]/40 via-[#224bc3]/50 to-[#224bc3]/40" />
+              <div className="absolute left-1/4 top-4 h-4 w-px -translate-x-1/2 bg-gradient-to-b from-[#224bc3]/50 to-[#224bc3]/20" />
+              <div className="absolute right-1/4 top-4 h-4 w-px translate-x-1/2 bg-gradient-to-b from-[#224bc3]/50 to-[#224bc3]/20" />
+              <motion.div
+                className="absolute left-1/4 top-[13px] h-2 w-2 rounded-full bg-[#38ac06]"
+                animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.15, 1] }}
+                transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div
+                className="absolute right-1/4 top-[13px] h-2 w-2 rounded-full bg-[#224bc3]"
+                animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.15, 1] }}
+                transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
+              />
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-2 md:gap-4">
+              <motion.div
+                whileHover={{ y: -2 }}
+                className="rounded-2xl border border-black/10 bg-white/90 p-4"
+              >
+                <p className="text-sm font-semibold text-black">Web Intake</p>
+                <div className="mt-3 grid gap-2">
+                  {branchChips.web.map((chip) => {
+                    const Icon = chip.icon;
+                    return (
+                      <div
+                        key={chip.label}
+                        className="rounded-xl border border-black/10 bg-[#fffffa] px-3 py-2 text-xs text-black/70"
+                      >
+                        <p className="inline-flex items-center gap-2 font-medium">
+                          <Icon className="h-3.5 w-3.5 text-[#2f8f07]" />
+                          {chip.label}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ y: -2 }}
+                className="rounded-2xl border border-black/10 bg-white/90 p-4"
+              >
+                <p className="text-sm font-semibold text-black">API Infrastructure</p>
+                <div className="mt-3 grid gap-2">
+                  {branchChips.api.map((chip) => {
+                    const Icon = chip.icon;
+                    return (
+                      <div
+                        key={chip.label}
+                        className="rounded-xl border border-black/10 bg-[#fffffa] px-3 py-2 text-xs text-black/70"
+                      >
+                        <p className="inline-flex items-center gap-2 font-medium">
+                          <Icon className="h-3.5 w-3.5 text-[#224bc3]" />
+                          {chip.label}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

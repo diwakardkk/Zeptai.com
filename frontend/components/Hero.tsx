@@ -1,94 +1,86 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, PlayCircle, Command } from "lucide-react";
+import { ArrowRight, PlayCircle } from "lucide-react";
 import Link from "next/link";
+import VoiceInteractionPanel from "@/components/hero/VoiceInteractionPanel";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden pt-16 pb-20 lg:pt-20 lg:pb-32">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full overflow-hidden -z-10 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/20 blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[50%] rounded-full bg-blue-500/10 blur-[100px]" />
+    <section className="relative overflow-hidden border-b border-black/10 bg-background pt-12 pb-12 lg:pt-14 lg:pb-14">
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <motion.div
+          className="absolute left-[-12%] top-[-14%] h-[340px] w-[340px] rounded-full bg-[#38ac06]/14 blur-[120px]"
+          animate={{ opacity: [0.45, 0.8, 0.45] }}
+          transition={{ duration: 5.4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute right-[-12%] top-[-8%] h-[430px] w-[430px] rounded-full bg-[#224bc3]/12 blur-[130px]"
+          animate={{ opacity: [0.4, 0.75, 0.4] }}
+          transition={{ duration: 5.8, repeat: Infinity, ease: "easeInOut", delay: 0.25 }}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,250,0.95),rgba(255,255,250,0.72)_40%,transparent_75%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(9,9,9,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(9,9,9,0.045)_1px,transparent_1px)] bg-[size:40px_40px] opacity-[0.2]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-7 px-4 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:gap-10 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.55 }}
+          className="text-center lg:text-left"
         >
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-sm font-medium mb-6">
-            <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse w-max"></span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/25 bg-white/90 px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[#224bc3]">
+            <motion.span
+              className="h-2 w-2 rounded-full bg-[#38ac06]"
+              animate={{ scale: [1, 1.18, 1], opacity: [0.55, 1, 0.55] }}
+              transition={{ duration: 2.1, repeat: Infinity, ease: "easeInOut" }}
+            />
             Healthcare AI Research and Enterprise AI Platform
           </span>
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-foreground mb-6">
+
+          <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-black sm:text-5xl lg:text-[3.45rem] lg:leading-[1.02]">
             Simplify Patient Intake<br className="hidden sm:block" />
-            <span className="text-green-500">with Healthcare AI</span>
+            <span className="bg-gradient-to-r from-[#38ac06] to-[#224bc3] bg-clip-text text-transparent">
+              with Healthcare AI
+            </span>
           </h1>
-          <p className="mt-4 max-w-2xl mx-auto text-xl text-muted-foreground mb-10">
+
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-black/66 md:text-lg lg:mx-0">
             ZeptAI uses voice-based healthcare AI to capture patient symptoms, history,
             medications and converts them into clear, structured summaries that save
             doctors time and improve communication before consultation.
           </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
             <Link
               href="#contact"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-primary text-primary-foreground font-bold hover:bg-primary/90 transition-all hover:scale-105"
+              className="group inline-flex items-center justify-center gap-2 rounded-full bg-[linear-gradient(95deg,#38ac06,#224bc3)] px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_34px_-18px_rgba(34,75,195,0.75)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_42px_-18px_rgba(34,75,195,0.88)]"
             >
-              Request Demo <ArrowRight className="w-5 h-5" />
+              Request Demo <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
             </Link>
             <Link
               href="/blog"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-muted text-foreground font-bold hover:bg-muted/80 transition-all border border-border"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-black/10 bg-white px-5 py-3 text-sm font-semibold text-black/85 transition hover:border-[#224bc3]/35 hover:text-[#224bc3]"
             >
               Read AI Insights
             </Link>
             <Link
               href="#demo"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-muted text-foreground font-bold hover:bg-muted/80 transition-all border border-border"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-black/10 bg-white px-5 py-3 text-sm font-semibold text-black/85 transition hover:border-[#38ac06]/35 hover:text-[#2f8f07]"
             >
-              <PlayCircle className="w-5 h-5" /> Try Live Intake
+              <PlayCircle className="h-4 w-4" /> Try Live Intake
             </Link>
           </div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mt-16 mx-auto max-w-4xl relative"
+          transition={{ duration: 0.6, delay: 0.16 }}
+          className="relative mx-auto w-full max-w-2xl lg:max-w-none"
         >
-          <div className="glassmorphism rounded-2xl overflow-hidden shadow-2xl border border-white/10 p-2 bg-gradient-to-b from-white/5 to-transparent">
-            <div className="bg-background rounded-xl overflow-hidden border border-border">
-              <div className="h-8 bg-muted flex items-center px-4 border-b border-border">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-destructive/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-                </div>
-              </div>
-              <div className="p-8 sm:p-12 text-left">
-                <div className="flex gap-4 mb-6">
-                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0">
-                    <Command className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="bg-muted p-4 rounded-2xl rounded-tl-sm text-sm sm:text-base">
-                    Hello, I&apos;m ZeptAI. I&apos;ll complete your intake conversation before the doctor joins. What symptoms are you facing today?
-                  </div>
-                </div>
-                <div className="flex gap-4 justify-end mb-6">
-                  <div className="bg-primary/20 text-foreground p-4 rounded-2xl rounded-tr-sm text-sm sm:text-base border border-primary/30 max-w-md">
-                    I&apos;ve had fever and cough for three days, with mild chest discomfort. I also have a history of asthma and used my inhaler last night.
-                  </div>
-                  <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0 border border-blue-500/30">
-                    <span className="text-sm font-medium">U</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <VoiceInteractionPanel />
         </motion.div>
       </div>
     </section>
