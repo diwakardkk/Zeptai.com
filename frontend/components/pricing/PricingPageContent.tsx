@@ -1,29 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import Script from "next/script";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import {
   ArrowRight,
-  BadgeIndianRupee,
-  Binary,
+  CheckCircle2,
   Building2,
   CreditCard,
+  Crown,
   QrCode,
-  ShieldCheck,
+  Smartphone,
   Stethoscope,
+  TestTube2,
 } from "lucide-react";
-import { getLaunchPackTotal, getStandardPackTotal, pricingPlans } from "@/lib/pricing";
-
-declare global {
-  interface Window {
-    Razorpay?: new (options: Record<string, unknown>) => { open: () => void };
-  }
-}
-
-const iconMap = {
-  clinic: <Stethoscope className="h-5 w-5 text-primary" />,
-  enterprise_api: <Building2 className="h-5 w-5 text-primary" />,
-};
+import CustomizePlanModal, { calculateCustomPricing } from "@/components/pricing/CustomizePlanModal";
 
 function formatInr(amount: number) {
   return new Intl.NumberFormat("en-IN", {
@@ -33,325 +23,349 @@ function formatInr(amount: number) {
   }).format(amount);
 }
 
+const clinicTiers = [
+  {
+    id: "basic",
+    name: "Basic",
+    reports: 200,
+    doctors: 1,
+    pricePerReport: 30,
+    total: 6000,
+  },
+  {
+    id: "pro",
+    name: "Pro",
+    reports: 500,
+    doctors: 2,
+    pricePerReport: 20,
+    total: 10000,
+  },
+] as const;
+
+type CustomizablePlan = "clinic" | "enterprise";
+
 export default function PricingPageContent() {
-  const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
-  const [error, setError] = useState<string>("");
+  const [activeTierId, setActiveTierId] = useState<(typeof clinicTiers)[number]["id"]>("pro");
+  const [customizePlan, setCustomizePlan] = useState<CustomizablePlan | null>(null);
+  const [paymentNotice, setPaymentNotice] = useState("");
 
-  async function openCheckout(planId: string) {
-    setError("");
-    setLoadingPlanId(planId);
+  const activeClinicTier = useMemo(
+    () => clinicTiers.find((tier) => tier.id === activeTierId) ?? clinicTiers[1],
+    [activeTierId],
+  );
 
-    try {
-      const orderResponse = await fetch("/api/payments/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId }),
-      });
-
-      const orderPayload = (await orderResponse.json()) as {
-        error?: string;
-        keyId?: string;
-        order?: { id: string; amount: number; currency: string };
-        plan?: { id: string; name: string; reportCredits: number };
+  const modalDefaults = useMemo(() => {
+    if (customizePlan === "clinic") {
+      return {
+        planName: "Clinic Plan",
+        doctors: activeClinicTier.doctors,
+        reports: activeClinicTier.reports,
       };
-
-      if (!orderResponse.ok || !orderPayload.order || !orderPayload.keyId || !orderPayload.plan) {
-        throw new Error(orderPayload.error || "Unable to start payment.");
-      }
-
-      if (!window.Razorpay) {
-        throw new Error("Payment checkout is not ready. Refresh and try again.");
-      }
-
-      const checkout = new window.Razorpay({
-        key: orderPayload.keyId,
-        amount: orderPayload.order.amount,
-        currency: orderPayload.order.currency,
-        name: "ZeptAI",
-        description: `${orderPayload.plan.name} · ${orderPayload.plan.reportCredits} report credits`,
-        image:
-          "https://raw.githubusercontent.com/prabhav1800-tech/zeptai_contents/main/uploads/logo.png",
-        order_id: orderPayload.order.id,
-        theme: { color: "#224bc3" },
-        method: {
-          upi: true,
-          card: true,
-          netbanking: true,
-          wallet: true,
-        },
-        notes: {
-          plan_id: orderPayload.plan.id,
-          product: "ZeptAI report credits",
-        },
-        handler: async (response: {
-          razorpay_payment_id: string;
-          razorpay_order_id: string;
-          razorpay_signature: string;
-        }) => {
-          const verifyResponse = await fetch("/api/payments/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              planId: orderPayload.plan?.id,
-              ...response,
-            }),
-          });
-
-          const verifyPayload = (await verifyResponse.json()) as {
-            ok?: boolean;
-            redirectUrl?: string;
-            error?: string;
-          };
-
-          if (!verifyResponse.ok || !verifyPayload.ok || !verifyPayload.redirectUrl) {
-            throw new Error(verifyPayload.error || "Payment verification failed.");
-          }
-
-          window.location.href = verifyPayload.redirectUrl;
-        },
-      });
-
-      checkout.open();
-    } catch (checkoutError) {
-      setError(
-        checkoutError instanceof Error
-          ? checkoutError.message
-          : "Unable to start payment right now.",
-      );
-    } finally {
-      setLoadingPlanId(null);
     }
-  }
+
+    return {
+      planName: "Enterprise API Plan",
+      doctors: 4,
+      reports: 1000,
+    };
+  }, [activeClinicTier.doctors, activeClinicTier.reports, customizePlan]);
+
+  const openPayPlaceholder = ({
+    planName,
+    doctors,
+    reports,
+  }: {
+    planName: string;
+    doctors: number;
+    reports: number;
+  }) => {
+    const estimate = calculateCustomPricing(reports);
+    setPaymentNotice(
+      `${planName}: ${reports} reports for ${doctors} doctor${doctors > 1 ? "s" : ""} estimated at ${estimate.estimatedCostText}. Payment UI is ready for Razorpay, UPI, and Cards; backend payment wiring can be connected next.`,
+    );
+  };
 
   return (
     <>
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
+      <section className="relative overflow-hidden pb-16 pt-24">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-60 bg-[radial-gradient(circle_at_top_left,rgba(56,172,6,0.16),transparent_55%),radial-gradient(circle_at_top_right,rgba(34,75,195,0.2),transparent_56%)]" />
 
-      <section className="pb-16 pt-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1 text-sm font-semibold text-primary">
-              Per-Report Pricing
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/25 bg-white/85 px-4 py-1 text-xs font-semibold uppercase tracking-[0.17em] text-[#224bc3]">
+              ZeptAI Pricing
             </span>
-            <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-foreground md:text-6xl">
-              Usage-Based Pricing for Healthcare AI
+            <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-black md:text-6xl">
+              Premium SaaS Pricing for Healthcare AI
             </h1>
-            <p className="mt-5 text-lg leading-8 text-muted-foreground">
-              ZeptAI pricing is built around report credits. Both plans start at
-              a standard rate of about <strong>$1 per report</strong>, with
-              launch offers for clinics and enterprise pilots.
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-black/65">
+              Choose a plan that matches your report volume. Built for clinics first, and scalable
+              for enterprise API rollouts with flexible pricing in INR.
             </p>
           </div>
 
-          <div className="mt-8 grid gap-4 rounded-3xl border border-border bg-secondary/20 p-5 text-sm text-muted-foreground md:grid-cols-4">
-            <div className="rounded-2xl bg-background px-4 py-4">
-              <div className="font-semibold text-foreground">Razorpay Checkout</div>
-              <div className="mt-1">Secure hosted payment flow</div>
+          <div className="mt-8 grid gap-4 rounded-3xl border border-black/10 bg-[#fffffa]/85 p-5 text-sm text-black/60 shadow-[0_24px_60px_-42px_rgba(0,0,0,0.45)] backdrop-blur md:grid-cols-3">
+            <div className="rounded-2xl border border-black/10 bg-white/90 px-4 py-4">
+              <div className="font-semibold text-black">Razorpay Ready</div>
+              <div className="mt-1">Hosted checkout slot prepared on UI</div>
             </div>
-            <div className="rounded-2xl bg-background px-4 py-4">
-              <div className="font-semibold text-foreground">UPI + QR Scan</div>
-              <div className="mt-1">Fast payment on desktop and mobile</div>
+            <div className="rounded-2xl border border-black/10 bg-white/90 px-4 py-4">
+              <div className="font-semibold text-black">INR Per Report</div>
+              <div className="mt-1">Simple and transparent pricing slabs</div>
             </div>
-            <div className="rounded-2xl bg-background px-4 py-4">
-              <div className="font-semibold text-foreground">Credit / Debit Cards</div>
-              <div className="mt-1">Card and netbanking supported</div>
-            </div>
-            <div className="rounded-2xl bg-background px-4 py-4">
-              <div className="font-semibold text-foreground">Per-Report Credits</div>
-              <div className="mt-1">Simple pricing for direct usage</div>
+            <div className="rounded-2xl border border-black/10 bg-white/90 px-4 py-4">
+              <div className="font-semibold text-black">Scale Anytime</div>
+              <div className="mt-1">Customize doctor and report usage instantly</div>
             </div>
           </div>
 
-          <div className="mt-12 grid gap-8 lg:grid-cols-2">
-            {pricingPlans.map((plan) => {
-              const launchTotal = getLaunchPackTotal(plan);
-              const standardTotal = getStandardPackTotal(plan);
-              const isLoading = loadingPlanId === plan.id;
+          <div className="mt-12 grid gap-6 lg:grid-cols-3">
+            <section className="rounded-[2rem] border border-black/10 bg-[#fffffa]/90 p-6 shadow-[0_18px_45px_-30px_rgba(0,0,0,0.6)] backdrop-blur transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_50px_-28px_rgba(0,0,0,0.55)]">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#38ac06]/10 text-[#38ac06]">
+                <TestTube2 className="h-5 w-5" />
+              </div>
+              <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-black/50">Trial Plan</p>
+              <h2 className="mt-2 text-2xl font-bold text-black">Start Fast</h2>
+              <p className="mt-2 text-sm leading-6 text-black/65">
+                Entry-level plan to test patient intake and summary quality with minimal setup.
+              </p>
 
-              return (
-                <section
-                  key={plan.id}
-                  className="rounded-[2rem] border border-border bg-card p-8 shadow-lg shadow-primary/5"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-                        {iconMap[plan.id]}
-                        {plan.shortLabel}
-                      </span>
-                      <h2 className="mt-5 text-3xl font-bold tracking-tight text-foreground">
-                        {plan.name}
-                      </h2>
-                      <p className="mt-3 max-w-xl text-sm leading-7 text-muted-foreground">
-                        {plan.description}
+              <div className="mt-6 rounded-2xl border border-black/10 bg-white/90 p-4">
+                <p className="text-sm text-black/55">Pricing</p>
+                <p className="mt-1 text-3xl font-extrabold text-black">₹0</p>
+                <p className="text-sm text-black/60">50 reports included (trial)</p>
+              </div>
+
+              <ul className="mt-6 space-y-3 text-sm text-black/75">
+                {["50 AI reports", "Voice-based intake", "Basic summaries"].map((feature) => (
+                  <li key={feature} className="flex items-start gap-2.5">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#38ac06]" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                href="/contact"
+                className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-full bg-gradient-to-r from-[#38ac06] to-[#224bc3] px-5 text-sm font-semibold text-white shadow-[0_14px_30px_-20px_rgba(34,75,195,0.85)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_35px_-18px_rgba(34,75,195,0.85)]"
+              >
+                Start Trial
+              </Link>
+            </section>
+
+            <section className="relative rounded-[2rem] border border-[#224bc3]/30 bg-gradient-to-b from-white/95 to-[#fffffa]/95 p-6 shadow-[0_22px_60px_-36px_rgba(34,75,195,0.7)] backdrop-blur transition duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_70px_-34px_rgba(34,75,195,0.65)]">
+              <span className="absolute -top-3 right-5 inline-flex items-center gap-1.5 rounded-full border border-[#224bc3]/25 bg-[#224bc3] px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.15em] text-white">
+                <Crown className="h-3.5 w-3.5" />
+                Most Popular
+              </span>
+
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#224bc3]/10 text-[#224bc3]">
+                <Stethoscope className="h-5 w-5" />
+              </div>
+              <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-black/50">Clinic Plan</p>
+              <h2 className="mt-2 text-2xl font-bold text-black">For Growing Clinics</h2>
+              <p className="mt-2 text-sm leading-6 text-black/65">
+                Choose between Basic and Pro based on your monthly report volume.
+              </p>
+
+              <div className="mt-6 grid gap-2.5">
+                {clinicTiers.map((tier) => {
+                  const isActive = tier.id === activeTierId;
+                  return (
+                    <button
+                      type="button"
+                      key={tier.id}
+                      onClick={() => setActiveTierId(tier.id)}
+                      className={`rounded-2xl border p-3.5 text-left transition ${
+                        isActive
+                          ? "border-[#224bc3]/45 bg-[#224bc3]/10 shadow-[0_14px_28px_-22px_rgba(34,75,195,0.9)]"
+                          : "border-black/10 bg-white/85 hover:border-[#224bc3]/25 hover:bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-sm font-semibold text-black">{tier.name}</p>
+                        <p className="text-sm font-semibold text-[#224bc3]">₹{tier.pricePerReport}/report</p>
+                      </div>
+                      <p className="mt-1 text-xs text-black/60">
+                        {tier.reports} reports · {formatInr(tier.total)} · {tier.doctors}{" "}
+                        {tier.doctors > 1 ? "doctors" : "doctor"}
                       </p>
-                    </div>
-                    <div className="rounded-2xl border border-primary/20 bg-primary/10 px-4 py-3 text-right">
-                      <div className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-                        Standard Rate
-                      </div>
-                      <div className="mt-1 text-lg font-bold text-foreground">$1 / report</div>
-                    </div>
-                  </div>
+                    </button>
+                  );
+                })}
+              </div>
 
-                  <div className="mt-8 grid gap-4 rounded-3xl border border-border bg-background p-5 md:grid-cols-[1fr_auto] md:items-end">
-                    <div>
-                      <div className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-                        Launch Offer
-                      </div>
-                      <div className="mt-2 flex flex-wrap items-end gap-3">
-                        <span className="text-4xl font-extrabold tracking-tight text-foreground">
-                          {formatInr(launchTotal)}
-                        </span>
-                        <span className="rounded-full bg-secondary/60 px-3 py-1 text-sm text-muted-foreground">
-                          {formatInr(plan.launchPricePerReportInr)} / report
-                        </span>
-                      </div>
-                      <div className="mt-3 text-sm text-muted-foreground">
-                        <span className="line-through">{formatInr(standardTotal)}</span>{" "}
-                        regular pricing for {plan.reportCredits} reports
-                      </div>
-                    </div>
-                    <div className="rounded-2xl bg-secondary/25 px-4 py-4 text-sm text-muted-foreground">
-                      <div className="font-semibold text-foreground">{plan.reportCredits} report credits</div>
-                      <div className="mt-1">{plan.highlight}</div>
-                    </div>
-                  </div>
+              <div className="mt-5 rounded-2xl border border-black/10 bg-white/90 p-4">
+                <p className="text-sm text-black/55">Selected tier total</p>
+                <p className="mt-1 text-3xl font-extrabold text-black">{formatInr(activeClinicTier.total)}</p>
+                <p className="text-sm text-black/60">
+                  {activeClinicTier.reports} reports at ₹{activeClinicTier.pricePerReport}/report
+                </p>
+              </div>
 
-                  <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-2xl border border-border bg-background/80 px-4 py-4">
-                      <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                        Delivery
-                      </div>
-                      <div className="mt-2 text-sm font-medium text-foreground">
-                        {plan.deliveryLabel}
-                      </div>
-                    </div>
-                    <div className="rounded-2xl border border-border bg-background/80 px-4 py-4">
-                      <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                        Support
-                      </div>
-                      <div className="mt-2 text-sm font-medium text-foreground">
-                        {plan.supportLabel}
-                      </div>
-                    </div>
-                  </div>
+              <ul className="mt-6 space-y-3 text-sm text-black/75">
+                {[
+                  "Structured summaries",
+                  "Up to 2 doctors",
+                  "Faster processing",
+                  "Dashboard support",
+                ].map((feature) => (
+                  <li key={feature} className="flex items-start gap-2.5">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#38ac06]" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
 
-                  <ul className="mt-8 space-y-4 text-sm leading-6 text-muted-foreground">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-3">
-                        <span className="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </span>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+              <div className="mt-7 grid gap-2.5 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setCustomizePlan("clinic")}
+                  className="inline-flex h-11 items-center justify-center rounded-full border border-[#224bc3]/30 bg-white px-5 text-sm font-semibold text-[#224bc3] transition hover:bg-[#224bc3]/10"
+                >
+                  Customize Plan
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    openPayPlaceholder({
+                      planName: "Clinic Plan",
+                      doctors: activeClinicTier.doctors,
+                      reports: activeClinicTier.reports,
+                    })
+                  }
+                  className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-[#38ac06] to-[#224bc3] px-5 text-sm font-semibold text-white shadow-[0_14px_30px_-20px_rgba(34,75,195,0.85)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_35px_-18px_rgba(34,75,195,0.85)]"
+                >
+                  Pay Now
+                </button>
+              </div>
+            </section>
 
-                  <button
-                    type="button"
-                    onClick={() => openCheckout(plan.id)}
-                    disabled={isLoading}
-                    className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
-                  >
-                    {isLoading ? "Opening checkout..." : plan.ctaLabel}
-                  </button>
+            <section className="rounded-[2rem] border border-black/10 bg-[#fffffa]/90 p-6 shadow-[0_18px_45px_-30px_rgba(0,0,0,0.6)] backdrop-blur transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_50px_-28px_rgba(0,0,0,0.55)]">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#224bc3]/10 text-[#224bc3]">
+                <Building2 className="h-5 w-5" />
+              </div>
+              <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-black/50">
+                Enterprise API Plan
+              </p>
+              <h2 className="mt-2 text-2xl font-bold text-black">Scale with API</h2>
+              <p className="mt-2 text-sm leading-6 text-black/65">
+                Built for hospitals and digital health products needing custom workflows and deep
+                integrations.
+              </p>
 
-                  <p className="mt-4 text-center text-xs text-muted-foreground">
-                    Razorpay checkout supports UPI, QR scan, debit cards, credit cards, and netbanking.
-                  </p>
-                </section>
-              );
-            })}
+              <div className="mt-6 rounded-2xl border border-black/10 bg-white/90 p-4">
+                <p className="text-sm text-black/55">Pricing range</p>
+                <p className="mt-1 text-3xl font-extrabold text-black">₹15 - ₹25</p>
+                <p className="text-sm text-black/60">per report for 1000+ reports</p>
+              </div>
+
+              <ul className="mt-6 space-y-3 text-sm text-black/75">
+                {[
+                  "API integration",
+                  "Custom workflows",
+                  "Scalable usage",
+                  "Priority support",
+                  "Unlimited doctors",
+                ].map((feature) => (
+                  <li key={feature} className="flex items-start gap-2.5">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#38ac06]" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-7 grid gap-2.5 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setCustomizePlan("enterprise")}
+                  className="inline-flex h-11 items-center justify-center rounded-full border border-[#224bc3]/30 bg-white px-5 text-sm font-semibold text-[#224bc3] transition hover:bg-[#224bc3]/10"
+                >
+                  Customize Plan
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    openPayPlaceholder({
+                      planName: "Enterprise API Plan",
+                      doctors: 5,
+                      reports: 1000,
+                    })
+                  }
+                  className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-[#38ac06] to-[#224bc3] px-5 text-sm font-semibold text-white shadow-[0_14px_30px_-20px_rgba(34,75,195,0.85)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_35px_-18px_rgba(34,75,195,0.85)]"
+                >
+                  Pay Now
+                </button>
+              </div>
+            </section>
           </div>
 
-          {error && (
-            <div className="mt-8 rounded-2xl border border-destructive/20 bg-destructive/5 px-5 py-4 text-sm text-destructive">
-              {error}
+          {paymentNotice && (
+            <div className="mt-6 rounded-2xl border border-[#224bc3]/25 bg-white/90 px-5 py-4 text-sm text-black/70">
+              {paymentNotice}
             </div>
           )}
 
-          <section className="mt-12 rounded-[2rem] border border-border bg-background p-8 shadow-sm">
-            <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              What the pricing means
-            </h2>
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              <div className="rounded-2xl border border-border bg-secondary/20 p-5">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
-                  <BadgeIndianRupee className="h-5 w-5 text-primary" />
+          <section className="mt-10 rounded-[2rem] border border-black/10 bg-[#fffffa]/85 p-8 shadow-[0_24px_50px_-40px_rgba(0,0,0,0.5)]">
+            <h2 className="text-2xl font-bold tracking-tight text-black">Payment Readiness</h2>
+            <p className="mt-2 text-sm leading-7 text-black/65">
+              Payment actions are wired as UI placeholders, ready for backend integration with
+              Razorpay checkout.
+            </p>
+            <div className="mt-6 grid gap-4 sm:grid-cols-3">
+              <div className="rounded-2xl border border-black/10 bg-white/90 p-5">
+                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#224bc3]/10">
+                  <Smartphone className="h-5 w-5 text-[#224bc3]" />
                 </div>
-                <h3 className="font-semibold text-foreground">Per-report billing</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Every paid report credit maps to a generated patient intake summary or report.
+                <h3 className="font-semibold text-black">Razorpay</h3>
+                <p className="mt-2 text-sm leading-6 text-black/65">
+                  Hosted checkout integration slot is prepared.
                 </p>
               </div>
-              <div className="rounded-2xl border border-border bg-secondary/20 p-5">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
-                  <Binary className="h-5 w-5 text-primary" />
+              <div className="rounded-2xl border border-black/10 bg-white/90 p-5">
+                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#224bc3]/10">
+                  <QrCode className="h-5 w-5 text-[#224bc3]" />
                 </div>
-                <h3 className="font-semibold text-foreground">FastAPI-backed workflow</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  The same backend logic powers intake capture, summarization, and report generation.
+                <h3 className="font-semibold text-black">UPI</h3>
+                <p className="mt-2 text-sm leading-6 text-black/65">
+                  Ready for UPI intent and QR-based payment flows.
                 </p>
               </div>
-              <div className="rounded-2xl border border-border bg-secondary/20 p-5">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
-                  <ShieldCheck className="h-5 w-5 text-primary" />
+              <div className="rounded-2xl border border-black/10 bg-white/90 p-5">
+                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#224bc3]/10">
+                  <CreditCard className="h-5 w-5 text-[#224bc3]" />
                 </div>
-                <h3 className="font-semibold text-foreground">Secure hosted payments</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Users pay through Razorpay checkout with support for UPI scan, cards, and Indian payment methods.
+                <h3 className="font-semibold text-black">Cards</h3>
+                <p className="mt-2 text-sm leading-6 text-black/65">
+                  Supports debit and credit card checkout paths.
                 </p>
               </div>
             </div>
 
-            <div className="mt-8 flex flex-col gap-3 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
-              <p>Need custom volume pricing or hospital procurement support?</p>
-              <a
+            <div className="mt-8 flex flex-col gap-3 text-sm text-black/60 md:flex-row md:items-center md:justify-between">
+              <p>Need procurement-friendly pricing for multi-clinic deployments?</p>
+              <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 font-semibold text-primary transition-colors hover:text-primary/80"
+                className="inline-flex items-center gap-2 font-semibold text-[#224bc3] transition hover:text-[#224bc3]/80"
               >
                 Talk to ZeptAI <ArrowRight className="h-4 w-4" />
-              </a>
-            </div>
-          </section>
-
-          <section className="mt-8 rounded-[2rem] border border-border bg-secondary/10 p-8">
-            <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              Payment methods available at checkout
-            </h2>
-            <div className="mt-6 grid gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl border border-border bg-background px-5 py-5">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
-                  <QrCode className="h-5 w-5 text-primary" />
-                </div>
-                <div className="font-semibold text-foreground">UPI + QR Scan</div>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Scan and pay from any supported UPI app during Razorpay checkout.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-border bg-background px-5 py-5">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
-                  <CreditCard className="h-5 w-5 text-primary" />
-                </div>
-                <div className="font-semibold text-foreground">Credit and Debit Cards</div>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Accept payments with major credit cards, debit cards, and supported card rails.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-border bg-background px-5 py-5">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
-                  <ShieldCheck className="h-5 w-5 text-primary" />
-                </div>
-                <div className="font-semibold text-foreground">Hosted checkout</div>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  One click opens the secure payment flow without building a separate payment UI.
-                </p>
-              </div>
+              </Link>
             </div>
           </section>
         </div>
       </section>
+
+      <CustomizePlanModal
+        open={Boolean(customizePlan)}
+        planName={modalDefaults.planName}
+        defaultDoctors={modalDefaults.doctors}
+        defaultReports={modalDefaults.reports}
+        onClose={() => setCustomizePlan(null)}
+        onPayNow={({ planName, doctors, reports }) => {
+          openPayPlaceholder({ planName, doctors, reports });
+          setCustomizePlan(null);
+        }}
+      />
     </>
   );
 }
