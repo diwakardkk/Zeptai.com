@@ -1,10 +1,41 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, AudioLines, FileText, Sparkles } from "lucide-react";
+import { ArrowRight, AudioLines, FileText } from "lucide-react";
 
 type VoiceState = "idle" | "listening" | "processing" | "speaking" | "ready" | "reporting";
+
+type ReportPayload = {
+  summary?: {
+    summary_text?: string;
+    chief_complaint?: string | null;
+    duration?: string | null;
+  };
+  analysis?: {
+    key_findings?: string[];
+  };
+};
+
+type SpeechRecognitionInstance = {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: any) => void) | null;
+  onerror: ((event: any) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+};
+
+type SpeechRecognitionCtor = new () => SpeechRecognitionInstance;
+
+declare global {
+  interface Window {
+    SpeechRecognition?: SpeechRecognitionCtor;
+    webkitSpeechRecognition?: SpeechRecognitionCtor;
+  }
+}
 
 const STATE_META: Record<
   VoiceState,
@@ -48,12 +79,81 @@ const STATE_META: Record<
   },
 };
 
+const ENV_API_BASE = process.env.NEXT_PUBLIC_NURSE_API_BASE;
 const BARS = Array.from({ length: 20 }, (_, i) => i);
+
+function getApiCandidates() {
+  const candidates = [ENV_API_BASE].filter((v): v is string => Boolean(v));
+
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    const isLocalHost = host === "localhost" || host === "127.0.0.1";
+
+    if (isLocalHost) {
+      candidates.push("http://127.0.0.1:8000/api/v1", "http://127.0.0.1:8001/api/v1");
+    }
+
+    if (host === "zeptai.com" || host.endsWith(".zeptai.com")) {
+      candidates.push("https://api.zeptai.com/api/v1");
+    }
+  }
+
+  return Array.from(new Set(candidates)).map((base) => base.replace(/\/$/, ""));
+}
+
+async function resolveApiBase() {
+  const candidates = getApiCandidates();
+  for (const base of candidates) {
+    try {
+      const health = await fetch(`${base}/health`, { method: "GET" });
+      if (health.ok) return base;
+    } catch {
+      // Try next.
+    }
+  }
+
+  throw new Error(
+    "Unable to connect to API. Start backend: cd backend/api && uvicorn app.main:app --host 0.0.0.0 --port 8000",
+  );
+}
+
+async function parseJsonOrThrow(r: Response) {
+  const raw = await r.text();
+  let data: unknown = null;
+
+  try {
+    data = raw ? JSON.parse(raw) : null;
+  } catch {
+    // keep raw
+  }
+
+  if (!r.ok) {
+    const msg =
+      data && typeof data === "object" && "detail" in data
+        ? String((data as Record<string, unknown>).detail)
+        : raw || `HTTP ${r.status}`;
+    throw new Error(msg);
+  }
+
+  return data as Record<string, unknown>;
+}
+
+function getRecognitionCtor() {
+  return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
+}
 
 export default function VoiceInteractionPanel() {
   const [state, setState] = useState<VoiceState>("idle");
   const [showReport, setShowReport] = useState(false);
+  const [report, setReport] = useState<ReportPayload | null>(null);
+  const [apiBase, setApiBase] = useState<string | null>(null);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [connectionLabel, setConnectionLabel] = useState("Not connected");
+
   const timerRef = useRef<number[]>([]);
+  const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  const transcriptRef = useRef("");
 
   const meta = STATE_META[state];
   const isRunning =
@@ -64,30 +164,160 @@ export default function VoiceInteractionPanel() {
     timerRef.current = [];
   };
 
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+    }
+  };
+
   useEffect(() => {
-    return () => clearTimers();
+    return () => {
+      clearTimers();
+      stopListening();
+    };
   }, []);
 
-  const startConversation = () => {
+  const ensureConversation = useCallback(async () => {
+    if (apiBase && conversationId) return { base: apiBase, cid: conversationId };
+
+    const base = apiBase ?? (await resolveApiBase());
+    setApiBase(base);
+    setConnectionLabel("Connected");
+
+    const r = await fetch(`${base}/chat/start`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ language: "en", voice_mode: false }),
+    });
+    const data = await parseJsonOrThrow(r);
+    const cid = String(data.conversation_id ?? "");
+    if (!cid) throw new Error("Missing conversation_id from API.");
+
+    setConversationId(cid);
+    return { base, cid };
+  }, [apiBase, conversationId]);
+
+  const runAssistantTurn = useCallback(
+    async (userText: string) => {
+      const text = userText.trim();
+      if (!text) {
+        setState("ready");
+        return;
+      }
+
+      const { base, cid } = await ensureConversation();
+      setState("processing");
+
+      const r = await fetch(`${base}/chat/message`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-conversation-id": cid,
+        },
+        body: JSON.stringify({ conversation_id: cid, message: text }),
+      });
+      await parseJsonOrThrow(r);
+
+      setState("speaking");
+      timerRef.current.push(window.setTimeout(() => setState("ready"), 1400));
+    },
+    [ensureConversation],
+  );
+
+  const startConversation = useCallback(async () => {
+    if (isRunning) return;
+
     clearTimers();
     setShowReport(false);
-    setState("listening");
+    setReport(null);
+    setError(null);
 
-    timerRef.current.push(window.setTimeout(() => setState("processing"), 2400));
-    timerRef.current.push(window.setTimeout(() => setState("speaking"), 4400));
-    timerRef.current.push(window.setTimeout(() => setState("ready"), 6800));
-  };
+    try {
+      await ensureConversation();
+      setState("listening");
 
-  const generateReport = () => {
+      const Ctor = getRecognitionCtor();
+      if (!Ctor) {
+        timerRef.current.push(
+          window.setTimeout(() => {
+            void runAssistantTurn("I have fever and cough for three days with chest discomfort.");
+          }, 1200),
+        );
+        return;
+      }
+
+      transcriptRef.current = "";
+      const recognition = new Ctor();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = "en-US";
+
+      recognition.onresult = (event: any) => {
+        const results = event?.results;
+        if (!results || !results.length) return;
+
+        let transcript = "";
+        for (let i = 0; i < results.length; i += 1) {
+          const segment = results[i]?.[0]?.transcript;
+          if (segment) transcript += segment;
+        }
+
+        const clean = transcript.trim();
+        if (clean) transcriptRef.current = clean;
+      };
+
+      recognition.onerror = () => {
+        setError("Voice input unavailable. Using guided simulation.");
+        stopListening();
+        void runAssistantTurn("I have fever and cough for three days with chest discomfort.");
+      };
+
+      recognition.onend = () => {
+        const captured = transcriptRef.current.trim();
+        transcriptRef.current = "";
+        void runAssistantTurn(captured || "I have fever and cough for three days with chest discomfort.");
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (err: unknown) {
+      setState("idle");
+      setConnectionLabel("Not connected");
+      setError(err instanceof Error ? err.message : "Unable to start conversation.");
+    }
+  }, [ensureConversation, isRunning, runAssistantTurn]);
+
+  const generateReport = useCallback(async () => {
     clearTimers();
-    setState("reporting");
-    timerRef.current.push(
-      window.setTimeout(() => {
-        setShowReport(true);
-        setState("ready");
-      }, 1100),
-    );
-  };
+    setError(null);
+
+    try {
+      const { base, cid } = await ensureConversation();
+      setState("reporting");
+
+      const r = await fetch(`${base}/chat/report`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-conversation-id": cid,
+        },
+        body: JSON.stringify({ conversation_id: cid }),
+      });
+      const data = (await parseJsonOrThrow(r)) as unknown as ReportPayload;
+      setReport(data);
+
+      timerRef.current.push(
+        window.setTimeout(() => {
+          setShowReport(true);
+          setState("ready");
+        }, 800),
+      );
+    } catch (err: unknown) {
+      setState("ready");
+      setError(err instanceof Error ? err.message : "Unable to generate report.");
+    }
+  }, [ensureConversation]);
 
   const waveConfig = useMemo(() => {
     if (state === "listening") return { base: 26, variance: 16, duration: 0.62, ease: "easeInOut" as const };
@@ -114,7 +344,7 @@ export default function VoiceInteractionPanel() {
             Voice Interface
           </p>
           <span className="rounded-full border border-black/10 bg-[#fffffa] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/60">
-            {meta.badge}
+            {connectionLabel}
           </span>
         </div>
 
@@ -198,7 +428,7 @@ export default function VoiceInteractionPanel() {
               disabled={isRunning}
               className="group inline-flex items-center gap-2 rounded-full bg-[linear-gradient(95deg,#38ac06,#224bc3)] px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-white shadow-[0_14px_34px_-20px_rgba(34,75,195,0.8)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-18px_rgba(34,75,195,0.9)] disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {isRunning ? "Listening..." : "Start Conversation"}
+              {isRunning ? meta.badge : "Start Conversation"}
               <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
             </button>
 
@@ -221,6 +451,12 @@ export default function VoiceInteractionPanel() {
           </div>
         </div>
 
+        {error && (
+          <div className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
+            {error}
+          </div>
+        )}
+
         <AnimatePresence>
           {showReport && (
             <motion.div
@@ -233,9 +469,14 @@ export default function VoiceInteractionPanel() {
                 Structured Clinical Summary
               </p>
               <div className="mt-2.5 space-y-1.5">
-                {[72, 92, 58, 80].map((width, idx) => (
+                {[
+                  report?.summary?.chief_complaint ? 92 : 72,
+                  report?.summary?.duration ? 84 : 66,
+                  report?.analysis?.key_findings?.length ? 76 : 58,
+                  report?.summary?.summary_text ? 88 : 80,
+                ].map((width, idx) => (
                   <motion.div
-                    key={width}
+                    key={`${width}-${idx}`}
                     className="h-2 rounded-full bg-[linear-gradient(90deg,rgba(56,172,6,0.3),rgba(34,75,195,0.28))]"
                     initial={{ width: 0, opacity: 0 }}
                     animate={{ width: `${width}%`, opacity: 1 }}

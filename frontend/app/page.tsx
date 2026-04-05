@@ -10,7 +10,6 @@ import Features from "@/components/Features";
 import Research from "@/components/Research";
 import AppDownload from "@/components/AppDownload";
 import Team from "@/components/Team";
-import ChatbotDemo from "@/components/ChatbotDemo";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import { getAllPosts } from "@/lib/blog/getAllPosts";
@@ -51,7 +50,6 @@ export default async function Home() {
       <HowItWorks />
       <Features />
       <Research />
-      <ChatbotDemo />
       <AppDownload />
       <section className="relative overflow-hidden border-y border-black/10 bg-background py-14 md:py-16">
         <div className="pointer-events-none absolute inset-0">
