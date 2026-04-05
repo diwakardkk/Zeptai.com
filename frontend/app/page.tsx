@@ -20,7 +20,7 @@ import { getOrganizationSchema } from "@/lib/seo/schema";
 export const metadata: Metadata = buildPageMetadata({
   title: "Simplify Patient Intake with Healthcare AI",
   description:
-    "ZeptAI uses voice-based healthcare AI to capture patient symptoms, history, medications and converts them into clear, structured summaries that save doctors time and improve communication before consultation.",
+    "ZeptAI uses voice AI for patient intake to capture symptoms and history, generating structured summaries that save doctors time and improve communication.",
   path: "/",
   keywords: [
     "healthcare AI for patient intake",
