@@ -1,6 +1,18 @@
-﻿"use client";
+"use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Bot,
+  CheckCircle2,
+  Loader2,
+  Mic,
+  RefreshCcw,
+  Send,
+  Sparkles,
+  UserRound,
+  Volume2,
+} from "lucide-react";
 
 type Msg = { from: "bot" | "user"; text: string };
 
@@ -31,6 +43,8 @@ type SpeechRecognitionInstance = {
 };
 
 type SpeechRecognitionCtor = new () => SpeechRecognitionInstance;
+
+type AssistantState = "idle" | "bot_speaking" | "listening" | "processing" | "report_ready";
 
 declare global {
   interface Window {
@@ -135,7 +149,11 @@ export default function NurseChat() {
   const [reportOnly, setReportOnly] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  const transcriptRef = useRef("");
+  const shouldAutoSendRef = useRef(false);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
@@ -145,9 +163,65 @@ export default function NurseChat() {
     setIsListening(false);
   }, []);
 
+  const sendMessage = useCallback(
+    async (overrideInput?: string) => {
+      const userText = (overrideInput ?? input).trim();
+      if (!userText) return;
+      if (loading || reportLoading) return;
+
+      if (!conversationId || !apiBase) {
+        setError("Conversation is not initialized yet. Please wait or refresh.");
+        return;
+      }
+
+      if (isListening) {
+        shouldAutoSendRef.current = false;
+        stopListening();
+      }
+
+      setMessages((m) => [...m, { from: "user", text: userText }]);
+      setInput("");
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        const r = await fetch(`${apiBase}/chat/message`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-conversation-id": conversationId,
+          },
+          body: JSON.stringify({ conversation_id: conversationId, message: userText }),
+        });
+
+        const data = await parseJsonOrThrow(r);
+        const reply = String(data.response ?? "I could not generate a response.");
+        const nextQuestion =
+          data.next_question && typeof data.next_question === "string"
+            ? data.next_question.trim()
+            : "";
+
+        const combined = mergeBotText(reply, nextQuestion);
+
+        setMessages((m) => [...m, { from: "bot", text: combined || "I could not generate a response." }]);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Failed to send message");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiBase, conversationId, input, isListening, loading, reportLoading, stopListening],
+  );
+
   const startListening = useCallback(() => {
     if (reportOnly) {
       setError("Voice input is disabled in report view.");
+      return;
+    }
+
+    if (loading || reportLoading) {
+      setError("Please wait until the assistant finishes processing.");
       return;
     }
 
@@ -156,6 +230,9 @@ export default function NurseChat() {
       setError("Speech recognition is not supported in this browser. Use Chrome or Edge.");
       return;
     }
+
+    transcriptRef.current = "";
+    shouldAutoSendRef.current = true;
 
     const recognition = new Ctor();
     recognition.continuous = false;
@@ -169,31 +246,41 @@ export default function NurseChat() {
       let transcript = "";
       for (let i = 0; i < results.length; i += 1) {
         const segment = results[i]?.[0]?.transcript;
-        if (segment) {
-          transcript += segment;
-        }
+        if (segment) transcript += segment;
       }
 
-      if (transcript.trim()) {
-        setInput(transcript.trim());
+      const clean = transcript.trim();
+      if (clean) {
+        transcriptRef.current = clean;
+        setInput(clean);
       }
     };
 
     recognition.onerror = (event: any) => {
       const reason = event?.error ? String(event.error) : "unknown_error";
+      shouldAutoSendRef.current = false;
       setError(`Voice input error: ${reason}`);
       setIsListening(false);
     };
 
     recognition.onend = () => {
       setIsListening(false);
+
+      const captured = transcriptRef.current.trim();
+      const shouldAutoSend = shouldAutoSendRef.current;
+      transcriptRef.current = "";
+      shouldAutoSendRef.current = false;
+
+      if (shouldAutoSend && captured && !reportOnly) {
+        void sendMessage(captured);
+      }
     };
 
     recognitionRef.current = recognition;
     setError(null);
     setIsListening(true);
     recognition.start();
-  }, [reportOnly]);
+  }, [loading, reportLoading, reportOnly, sendMessage]);
 
   const toggleListening = useCallback(() => {
     if (isListening) {
@@ -245,12 +332,26 @@ export default function NurseChat() {
   }, [startConversation, stopListening]);
 
   useEffect(() => {
+    window.dispatchEvent(new CustomEvent("nursechat-listening-state", { detail: { listening: isListening } }));
+  }, [isListening]);
+
+  const lastMessage = messages[messages.length - 1];
+
+  const assistantState: AssistantState = useMemo(() => {
+    if (reportOnly && report) return "report_ready";
+    if (reportLoading || loading) return "processing";
+    if (isListening) return "listening";
+    if (lastMessage?.from === "bot") return "bot_speaking";
+    return "idle";
+  }, [isListening, lastMessage?.from, loading, report, reportLoading, reportOnly]);
+
+  useEffect(() => {
     window.dispatchEvent(
-      new CustomEvent("nursechat-listening-state", {
-        detail: { listening: isListening },
+      new CustomEvent("nursechat-assistant-state", {
+        detail: { state: assistantState, listening: isListening },
       }),
     );
-  }, [isListening]);
+  }, [assistantState, isListening]);
 
   useEffect(() => {
     const onToggleListening = () => {
@@ -263,55 +364,50 @@ export default function NurseChat() {
     };
   }, [toggleListening]);
 
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [error, loading, messages, reportOnly]);
+
   const statusText = useMemo(() => {
     if (loading) return "Connecting...";
     if (conversationId) return `Conversation: ${conversationId.slice(0, 8)}...`;
     return "Not connected";
   }, [loading, conversationId]);
 
-  async function send() {
-    if (!input.trim()) return;
-    if (!conversationId || !apiBase) {
-      setError("Conversation is not initialized yet. Please wait or refresh.");
-      return;
+  const assistantMeta = useMemo(() => {
+    if (assistantState === "listening") {
+      return {
+        label: "Listening to patient",
+        chipClass: "border-[#38ac06]/40 bg-[#38ac06]/15 text-[#2f8f07]",
+      };
     }
 
-    const userText = input.trim();
-    setMessages((m) => [...m, { from: "user", text: userText }]);
-    setInput("");
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const r = await fetch(`${apiBase}/chat/message`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-conversation-id": conversationId,
-        },
-        body: JSON.stringify({ conversation_id: conversationId, message: userText }),
-      });
-
-      const data = await parseJsonOrThrow(r);
-      const reply = String(data.response ?? "I could not generate a response.");
-      const nextQuestion =
-        data.next_question && typeof data.next_question === "string"
-          ? data.next_question.trim()
-          : "";
-
-      const combined = mergeBotText(reply, nextQuestion);
-
-      setMessages((m) => [
-        ...m,
-        { from: "bot", text: combined || "I could not generate a response." },
-      ]);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to send message");
-    } finally {
-      setLoading(false);
+    if (assistantState === "processing") {
+      return {
+        label: "Processing response",
+        chipClass: "border-[#224bc3]/35 bg-[#224bc3]/12 text-[#224bc3]",
+      };
     }
-  }
+
+    if (assistantState === "bot_speaking") {
+      return {
+        label: "Bot turn",
+        chipClass: "border-[#224bc3]/30 bg-[#224bc3]/10 text-[#224bc3]",
+      };
+    }
+
+    if (assistantState === "report_ready") {
+      return {
+        label: "Report ready",
+        chipClass: "border-[#38ac06]/35 bg-[#38ac06]/15 text-[#2f8f07]",
+      };
+    }
+
+    return {
+      label: "Ready",
+      chipClass: "border-black/15 bg-white/80 text-black/65",
+    };
+  }, [assistantState]);
 
   async function generateReport() {
     if (!conversationId || !apiBase) {
@@ -351,88 +447,202 @@ export default function NurseChat() {
     void startConversation();
   }
 
+  const isOrbActive = assistantState === "listening" || assistantState === "processing" || assistantState === "bot_speaking";
+
   return (
-    <div className="flex h-full flex-col">
-      <div className="border-b border-border px-4 py-2 text-xs text-muted-foreground">
-        <div>{statusText}</div>
-        {apiBase && <div>API: {apiBase}</div>}
+    <div className="flex h-full flex-col bg-[radial-gradient(circle_at_top_right,rgba(34,75,195,0.08),transparent_40%),radial-gradient(circle_at_top_left,rgba(56,172,6,0.1),transparent_38%)]">
+      <div className="border-b border-black/10 bg-[#fffffa]/85 px-4 py-3 backdrop-blur-sm">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="relative flex h-10 w-10 items-center justify-center">
+              <motion.span
+                className="absolute inset-0 rounded-full bg-gradient-to-br from-[#38ac06]/50 to-[#224bc3]/50"
+                animate={
+                  isOrbActive
+                    ? { scale: [1, 1.35, 1], opacity: [0.42, 0.12, 0.42] }
+                    : { scale: 1, opacity: 0.18 }
+                }
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <span className="relative inline-flex h-5 w-5 rounded-full bg-gradient-to-br from-[#38ac06] to-[#224bc3]" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-black">ZeptAI Intake Assistant</p>
+              <p className="text-xs text-black/55">{statusText}</p>
+            </div>
+          </div>
+
+          <span className={`rounded-full border px-2.5 py-1 text-[0.66rem] font-semibold uppercase tracking-[0.12em] ${assistantMeta.chipClass}`}>
+            {assistantMeta.label}
+          </span>
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-black/55">
+          {apiBase && <span className="rounded-full border border-black/10 bg-white/80 px-2.5 py-1">API: {apiBase}</span>}
+          <span className="rounded-full border border-black/10 bg-white/80 px-2.5 py-1">
+            Turn: {isListening ? "Patient" : lastMessage?.from === "bot" ? "Assistant" : "Waiting"}
+          </span>
+        </div>
+
+        <AnimatePresence>
+          {assistantState === "listening" && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="mt-3 flex items-center gap-1.5"
+            >
+              {[0, 1, 2, 3, 4].map((bar) => (
+                <motion.span
+                  key={bar}
+                  className="w-1.5 rounded-full bg-gradient-to-t from-[#38ac06] to-[#224bc3]"
+                  animate={{ height: [8, 18, 9, 16, 8] }}
+                  transition={{ duration: 0.9, repeat: Infinity, delay: bar * 0.08 }}
+                />
+              ))}
+              <span className="ml-1 text-[11px] text-black/60">Listening for your response...</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-background p-4">
+      <div className="flex-1 overflow-y-auto px-4 py-4">
         {reportOnly && report ? (
-          <div className="space-y-3 rounded-xl border border-border bg-muted/40 p-4 text-sm text-foreground">
-            <div className="font-semibold">Generated Report</div>
-            {report.generated_at && (
-              <div className="text-xs text-muted-foreground">
-                Generated: {new Date(report.generated_at).toLocaleString()}
+          <div className="space-y-4 rounded-2xl border border-[#224bc3]/20 bg-white/90 p-4 shadow-[0_18px_45px_-35px_rgba(34,75,195,0.65)]">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-[#38ac06]/15 text-[#2f8f07]">
+                  <CheckCircle2 className="h-4 w-4" />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-black">Clinical Intake Report</p>
+                  <p className="text-xs text-black/55">Structured summary generated successfully</p>
+                </div>
               </div>
-            )}
-            <div>
-              <div className="text-xs uppercase tracking-wide text-muted-foreground">Chief Complaint</div>
-              <div>{report.summary?.chief_complaint || "Not available"}</div>
+              {report.generated_at && (
+                <div className="text-[11px] text-black/55">
+                  {new Date(report.generated_at).toLocaleString()}
+                </div>
+              )}
             </div>
-            <div>
-              <div className="text-xs uppercase tracking-wide text-muted-foreground">Summary</div>
-              <div>{report.summary?.summary_text || "Not available"}</div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-xl border border-black/10 bg-[#fffffa] p-3">
+                <div className="text-[10px] uppercase tracking-[0.14em] text-black/45">Chief Complaint</div>
+                <div className="mt-1 text-sm text-black/75">{report.summary?.chief_complaint || "Not available"}</div>
+              </div>
+              <div className="rounded-xl border border-black/10 bg-[#fffffa] p-3">
+                <div className="text-[10px] uppercase tracking-[0.14em] text-black/45">Risk Level</div>
+                <div className="mt-1 text-sm font-medium text-black/75">{report.analysis?.risk_level || "Not available"}</div>
+              </div>
             </div>
-            <div>
-              <div className="text-xs uppercase tracking-wide text-muted-foreground">Risk Level</div>
-              <div>{report.analysis?.risk_level || "Not available"}</div>
+
+            <div className="rounded-xl border border-black/10 bg-[#fffffa] p-3">
+              <div className="text-[10px] uppercase tracking-[0.14em] text-black/45">Summary</div>
+              <div className="mt-1 whitespace-pre-wrap text-sm leading-6 text-black/75">
+                {report.summary?.summary_text || "Not available"}
+              </div>
             </div>
-            <div>
-              <div className="text-xs uppercase tracking-wide text-muted-foreground">Key Findings</div>
-              <ul className="list-disc pl-5">
-                {(report.analysis?.key_findings || []).length > 0 ? (
-                  report.analysis?.key_findings?.map((item, idx) => <li key={idx}>{item}</li>)
-                ) : (
-                  <li>Not available</li>
-                )}
-              </ul>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-xl border border-black/10 bg-[#fffffa] p-3">
+                <div className="text-[10px] uppercase tracking-[0.14em] text-black/45">Key Findings</div>
+                <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-black/75">
+                  {(report.analysis?.key_findings || []).length > 0 ? (
+                    report.analysis?.key_findings?.map((item, idx) => <li key={idx}>{item}</li>)
+                  ) : (
+                    <li>Not available</li>
+                  )}
+                </ul>
+              </div>
+              <div className="rounded-xl border border-black/10 bg-[#fffffa] p-3">
+                <div className="text-[10px] uppercase tracking-[0.14em] text-black/45">Red Flags</div>
+                <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-black/75">
+                  {(report.analysis?.red_flags || []).length > 0 ? (
+                    report.analysis?.red_flags?.map((item, idx) => <li key={idx}>{item}</li>)
+                  ) : (
+                    <li>Not available</li>
+                  )}
+                </ul>
+              </div>
             </div>
+
             <button
               onClick={startNewConversation}
-              className="rounded-lg border border-border bg-muted px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted/80"
+              className="inline-flex items-center gap-2 rounded-full border border-black/15 bg-white px-4 py-2 text-xs font-semibold text-black/75 transition hover:bg-white/80"
             >
-              New Conversation
+              <RefreshCcw className="h-3.5 w-3.5" /> New Conversation
             </button>
           </div>
         ) : (
           <div className="space-y-3">
             {messages.map((m, i) => (
-              <div
+              <motion.div
                 key={i}
-                className={`max-w-[90%] whitespace-pre-wrap rounded-2xl px-4 py-3 ${
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`max-w-[92%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm ${
                   m.from === "bot"
-                    ? "bg-muted text-foreground"
-                    : "ml-auto bg-primary text-white"
+                    ? "border border-black/10 bg-[#fffffa] text-black/80"
+                    : "ml-auto bg-gradient-to-br from-[#224bc3] to-[#1d3ea1] text-white"
                 }`}
               >
+                <div className="mb-1 flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] opacity-80">
+                  {m.from === "bot" ? <Bot className="h-3 w-3" /> : <UserRound className="h-3 w-3" />}
+                  {m.from === "bot" ? "ZeptAI Assistant" : "Patient"}
+                </div>
                 {m.text}
-              </div>
+              </motion.div>
             ))}
 
-            {loading && <div className="text-xs text-muted-foreground">Thinking...</div>}
-            {error && <div className="text-xs text-red-500">Error: {error}</div>}
+            {loading && (
+              <div className="inline-flex items-center gap-2 rounded-xl border border-[#224bc3]/20 bg-white/85 px-3 py-2 text-xs text-[#224bc3]">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" /> Assistant is processing...
+              </div>
+            )}
+
+            {error && (
+              <div className="rounded-xl border border-red-400/35 bg-red-50 px-3 py-2 text-xs text-red-600">
+                Error: {error}
+              </div>
+            )}
           </div>
         )}
+
+        <div ref={bottomRef} />
       </div>
 
       {!reportOnly && (
-        <div className="border-t border-border p-3">
-          <div className="mb-2 flex gap-2">
+        <div className="border-t border-black/10 bg-[#fffffa]/90 p-3 backdrop-blur-sm">
+          <div className="mb-2 flex flex-wrap gap-2">
             <button
               onClick={generateReport}
               disabled={reportLoading || !conversationId || loading}
-              className="rounded-lg border border-border bg-muted px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted/80 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-white px-3 py-2 text-xs font-semibold text-black/75 transition hover:bg-white/80 disabled:opacity-50"
             >
+              {reportLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
               {reportLoading ? "Generating report..." : "Generate Report"}
             </button>
+
             <button
               onClick={startNewConversation}
               disabled={loading}
-              className="rounded-lg border border-border bg-muted px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted/80 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-white px-3 py-2 text-xs font-semibold text-black/75 transition hover:bg-white/80 disabled:opacity-50"
             >
-              New Conversation
+              <RefreshCcw className="h-3.5 w-3.5" /> New Conversation
+            </button>
+
+            <button
+              onClick={toggleListening}
+              disabled={loading || reportLoading || !conversationId}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-semibold transition disabled:opacity-50 ${
+                isListening
+                  ? "border-[#38ac06]/40 bg-[#38ac06]/15 text-[#2f8f07]"
+                  : "border-[#224bc3]/35 bg-[#224bc3]/10 text-[#224bc3]"
+              }`}
+            >
+              {isListening ? <Volume2 className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
+              {isListening ? "Stop Listening" : "Voice Reply"}
             </button>
           </div>
 
@@ -440,22 +650,26 @@ export default function NurseChat() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && void send()}
-              placeholder={isListening ? "Listening..." : "Describe your symptoms..."}
-              className="flex-1 rounded-xl border border-border bg-muted px-3 py-2 outline-none"
+              onKeyDown={(e) => e.key === "Enter" && void sendMessage()}
+              placeholder={isListening ? "Listening... say your symptoms" : "Describe your symptoms..."}
+              className="flex-1 rounded-2xl border border-black/15 bg-white px-3.5 py-2.5 text-sm text-black/80 outline-none transition focus:border-[#224bc3]/40 focus:ring-2 focus:ring-[#224bc3]/20"
             />
             <button
-              onClick={() => void send()}
-              disabled={loading || !conversationId}
-              className="rounded-xl bg-primary px-4 py-2 font-semibold text-white hover:bg-primary/90 disabled:opacity-50"
+              onClick={() => void sendMessage()}
+              disabled={loading || !conversationId || !input.trim()}
+              className="inline-flex items-center gap-1.5 rounded-2xl bg-gradient-to-r from-[#38ac06] to-[#224bc3] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_12px_24px_-16px_rgba(34,75,195,0.85)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Send
+              <Send className="h-4 w-4" /> Send
             </button>
           </div>
+        </div>
+      )}
+
+      {reportOnly && (
+        <div className="border-t border-black/10 bg-[#fffffa]/90 p-3 text-xs text-black/55">
+          Report view is active. Start a new conversation to run another live intake.
         </div>
       )}
     </div>
   );
 }
-
-
