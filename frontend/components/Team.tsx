@@ -65,15 +65,14 @@ export default function Team() {
               <p className="text-primary font-medium mb-4">{member.role}</p>
               
               <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <a
-                  href={member.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={() => window.open(member.linkedin, "_blank", "noopener,noreferrer")}
                   aria-label={`${member.name} LinkedIn`}
                   className="p-2 bg-muted rounded-full hover:bg-primary/20 hover:text-primary transition-colors"
                 >
                   <Globe className="w-4 h-4" />
-                </a>
+                </button>
                 <a
                   href={`mailto:${member.email}`}
                   aria-label={`Email ${member.name}`}

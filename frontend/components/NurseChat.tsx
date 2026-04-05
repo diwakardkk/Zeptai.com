@@ -153,7 +153,7 @@ export default function NurseChat() {
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const transcriptRef = useRef("");
   const shouldAutoSendRef = useRef(false);
-  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
@@ -365,7 +365,9 @@ export default function NurseChat() {
   }, [toggleListening]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    const node = scrollAreaRef.current;
+    if (!node) return;
+    node.scrollTo({ top: node.scrollHeight, behavior: "smooth" });
   }, [error, loading, messages, reportOnly]);
 
   const statusText = useMemo(() => {
@@ -506,7 +508,7 @@ export default function NurseChat() {
         </AnimatePresence>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      <div ref={scrollAreaRef} className="flex-1 overflow-y-auto px-4 py-4">
         {reportOnly && report ? (
           <div className="space-y-4 rounded-2xl border border-[#224bc3]/20 bg-white/90 p-4 shadow-[0_18px_45px_-35px_rgba(34,75,195,0.65)]">
             <div className="flex items-center justify-between gap-3">
@@ -608,8 +610,6 @@ export default function NurseChat() {
             )}
           </div>
         )}
-
-        <div ref={bottomRef} />
       </div>
 
       {!reportOnly && (
