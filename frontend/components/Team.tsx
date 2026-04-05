@@ -15,7 +15,7 @@ const team = [
   {
     name: "Shivam Kumar",
     role: "CFO",
-    image: "https://raw.githubusercontent.com/diwakardkk/Zeptai.com/main/uploads/shivam____.png",
+    image: "/team-shivam.svg",
     email: "shivam@zeptai.com",
     linkedin: "https://www.linkedin.com/in/shivam-kumar-50237ab0/",
   },

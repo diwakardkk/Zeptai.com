@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-labelledby="title desc">
+  <title id="title">Shivam Kumar</title>
+  <desc id="desc">Avatar placeholder with initials SK</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38ac06"/>
+      <stop offset="100%" stop-color="#224bc3"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="320" rx="160" fill="url(#bg)"/>
+  <circle cx="160" cy="160" r="128" fill="#fffffa" fill-opacity="0.18"/>
+  <text
+    x="160"
+    y="184"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="108"
+    font-weight="700"
+    fill="#fffffa"
+  >
+    SK
+  </text>
+</svg>
