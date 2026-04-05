@@ -1,13 +1,13 @@
 ﻿import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { Timestamp, addDoc, collection } from "firebase/firestore";
 import {
   adminServerTimestamp,
   getAdminDb,
   isMissingAdminCredentialError,
 } from "@/app/api/_firestoreAdmin";
 import { db } from "@/app/api/_firestore";
-import { ContactSubmissionInput } from "@/types/contact";
+import { ContactInquiryType, ContactSubmissionInput } from "@/types/contact";
 import {
   isValidEmail,
   isValidMobile,
@@ -20,6 +20,7 @@ import {
 export const runtime = "nodejs";
 
 type ContactBody = Partial<ContactSubmissionInput>;
+const ALLOWED_INQUIRY_TYPES = new Set<ContactInquiryType>(["contact", "demo_request"]);
 
 function toPublicFirestoreError(error: unknown): string {
   if (!(error instanceof Error)) {
@@ -28,6 +29,10 @@ function toPublicFirestoreError(error: unknown): string {
 
   if (error.message.includes("Firebase Admin credentials missing")) {
     return "Database admin credentials are missing. Set FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in Netlify.";
+  }
+
+  if (error.message.includes("Invalid FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON")) {
+    return "Firebase Admin JSON is invalid. Fix FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in Netlify.";
   }
 
   if (error.message.includes("Firebase client config missing")) {
@@ -54,7 +59,16 @@ export async function POST(req: Request) {
     const email = normalizeEmail(body.email);
     const mobile = normalizeText(body.mobile);
     const message = normalizeMultilineText(body.message);
-    const sourcePage = sanitizeSourcePage(body.sourcePage, "home_contact");
+    const inquiryTypeNormalized = normalizeText(body.inquiryType).toLowerCase();
+    const inquiryType: ContactInquiryType = ALLOWED_INQUIRY_TYPES.has(
+      inquiryTypeNormalized as ContactInquiryType,
+    )
+      ? (inquiryTypeNormalized as ContactInquiryType)
+      : "contact";
+    const sourcePage = sanitizeSourcePage(
+      body.sourcePage,
+      inquiryType === "demo_request" ? "home_demo_request" : "home_contact",
+    );
 
     if (!name || !email || !mobile || !message) {
       return NextResponse.json(
@@ -103,7 +117,7 @@ export async function POST(req: Request) {
         mobile,
         message,
         sourcePage,
-        inquiryType: "contact",
+        inquiryType,
         status: "new",
         createdAt: adminServerTimestamp(),
       });
@@ -118,9 +132,10 @@ export async function POST(req: Request) {
         mobile,
         message,
         sourcePage,
-        inquiryType: "contact",
+        inquiryType,
         status: "new",
-        createdAt: serverTimestamp(),
+        // Concrete timestamp for fallback writes so Firestore rules accept `createdAt is timestamp`.
+        createdAt: Timestamp.now(),
       });
     }
 
@@ -137,60 +152,69 @@ export async function POST(req: Request) {
       smtpPass?.includes("your_gmail_app_password") ||
       receiverEmail?.includes("your_gmail");
 
-    if (!smtpUser || !smtpPass || !receiverEmail || hasPlaceholderValues) {
-      return NextResponse.json(
-        {
-          error:
-            "Email service is not configured. Set SMTP_USER, SMTP_PASS, and CONTACT_RECEIVER_EMAIL in .env.local.",
+    let emailWarning: string | null = null;
+
+    try {
+      if (!smtpUser || !smtpPass || !receiverEmail || hasPlaceholderValues) {
+        throw new Error(
+          "Email service is not configured. Set SMTP_USER, SMTP_PASS, and CONTACT_RECEIVER_EMAIL.",
+        );
+      }
+
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpSecure,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass,
         },
-        { status: 500 },
-      );
+      });
+
+      const safeName = escapeHtml(name);
+      const safeEmail = escapeHtml(email);
+      const safeMessage = escapeHtml(message).replace(/\r?\n/g, "<br/>");
+
+      await transporter.sendMail({
+        from: `"ZeptAI Contact" <${smtpUser}>`,
+        to: receiverEmail,
+        replyTo: email,
+        subject: `New Contact Message from ${name}`,
+        text: `Name: ${name}\nEmail: ${email}\nMobile: ${mobile}\n\nMessage:\n${message}`,
+        html: `
+          <h2>New Contact Message</h2>
+          <p><strong>Name:</strong> ${safeName}</p>
+          <p><strong>Email:</strong> ${safeEmail}</p>
+          <p><strong>Mobile:</strong> ${escapeHtml(mobile)}</p>
+          <p><strong>Message:</strong><br/>${safeMessage}</p>
+        `,
+      });
+
+      await transporter.sendMail({
+        from: `"${autoReplyFromName}" <${smtpUser}>`,
+        to: email,
+        replyTo: receiverEmail,
+        subject: "We received your message - ZeptAI",
+        text: `Hi ${name},\n\nThanks for contacting ZeptAI. We received your message and will get back to you soon.\n\nYour message:\n${message}\n\nRegards,\nZeptAI Team`,
+        html: `
+          <p>Hi ${safeName},</p>
+          <p>Thanks for contacting <strong>ZeptAI</strong>. We received your message and will get back to you soon.</p>
+          <p><strong>Your message:</strong><br/>${safeMessage}</p>
+          <p>Regards,<br/>ZeptAI Team</p>
+        `,
+      });
+    } catch (emailError) {
+      console.error("Contact API email warning:", emailError);
+      emailWarning =
+        emailError instanceof Error
+          ? emailError.message
+          : "Contact request saved, but email notification failed.";
     }
 
-    const transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: smtpSecure,
-      auth: {
-        user: smtpUser,
-        pass: smtpPass,
-      },
+    return NextResponse.json({
+      ok: true,
+      ...(emailWarning ? { warning: emailWarning } : {}),
     });
-
-    const safeName = escapeHtml(name);
-    const safeEmail = escapeHtml(email);
-    const safeMessage = escapeHtml(message).replace(/\r?\n/g, "<br/>");
-
-    await transporter.sendMail({
-      from: `"ZeptAI Contact" <${smtpUser}>`,
-      to: receiverEmail,
-      replyTo: email,
-      subject: `New Contact Message from ${name}`,
-      text: `Name: ${name}\nEmail: ${email}\nMobile: ${mobile}\n\nMessage:\n${message}`,
-      html: `
-        <h2>New Contact Message</h2>
-        <p><strong>Name:</strong> ${safeName}</p>
-        <p><strong>Email:</strong> ${safeEmail}</p>
-        <p><strong>Mobile:</strong> ${escapeHtml(mobile)}</p>
-        <p><strong>Message:</strong><br/>${safeMessage}</p>
-      `,
-    });
-
-    await transporter.sendMail({
-      from: `"${autoReplyFromName}" <${smtpUser}>`,
-      to: email,
-      replyTo: receiverEmail,
-      subject: "We received your message - ZeptAI",
-      text: `Hi ${name},\n\nThanks for contacting ZeptAI. We received your message and will get back to you soon.\n\nYour message:\n${message}\n\nRegards,\nZeptAI Team`,
-      html: `
-        <p>Hi ${safeName},</p>
-        <p>Thanks for contacting <strong>ZeptAI</strong>. We received your message and will get back to you soon.</p>
-        <p><strong>Your message:</strong><br/>${safeMessage}</p>
-        <p>Regards,<br/>ZeptAI Team</p>
-      `,
-    });
-
-    return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Contact API error:", error);
     return NextResponse.json(

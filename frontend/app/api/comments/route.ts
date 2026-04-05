@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { addDoc, collection, getDocs, limit, orderBy, query, serverTimestamp, where } from "firebase/firestore";
+import { Timestamp, addDoc, collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
 import {
   adminServerTimestamp,
   getAdminDb,
@@ -25,6 +25,10 @@ function toPublicFirestoreError(error: unknown): string {
 
   if (error.message.includes("Firebase Admin credentials missing")) {
     return "Database admin credentials are missing. Set FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in Netlify.";
+  }
+
+  if (error.message.includes("Invalid FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON")) {
+    return "Firebase Admin JSON is invalid. Fix FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in Netlify.";
   }
 
   if (error.message.includes("Firebase client config missing")) {
@@ -90,7 +94,7 @@ export async function POST(req: Request) {
         mobile,
         comment,
         status: "pending",
-        createdAt: serverTimestamp(),
+        createdAt: Timestamp.now(),
       });
       docId = docRef.id;
     }

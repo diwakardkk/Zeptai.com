@@ -68,10 +68,16 @@ export function adminServerTimestamp() {
 }
 
 export function isMissingAdminCredentialError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  const message = error.message;
+
   return (
-    error instanceof Error &&
-    error.message.includes(
-      "Firebase Admin credentials missing. Set FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON",
-    )
+    message.includes("Firebase Admin credentials missing. Set FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON") ||
+    message.includes("Invalid FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON") ||
+    message.includes("Failed to parse private key") ||
+    message.includes("Service account object must contain")
   );
 }

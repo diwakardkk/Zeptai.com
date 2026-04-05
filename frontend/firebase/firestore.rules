@@ -32,7 +32,10 @@ service cloud.firestore {
         isString(request.resource.data.sourcePage) &&
         request.resource.data.sourcePage.size() > 0 &&
         request.resource.data.sourcePage.size() <= 120 &&
-        request.resource.data.inquiryType == "contact" &&
+        (
+          request.resource.data.inquiryType == "contact" ||
+          request.resource.data.inquiryType == "demo_request"
+        ) &&
         request.resource.data.status == "new" &&
         request.resource.data.createdAt is timestamp;
 
