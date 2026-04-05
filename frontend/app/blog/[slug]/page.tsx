@@ -62,7 +62,7 @@ export default async function BlogArticlePage({ params }: Props) {
 
   const headings = post.tableOfContents.map((item) => ({ ...item, id: headingId(item.text) }));
   const related = await getRelatedPosts(post.slug, 3);
-  const url = `https://www.zeptai.com/blog/${post.slug}`;
+  const url = `https://zeptai.com/blog/${post.slug}`;
   const articleSchema = getBlogPostingSchema(post);
   const estimatedListenMinutes = getArticleListenTime(post.title, post.content);
 

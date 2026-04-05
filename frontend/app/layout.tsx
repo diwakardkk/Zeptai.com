@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     default: "ZeptAI",
     template: "%s | ZeptAI",
   },
-  description: "AI for Healthcare Patient Intake and Smart Summaries",
+  description: "Healthcare AI for patient intake and structured summaries",
   keywords: [...siteConfig.keywords],
   applicationName: "ZeptAI",
   authors: [{ name: "ZeptAI Team" }],
