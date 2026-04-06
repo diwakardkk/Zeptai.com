@@ -26,7 +26,7 @@ export default function Technology() {
   return (
     <section
       id="technology"
-      className="relative overflow-hidden border-y border-black/10 bg-background py-12 md:py-14"
+      className="relative overflow-hidden border-y border-border bg-background py-12 md:py-14"
     >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-[-12%] top-6 h-52 w-52 rounded-full bg-[#38ac06]/10 blur-[90px]" />
@@ -35,10 +35,10 @@ export default function Technology() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-black md:text-5xl">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-5xl">
             Web-Based Patient Intake & API Infrastructure
           </h2>
-          <p className="mt-4 text-sm text-black/65 md:text-base">
+          <p className="mt-4 text-sm text-muted-foreground md:text-base">
             One unified intake engine powering both web intake and API delivery.
           </p>
         </div>
@@ -48,7 +48,7 @@ export default function Technology() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.45 }}
-          className="relative mx-auto mt-6 max-w-6xl rounded-3xl border border-black/10 bg-[#fffffa]/85 p-4 shadow-[0_24px_56px_-40px_rgba(0,0,0,0.6)] backdrop-blur-sm md:p-6"
+          className="relative mx-auto mt-6 max-w-6xl rounded-3xl border border-border bg-card/85 p-4 shadow-[0_24px_56px_-40px_rgba(0,0,0,0.6)] backdrop-blur-sm md:p-6"
         >
           <div className="grid gap-3 md:grid-cols-2">
             {[
@@ -60,9 +60,9 @@ export default function Technology() {
                 <motion.div
                   key={chip.label}
                   whileHover={{ y: -1 }}
-                  className="rounded-xl border border-black/10 bg-white/85 px-3 py-2"
+                  className="rounded-xl border border-border bg-card/85 px-3 py-2"
                 >
-                  <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-black/70">
+                  <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                     <Icon className={`h-3.5 w-3.5 ${chip.tone}`} />
                     {chip.label}
                   </p>
@@ -83,7 +83,7 @@ export default function Technology() {
               }}
               transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
             >
-              <p className="inline-flex items-center gap-2 text-sm font-semibold text-black">
+              <p className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
                 <Cpu className="h-4 w-4 text-[#224bc3]" />
                 Unified Intake Engine
               </p>
@@ -111,16 +111,16 @@ export default function Technology() {
             <div className="grid gap-3 md:grid-cols-2 md:gap-4">
               <motion.div
                 whileHover={{ y: -2 }}
-                className="rounded-2xl border border-black/10 bg-white/90 p-4"
+                className="rounded-2xl border border-border bg-card/90 p-4"
               >
-                <p className="text-sm font-semibold text-black">Web Intake</p>
+                <p className="text-sm font-semibold text-foreground">Web Intake</p>
                 <div className="mt-3 grid gap-2">
                   {branchChips.web.map((chip) => {
                     const Icon = chip.icon;
                     return (
                       <div
                         key={chip.label}
-                        className="rounded-xl border border-black/10 bg-[#fffffa] px-3 py-2 text-xs text-black/70"
+                        className="rounded-xl border border-border bg-[#fffffa] px-3 py-2 text-xs text-muted-foreground"
                       >
                         <p className="inline-flex items-center gap-2 font-medium">
                           <Icon className="h-3.5 w-3.5 text-[#2f8f07]" />
@@ -134,16 +134,16 @@ export default function Technology() {
 
               <motion.div
                 whileHover={{ y: -2 }}
-                className="rounded-2xl border border-black/10 bg-white/90 p-4"
+                className="rounded-2xl border border-border bg-card/90 p-4"
               >
-                <p className="text-sm font-semibold text-black">API Infrastructure</p>
+                <p className="text-sm font-semibold text-foreground">API Infrastructure</p>
                 <div className="mt-3 grid gap-2">
                   {branchChips.api.map((chip) => {
                     const Icon = chip.icon;
                     return (
                       <div
                         key={chip.label}
-                        className="rounded-xl border border-black/10 bg-[#fffffa] px-3 py-2 text-xs text-black/70"
+                        className="rounded-xl border border-border bg-[#fffffa] px-3 py-2 text-xs text-muted-foreground"
                       >
                         <p className="inline-flex items-center gap-2 font-medium">
                           <Icon className="h-3.5 w-3.5 text-[#224bc3]" />

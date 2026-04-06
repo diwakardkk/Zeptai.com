@@ -4,35 +4,77 @@
 
 @layer base {
   :root {
-    --background: 60 100% 99%;
-    --foreground: 0 0% 4%;
-    
-    --card: 60 100% 97%;
-    --card-foreground: 0 0% 6%;
-    
-    --popover: 60 100% 97%;
-    --popover-foreground: 0 0% 6%;
-    
-    --primary: 224.7 70.3% 44.9%; /* Blue */
+    --background: 48 100% 98%;
+    --foreground: 222 24% 11%;
+
+    --card: 50 100% 99%;
+    --card-foreground: 222 24% 13%;
+
+    --popover: 50 100% 99%;
+    --popover-foreground: 222 24% 13%;
+
+    --primary: 224.7 70.3% 44.9%;
     --primary-foreground: 0 0% 100%;
-    
-    --secondary: 101.9 93.3% 34.9%; /* Green */
+
+    --secondary: 101.9 93.3% 34.9%;
     --secondary-foreground: 0 0% 100%;
-    
-    --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 22%;
-    
-    --accent: 101.9 93.3% 34.9%; /* Green accent */
+
+    --muted: 220 20% 94%;
+    --muted-foreground: 222 12% 40%;
+
+    --accent: 101.9 93.3% 34.9%;
     --accent-foreground: 0 0% 100%;
-    
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 88%;
-    --input: 0 0% 96%;
+    --border: 220 16% 86%;
+    --input: 220 20% 96%;
     --ring: 224.7 70.3% 44.9%;
-    
+
     --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222 29% 10%;
+    --foreground: 48 40% 95%;
+
+    --card: 222 24% 14%;
+    --card-foreground: 48 38% 95%;
+
+    --popover: 222 24% 14%;
+    --popover-foreground: 48 38% 95%;
+
+    --primary: 224.7 70.3% 56%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 101.9 78% 43%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 222 18% 19%;
+    --muted-foreground: 220 14% 74%;
+
+    --accent: 101.9 78% 43%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 63% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 16% 26%;
+    --input: 222 18% 20%;
+    --ring: 224.7 70.3% 56%;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  html:not(.dark) {
+    color-scheme: light;
   }
 
   body {
@@ -43,10 +85,9 @@
 
 @layer utilities {
   .glassmorphism {
-    @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-xl;
+    @apply border border-border bg-card/85 shadow-xl backdrop-blur-lg;
   }
-}
-
-html {
-  scroll-behavior: smooth;
+  .theme-surface {
+    @apply border border-border bg-card text-card-foreground;
+  }
 }

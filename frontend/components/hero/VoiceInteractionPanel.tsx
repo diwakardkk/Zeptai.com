@@ -142,6 +142,25 @@ function getRecognitionCtor() {
   return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
 }
 
+function stripQuestionIds(text: string) {
+  return text
+    .split(/\r?\n/)
+    .filter((line) => !/^q\d+\s*$/i.test(line.trim()))
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function mergeBotText(responseText: string, nextQuestionText: string) {
+  const cleanResponse = stripQuestionIds(responseText || "");
+  const cleanNext = stripQuestionIds(nextQuestionText || "");
+
+  if (!cleanNext) return cleanResponse;
+  if (!cleanResponse) return cleanNext;
+  if (cleanResponse === cleanNext) return cleanResponse;
+  return `${cleanResponse}\n\n${cleanNext}`;
+}
+
 export default function VoiceInteractionPanel() {
   const [state, setState] = useState<VoiceState>("idle");
   const [showReport, setShowReport] = useState(false);
@@ -171,15 +190,54 @@ export default function VoiceInteractionPanel() {
     }
   };
 
+  const stopSpeaking = () => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+  };
+
+  const speakAssistant = useCallback((text: string) => {
+    return new Promise<void>((resolve) => {
+      const cleanText = text.trim();
+      if (!cleanText) {
+        resolve();
+        return;
+      }
+
+      if (
+        typeof window === "undefined" ||
+        !("speechSynthesis" in window) ||
+        typeof window.SpeechSynthesisUtterance === "undefined"
+      ) {
+        resolve();
+        return;
+      }
+
+      try {
+        stopSpeaking();
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = "en-US";
+        utterance.rate = 1;
+        utterance.pitch = 1;
+        utterance.onend = () => resolve();
+        utterance.onerror = () => resolve();
+        window.speechSynthesis.speak(utterance);
+      } catch {
+        resolve();
+      }
+    });
+  }, []);
+
   useEffect(() => {
     return () => {
       clearTimers();
       stopListening();
+      stopSpeaking();
     };
   }, []);
 
   const ensureConversation = useCallback(async () => {
-    if (apiBase && conversationId) return { base: apiBase, cid: conversationId };
+    if (apiBase && conversationId) return { base: apiBase, cid: conversationId, greeting: "" };
 
     const base = apiBase ?? (await resolveApiBase());
     setApiBase(base);
@@ -193,9 +251,10 @@ export default function VoiceInteractionPanel() {
     const data = await parseJsonOrThrow(r);
     const cid = String(data.conversation_id ?? "");
     if (!cid) throw new Error("Missing conversation_id from API.");
+    const greeting = typeof data.greeting === "string" ? stripQuestionIds(data.greeting) : "";
 
     setConversationId(cid);
-    return { base, cid };
+    return { base, cid, greeting };
   }, [apiBase, conversationId]);
 
   const runAssistantTurn = useCallback(
@@ -217,12 +276,17 @@ export default function VoiceInteractionPanel() {
         },
         body: JSON.stringify({ conversation_id: cid, message: text }),
       });
-      await parseJsonOrThrow(r);
+      const data = await parseJsonOrThrow(r);
+      const reply = String(data.response ?? "I could not generate a response.");
+      const nextQuestion =
+        data.next_question && typeof data.next_question === "string" ? data.next_question.trim() : "";
+      const spokenText = mergeBotText(reply, nextQuestion);
 
       setState("speaking");
-      timerRef.current.push(window.setTimeout(() => setState("ready"), 1400));
+      await speakAssistant(spokenText);
+      setState("ready");
     },
-    [ensureConversation],
+    [ensureConversation, speakAssistant],
   );
 
   const startConversation = useCallback(async () => {
@@ -234,7 +298,13 @@ export default function VoiceInteractionPanel() {
     setError(null);
 
     try {
-      await ensureConversation();
+      const { greeting } = await ensureConversation();
+
+      if (greeting) {
+        setState("speaking");
+        await speakAssistant(greeting);
+      }
+
       setState("listening");
 
       const Ctor = getRecognitionCtor();
@@ -286,7 +356,7 @@ export default function VoiceInteractionPanel() {
       setConnectionLabel("Not connected");
       setError(err instanceof Error ? err.message : "Unable to start conversation.");
     }
-  }, [ensureConversation, isRunning, runAssistantTurn]);
+  }, [ensureConversation, isRunning, runAssistantTurn, speakAssistant]);
 
   const generateReport = useCallback(async () => {
     clearTimers();
@@ -330,20 +400,20 @@ export default function VoiceInteractionPanel() {
 
   return (
     <motion.div
-      className="relative overflow-hidden rounded-3xl border border-black/10 bg-[#fffffa]/88 p-3 shadow-[0_26px_54px_-38px_rgba(0,0,0,0.6)] backdrop-blur-sm sm:p-4"
+      className="relative overflow-hidden rounded-3xl border border-border bg-card/88 p-3 shadow-[0_26px_54px_-38px_rgba(0,0,0,0.6)] backdrop-blur-sm sm:p-4"
       whileHover={{ y: -2 }}
       transition={{ duration: 0.2 }}
     >
       <div className="pointer-events-none absolute -left-10 top-2 h-28 w-28 rounded-full bg-[#38ac06]/12 blur-2xl" />
       <div className="pointer-events-none absolute -right-10 bottom-2 h-32 w-32 rounded-full bg-[#224bc3]/12 blur-2xl" />
 
-      <div className="relative rounded-2xl border border-black/10 bg-white/95 p-4 sm:p-5">
+      <div className="relative rounded-2xl border border-border bg-card/95 p-4 sm:p-5">
         <div className="flex items-center justify-between gap-2">
           <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#224bc3]">
             <AudioLines className="h-3.5 w-3.5" />
             Voice Interface
           </p>
-          <span className="rounded-full border border-black/10 bg-[#fffffa] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/60">
+          <span className="rounded-full border border-border bg-background px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
             {connectionLabel}
           </span>
         </div>
@@ -372,7 +442,7 @@ export default function VoiceInteractionPanel() {
             />
 
             <motion.div
-              className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border border-black/10"
+              className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border"
               animate={{ rotate: state === "processing" || state === "reporting" ? 360 : 0 }}
               transition={{
                 duration: state === "processing" || state === "reporting" ? 4.8 : 0.4,
@@ -382,7 +452,7 @@ export default function VoiceInteractionPanel() {
             />
 
             <motion.div
-              className="absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full border border-black/10"
+              className="absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border"
               animate={{
                 scale:
                   state === "listening" || state === "speaking"
@@ -419,7 +489,7 @@ export default function VoiceInteractionPanel() {
           <p className="mt-2 text-xs font-semibold uppercase tracking-[0.13em]" style={{ color: meta.accent }}>
             {meta.label}
           </p>
-          <p className="mt-1 text-xs text-black/60">{meta.helper}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{meta.helper}</p>
 
           <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
             <button
@@ -452,7 +522,7 @@ export default function VoiceInteractionPanel() {
         </div>
 
         {error && (
-          <div className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
+          <div className="mt-3 rounded-xl border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive">
             {error}
           </div>
         )}
@@ -463,7 +533,7 @@ export default function VoiceInteractionPanel() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="mt-4 rounded-xl border border-black/10 bg-[#fffffa] p-3"
+              className="mt-4 rounded-xl border border-border bg-background p-3"
             >
               <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#224bc3]">
                 Structured Clinical Summary

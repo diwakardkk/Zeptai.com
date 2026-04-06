@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -40,7 +41,7 @@ export default function Navbar() {
             <Link href="/#features" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Features</Link>
             <Link href="/#research" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">Research</Link>
           </nav>
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3">
             <Link
               href="/#demo"
               className="text-sm font-medium text-foreground hover:text-primary transition-colors duration-200"
@@ -53,14 +54,16 @@ export default function Navbar() {
             >
               Explore API
             </Link>
+            <ThemeToggle />
           </div>
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-foreground focus:outline-none"
+              className="text-foreground focus:outline-none mr-2"
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
+            <ThemeToggle />
           </div>
         </div>
       </div>

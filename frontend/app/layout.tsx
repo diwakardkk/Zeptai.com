@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import "../styles/blog.css";
 import { sora } from "@/lib/fonts";
@@ -63,8 +64,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${sora.className} bg-background text-foreground antialiased`}>
+        <Script id="theme-init" strategy="beforeInteractive">{`
+          (function () {
+            try {
+              var stored = localStorage.getItem("theme");
+              var theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+              var root = document.documentElement;
+              if (theme === "dark") root.classList.add("dark");
+              else root.classList.remove("dark");
+              root.setAttribute("data-theme", theme);
+            } catch (e) {}
+          })();
+        `}</Script>
         {children}
       </body>
     </html>

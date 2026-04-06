@@ -52,22 +52,22 @@ export default function Contact({ variant = "section" }: ContactProps) {
   };
 
   const inputClass =
-    "w-full rounded-xl border border-black/10 bg-[#fffffa] px-3.5 py-2.5 text-sm text-black placeholder:text-black/40 focus:outline-none focus:ring-2 focus:ring-[#224bc3]/25 focus:border-[#224bc3]/30 transition";
+    "w-full rounded-xl border border-border bg-[#fffffa] px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#224bc3]/25 focus:border-[#224bc3]/30 transition";
 
   const successView = (
     <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
       <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#38ac06]/14">
         <CheckCircle className="h-7 w-7 text-[#2f8f07]" />
       </div>
-      <h3 className="mt-3 text-lg font-semibold text-black">Request Sent Successfully</h3>
-      <p className="mt-1 text-sm text-black/62">Thanks, our team will connect with you shortly.</p>
+      <h3 className="mt-3 text-lg font-semibold text-foreground">Request Sent Successfully</h3>
+      <p className="mt-1 text-sm text-muted-foreground">Thanks, our team will connect with you shortly.</p>
       <button
         type="button"
         onClick={() => {
           setIsSuccess(false);
           setIsFormOpen(true);
         }}
-        className="mt-4 inline-flex rounded-full border border-black/10 bg-[#fffffa] px-4 py-2 text-xs font-semibold uppercase tracking-[0.1em] text-black/70 transition hover:border-[#224bc3]/30 hover:text-[#224bc3]"
+        className="mt-4 inline-flex rounded-full border border-border bg-[#fffffa] px-4 py-2 text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground transition hover:border-[#224bc3]/30 hover:text-[#224bc3]"
       >
         Send Another
       </button>
@@ -78,7 +78,7 @@ export default function Contact({ variant = "section" }: ContactProps) {
     <form onSubmit={handleSubmit} className={isPage ? "space-y-3.5" : "space-y-4"}>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <div className="space-y-1.5">
-          <label htmlFor="name" className="text-xs font-semibold uppercase tracking-[0.11em] text-black/60">
+          <label htmlFor="name" className="text-xs font-semibold uppercase tracking-[0.11em] text-muted-foreground">
             Name
           </label>
           <input
@@ -93,7 +93,7 @@ export default function Contact({ variant = "section" }: ContactProps) {
           />
         </div>
         <div className="space-y-1.5">
-          <label htmlFor="email" className="text-xs font-semibold uppercase tracking-[0.11em] text-black/60">
+          <label htmlFor="email" className="text-xs font-semibold uppercase tracking-[0.11em] text-muted-foreground">
             Email
           </label>
           <input
@@ -110,7 +110,7 @@ export default function Contact({ variant = "section" }: ContactProps) {
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="mobile" className="text-xs font-semibold uppercase tracking-[0.11em] text-black/60">
+        <label htmlFor="mobile" className="text-xs font-semibold uppercase tracking-[0.11em] text-muted-foreground">
           Mobile
         </label>
         <input
@@ -126,7 +126,7 @@ export default function Contact({ variant = "section" }: ContactProps) {
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="message" className="text-xs font-semibold uppercase tracking-[0.11em] text-black/60">
+        <label htmlFor="message" className="text-xs font-semibold uppercase tracking-[0.11em] text-muted-foreground">
           Message
         </label>
         <textarea
@@ -185,13 +185,13 @@ export default function Contact({ variant = "section" }: ContactProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.42 }}
-              className="rounded-3xl border border-black/10 bg-[#fffffa]/88 p-5 shadow-[0_24px_52px_-42px_rgba(0,0,0,0.58)] backdrop-blur-sm md:p-6"
+              className="rounded-3xl border border-border bg-card/88 p-5 shadow-[0_24px_52px_-42px_rgba(0,0,0,0.58)] backdrop-blur-sm md:p-6"
             >
-              <p className="inline-flex rounded-full border border-[#224bc3]/25 bg-white/90 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]">
+              <p className="inline-flex rounded-full border border-[#224bc3]/25 bg-card/90 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]">
                 Demo Request
               </p>
-              <h3 className="mt-3 text-2xl font-bold tracking-tight text-black md:text-3xl">Talk to ZeptAI</h3>
-              <p className="mt-2 text-sm leading-6 text-black/66">
+              <h3 className="mt-3 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Talk to ZeptAI</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
                 Tell us your workflow goals and we will share a focused demo for your care team.
               </p>
 
@@ -199,7 +199,7 @@ export default function Contact({ variant = "section" }: ContactProps) {
                 {["Clinics", "Hospitals", "Telemedicine"].map((item) => (
                   <span
                     key={item}
-                    className="rounded-full border border-black/10 bg-white/88 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-black/70"
+                    className="rounded-full border border-border bg-card/88 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground"
                   >
                     {item}
                   </span>
@@ -212,7 +212,7 @@ export default function Contact({ variant = "section" }: ContactProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.44, delay: 0.06 }}
-              className="rounded-3xl border border-black/10 bg-white/94 p-4 shadow-[0_24px_52px_-42px_rgba(0,0,0,0.58)] md:p-5"
+              className="rounded-3xl border border-border bg-card/94 p-4 shadow-[0_24px_52px_-42px_rgba(0,0,0,0.58)] md:p-5"
             >
               {isSuccess ? successView : formView}
             </motion.div>
@@ -223,7 +223,7 @@ export default function Contact({ variant = "section" }: ContactProps) {
   }
 
   return (
-    <section id="contact" className="relative overflow-hidden border-t border-black/10 bg-background py-12 md:py-14">
+    <section id="contact" className="relative overflow-hidden border-t border-border bg-background py-12 md:py-14">
       <div className="pointer-events-none absolute inset-0">
         <motion.div
           className="absolute left-[-10%] top-8 h-52 w-52 rounded-full bg-[#38ac06]/10 blur-[90px]"
@@ -243,14 +243,14 @@ export default function Contact({ variant = "section" }: ContactProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.45 }}
-          className="rounded-3xl border border-black/10 bg-[#fffffa]/88 p-5 shadow-[0_26px_56px_-42px_rgba(0,0,0,0.58)] backdrop-blur-sm md:p-7"
+          className="rounded-3xl border border-border bg-card/88 p-5 shadow-[0_26px_56px_-42px_rgba(0,0,0,0.58)] backdrop-blur-sm md:p-7"
         >
           <div className="mx-auto max-w-2xl text-center">
-            <p className="inline-flex rounded-full border border-[#224bc3]/25 bg-white/90 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]">
+            <p className="inline-flex rounded-full border border-[#224bc3]/25 bg-card/90 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]">
               Get Started
             </p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-black md:text-5xl">Request a Demo</h2>
-            <p className="mt-2 text-sm text-black/65 md:text-base">See how ZeptAI fits your workflow.</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-5xl">Request a Demo</h2>
+            <p className="mt-2 text-sm text-muted-foreground md:text-base">See how ZeptAI fits your workflow.</p>
           </div>
 
           <div className="mt-5 flex justify-center">
@@ -274,7 +274,7 @@ export default function Contact({ variant = "section" }: ContactProps) {
                 transition={{ duration: 0.28, ease: "easeOut" }}
                 className="overflow-hidden"
               >
-                <div className="mt-5 rounded-2xl border border-black/10 bg-white/92 p-4 md:p-5">
+                <div className="mt-5 rounded-2xl border border-border bg-card/92 p-4 md:p-5">
                   {isSuccess ? successView : formView}
                 </div>
               </motion.div>

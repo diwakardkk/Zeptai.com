@@ -7,15 +7,15 @@ import VoiceInteractionPanel from "@/components/hero/VoiceInteractionPanel";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden border-b border-black/10 bg-background pt-12 pb-12 lg:pt-14 lg:pb-14">
+    <section id="demo" className="relative overflow-hidden border-b border-border bg-background pt-12 pb-12 lg:pt-14 lg:pb-14">
       <div className="pointer-events-none absolute inset-0 -z-10">
         <motion.div
-          className="absolute left-[-12%] top-[-14%] h-[340px] w-[340px] rounded-full bg-[#38ac06]/14 blur-[120px]"
+            className="absolute left-[-12%] top-[-14%] h-[340px] w-[340px] rounded-full bg-[#38ac06]/12 blur-[120px]"
           animate={{ opacity: [0.45, 0.8, 0.45] }}
           transition={{ duration: 5.4, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute right-[-12%] top-[-8%] h-[430px] w-[430px] rounded-full bg-[#224bc3]/12 blur-[130px]"
+            className="absolute right-[-12%] top-[-8%] h-[430px] w-[430px] rounded-full bg-[#224bc3]/12 blur-[130px]"
           animate={{ opacity: [0.4, 0.75, 0.4] }}
           transition={{ duration: 5.8, repeat: Infinity, ease: "easeInOut", delay: 0.25 }}
         />
@@ -39,14 +39,14 @@ export default function Hero() {
             Healthcare AI Research and Enterprise AI Platform
           </span>
 
-          <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-black sm:text-5xl lg:text-[3.45rem] lg:leading-[1.02]">
+          <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-[3.45rem] lg:leading-[1.02]">
             Simplify Patient Intake<br className="hidden sm:block" />
             <span className="bg-gradient-to-r from-[#38ac06] to-[#224bc3] bg-clip-text text-transparent">
               with Healthcare AI
             </span>
           </h1>
 
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-black/66 md:text-lg lg:mx-0">
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-muted-foreground md:text-lg lg:mx-0">
             ZeptAI uses voice-based healthcare AI to capture patient symptoms, history,
             medications and converts them into clear, structured summaries that save
             doctors time and improve communication before consultation.
@@ -61,13 +61,13 @@ export default function Hero() {
             </Link>
             <Link
               href="/blog"
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-black/10 bg-white px-5 py-3 text-sm font-semibold text-black/85 transition hover:border-[#224bc3]/35 hover:text-[#224bc3]"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition hover:border-[#224bc3]/35 hover:text-[#224bc3]"
             >
               Read AI Insights
             </Link>
             <Link
               href="#demo"
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-black/10 bg-white px-5 py-3 text-sm font-semibold text-black/85 transition hover:border-[#38ac06]/35 hover:text-[#2f8f07]"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition hover:border-[#38ac06]/35 hover:text-[#2f8f07]"
             >
               <PlayCircle className="h-4 w-4" /> Try Live Intake
             </Link>

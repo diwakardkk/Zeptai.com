@@ -25,7 +25,7 @@ const domains = [
   {
     label: "Explainable AI",
     icon: Code2,
-    tone: "from-[#224bc3]/15 to-[#38ac06]/10 text-black/80",
+    tone: "from-[#224bc3]/15 to-[#38ac06]/10 text-muted-foreground",
   },
 ];
 
@@ -53,7 +53,7 @@ export default function Research() {
   return (
     <section
       id="research"
-      className="relative overflow-hidden border-y border-black/10 bg-background py-12 md:py-14"
+      className="relative overflow-hidden border-y border-border bg-background py-12 md:py-14"
       aria-label="Healthcare AI research publications and journal impact"
     >
       <div className="pointer-events-none absolute -left-20 top-8 h-64 w-64 rounded-full bg-[#38ac06]/10 blur-[100px]" />
@@ -65,15 +65,15 @@ export default function Research() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/25 bg-white/85 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]"
+            className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/25 bg-card/85 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]"
           >
             <Sparkles className="h-3.5 w-3.5" />
             Research and Scientific Authority
           </motion.span>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-black md:text-5xl">
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
             Peer-Reviewed AI Research Behind ZeptAI
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-black/65 md:text-base">
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">
             Scientific foundation across conversational AI, medical imaging, and explainability.
           </p>
         </div>
@@ -83,7 +83,7 @@ export default function Research() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.45 }}
-          className="relative mx-auto mt-6 max-w-6xl rounded-3xl border border-black/10 bg-[#fffffa]/85 p-4 shadow-[0_24px_52px_-40px_rgba(0,0,0,0.55)] backdrop-blur-sm md:p-6"
+          className="relative mx-auto mt-6 max-w-6xl rounded-3xl border border-border bg-card/85 p-4 shadow-[0_24px_52px_-40px_rgba(0,0,0,0.55)] backdrop-blur-sm md:p-6"
         >
           <div className="flex justify-center">
             <motion.div
@@ -97,7 +97,7 @@ export default function Research() {
               }}
               transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
             >
-              <p className="inline-flex items-center gap-2 text-sm font-semibold text-black">
+              <p className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
                 <BookOpen className="h-4 w-4 text-[#224bc3]" />
                 Research Core
               </p>
@@ -129,14 +129,14 @@ export default function Research() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.35, delay: index * 0.05 }}
                     whileHover={{ y: -2 }}
-                    className="rounded-2xl border border-black/10 bg-white/90 p-3.5 text-center"
+                    className="rounded-2xl border border-border bg-card/90 p-3.5 text-center"
                   >
                     <span
                       className={`mx-auto mb-2 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br ${domain.tone}`}
                     >
                       <Icon className="h-4 w-4" />
                     </span>
-                    <p className="text-sm font-semibold text-black">{domain.label}</p>
+                    <p className="text-sm font-semibold text-foreground">{domain.label}</p>
                   </motion.div>
                 );
               })}
@@ -152,17 +152,17 @@ export default function Research() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.35, delay: index * 0.06 }}
                 whileHover={{ y: -2 }}
-                className="rounded-2xl border border-black/10 bg-white/90 p-4"
+                className="rounded-2xl border border-border bg-card/90 p-4"
               >
                 <div className="flex items-center justify-between gap-3">
                   <span className="rounded-full border border-[#38ac06]/25 bg-[#38ac06]/10 px-2.5 py-1 text-[11px] font-semibold text-[#2f8f07]">
                     {paper.badge}
                   </span>
-                  <span className="text-xs font-medium text-black/55">{paper.year}</span>
+                  <span className="text-xs font-medium text-muted-foreground">{paper.year}</span>
                 </div>
 
-                <p className="mt-2 text-sm font-semibold leading-6 text-black">{paper.title}</p>
-                <p className="mt-1 text-xs text-black/60">{paper.journal}</p>
+                <p className="mt-2 text-sm font-semibold leading-6 text-foreground">{paper.title}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{paper.journal}</p>
 
                 <div className="mt-3 flex items-center justify-between gap-3">
                   <a
@@ -179,7 +179,7 @@ export default function Research() {
                     href={`https://doi.org/${paper.doi}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[11px] font-medium text-black/55 underline-offset-2 hover:text-[#224bc3] hover:underline"
+                    className="text-[11px] font-medium text-muted-foreground underline-offset-2 hover:text-[#224bc3] hover:underline"
                   >
                     DOI
                   </a>

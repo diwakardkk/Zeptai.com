@@ -36,7 +36,7 @@ const workflowStages = [
     title: "Doctor-Ready Output",
     description: "Structured summaries arrive before consultation begins.",
     icon: FileText,
-    tone: "from-[#38ac06]/15 to-[#224bc3]/15 text-black/80",
+    tone: "from-[#38ac06]/15 to-[#224bc3]/15 text-muted-foreground",
   },
 ];
 
@@ -62,9 +62,9 @@ export default function HowItWorks() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45 }}
-            className="rounded-3xl border border-black/10 bg-[#fffffa]/88 p-5 shadow-[0_22px_54px_-38px_rgba(0,0,0,0.55)] backdrop-blur-sm md:p-6"
+            className="rounded-3xl border border-border bg-card/88 p-5 shadow-[0_22px_54px_-38px_rgba(0,0,0,0.55)] backdrop-blur-sm md:p-6"
           >
-            <p className="inline-flex rounded-full border border-[#224bc3]/25 bg-white/80 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.15em] text-[#224bc3]">
+            <p className="inline-flex rounded-full border border-[#224bc3]/25 bg-card/80 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.15em] text-[#224bc3]">
               Workflow Steps
             </p>
 
@@ -76,25 +76,25 @@ export default function HowItWorks() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.04, duration: 0.35 }}
-                  className="flex items-start gap-2.5 rounded-2xl border border-black/10 bg-white/85 px-3 py-2.5"
+                  className="flex items-start gap-2.5 rounded-2xl border border-border bg-card/85 px-3 py-2.5"
                 >
                   <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#224bc3]/10 text-[10px] font-bold text-[#224bc3]">
                     {index + 1}
                   </span>
-                  <p className="text-xs leading-5 text-black/70">{step}</p>
+                  <p className="text-xs leading-5 text-muted-foreground">{step}</p>
                 </motion.div>
               ))}
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-2 text-xs text-black/65">
-              <span className="inline-flex items-center gap-1 rounded-full border border-black/10 bg-white px-2.5 py-1">
+            <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1">
                 <MessageSquare className="h-3.5 w-3.5 text-[#224bc3]" /> Voice intake
               </span>
-              <span className="inline-flex items-center gap-1 rounded-full border border-black/10 bg-white px-2.5 py-1">
+              <span className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1">
                 <CalendarClock className="h-3.5 w-3.5 text-[#38ac06]" /> Screening context
               </span>
-              <span className="inline-flex items-center gap-1 rounded-full border border-black/10 bg-white px-2.5 py-1">
-                <Stethoscope className="h-3.5 w-3.5 text-black/70" /> Clinical handoff
+              <span className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1">
+                <Stethoscope className="h-3.5 w-3.5 text-muted-foreground" /> Clinical handoff
               </span>
             </div>
           </motion.article>
@@ -104,7 +104,7 @@ export default function HowItWorks() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.06 }}
-            className="relative rounded-3xl border border-black/10 bg-gradient-to-br from-white/90 via-[#fffffa]/92 to-[#224bc3]/[0.08] p-5 shadow-[0_24px_60px_-40px_rgba(0,0,0,0.55)] md:p-6"
+            className="relative rounded-3xl border border-border bg-gradient-to-br from-white/90 via-[#fffffa]/92 to-[#224bc3]/[0.08] p-5 shadow-[0_24px_60px_-40px_rgba(0,0,0,0.55)] md:p-6"
           >
             <div className="pointer-events-none absolute left-[29px] top-[62px] bottom-[62px] w-px bg-gradient-to-b from-[#38ac06]/50 via-[#224bc3]/40 to-[#224bc3]/20" />
             <motion.div
@@ -123,17 +123,17 @@ export default function HowItWorks() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.08, duration: 0.4 }}
-                    className="relative ml-7 rounded-2xl border border-black/10 bg-white/88 px-4 py-3.5"
+                    className="relative ml-7 rounded-2xl border border-border bg-card/88 px-4 py-3.5"
                     whileHover={{ y: -2 }}
                   >
                     <div
-                      className={`absolute -left-9 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-br ${stage.tone} border border-black/10`}
+                      className={`absolute -left-9 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-br ${stage.tone} border border-border`}
                     >
                       <Icon className="h-3.5 w-3.5" />
                     </div>
 
-                    <p className="text-sm font-semibold text-black">{stage.title}</p>
-                    <p className="mt-1 text-xs leading-5 text-black/65">{stage.description}</p>
+                    <p className="text-sm font-semibold text-foreground">{stage.title}</p>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">{stage.description}</p>
                   </motion.div>
                 );
               })}

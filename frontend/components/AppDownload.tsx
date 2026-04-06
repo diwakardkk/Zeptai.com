@@ -30,17 +30,17 @@ export default function AppDownload() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.45 }}
-          className="relative overflow-hidden rounded-[28px] border border-black/10 bg-[#fffffa]/85 p-5 shadow-[0_26px_56px_-42px_rgba(0,0,0,0.58)] backdrop-blur-sm md:p-7"
+          className="relative overflow-hidden rounded-[28px] border border-border bg-card/85 p-5 shadow-[0_26px_56px_-42px_rgba(0,0,0,0.58)] backdrop-blur-sm md:p-7"
         >
           <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/25 bg-white/90 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-[#224bc3]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/25 bg-card/90 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-[#224bc3]">
               <Layers3 className="h-3.5 w-3.5" />
               Web Access + Enterprise API
             </span>
-            <h2 className="mt-4 text-3xl font-bold tracking-tight text-black md:text-5xl">
+            <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
               One intake engine. Two ways to deploy.
             </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-sm text-black/65 md:text-base">
+            <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">
               Use ZeptAI directly on the web or integrate it into healthcare platforms through API.
             </p>
           </div>
@@ -74,10 +74,10 @@ export default function AppDownload() {
                 onMouseEnter={() => setActiveMode("web")}
                 onMouseLeave={() => setActiveMode(null)}
                 whileHover={{ y: -3 }}
-                className={`group relative overflow-hidden rounded-2xl border bg-white/92 p-4 transition-colors ${
+                className={`group relative overflow-hidden rounded-2xl border bg-card/92 p-4 transition-colors ${
                   activeMode === "web"
                     ? "border-[#38ac06]/45 shadow-[0_12px_34px_-26px_rgba(56,172,6,0.7)]"
-                    : "border-black/10"
+                    : "border-border"
                 }`}
               >
                 <motion.div
@@ -88,8 +88,8 @@ export default function AppDownload() {
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#38ac06]/12 text-[#2f8f07]">
                     <Globe2 className="h-4 w-4" />
                   </span>
-                  <p className="mt-3 text-sm font-semibold text-black">Web Access</p>
-                  <p className="mt-1 text-xs text-black/60">Browser intake</p>
+                  <p className="mt-3 text-sm font-semibold text-foreground">Web Access</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Browser intake</p>
                 </div>
               </motion.article>
 
@@ -112,18 +112,18 @@ export default function AppDownload() {
                 >
                   <Cpu className="h-4 w-4" />
                 </motion.span>
-                <p className="mt-3 text-sm font-semibold text-black">Unified Intake Engine</p>
-                <p className="mt-1 text-xs text-black/60">Voice + logic + summary</p>
+                <p className="mt-3 text-sm font-semibold text-foreground">Unified Intake Engine</p>
+                <p className="mt-1 text-xs text-muted-foreground">Voice + logic + summary</p>
               </motion.article>
 
               <motion.article
                 onMouseEnter={() => setActiveMode("api")}
                 onMouseLeave={() => setActiveMode(null)}
                 whileHover={{ y: -3 }}
-                className={`group relative overflow-hidden rounded-2xl border bg-white/92 p-4 transition-colors ${
+                className={`group relative overflow-hidden rounded-2xl border bg-card/92 p-4 transition-colors ${
                   activeMode === "api"
                     ? "border-[#224bc3]/45 shadow-[0_12px_34px_-26px_rgba(34,75,195,0.7)]"
-                    : "border-black/10"
+                    : "border-border"
                 }`}
               >
                 <motion.div
@@ -134,8 +134,8 @@ export default function AppDownload() {
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#224bc3]/12 text-[#224bc3]">
                     <Building2 className="h-4 w-4" />
                   </span>
-                  <p className="mt-3 text-sm font-semibold text-black">Enterprise API</p>
-                  <p className="mt-1 text-xs text-black/60">Platform integration</p>
+                  <p className="mt-3 text-sm font-semibold text-foreground">Enterprise API</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Platform integration</p>
                 </div>
               </motion.article>
             </div>
@@ -158,7 +158,7 @@ export default function AppDownload() {
             </a>
           </div>
 
-          <div className="mt-3 flex items-center justify-center gap-2 text-[11px] font-medium text-black/55">
+          <div className="mt-3 flex items-center justify-center gap-2 text-[11px] font-medium text-muted-foreground">
             <Sparkles className="h-3.5 w-3.5 text-[#224bc3]" />
             One core workflow for patients and platforms
           </div>

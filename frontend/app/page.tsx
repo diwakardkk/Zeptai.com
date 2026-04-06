@@ -51,29 +51,29 @@ export default async function Home() {
       <Features />
       <Research />
       <AppDownload />
-      <section className="relative overflow-hidden border-y border-black/10 bg-background py-14 md:py-16">
+      <section className="relative overflow-hidden border-y border-border bg-background py-14 md:py-16">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute left-[-10%] top-6 h-52 w-52 rounded-full bg-[#38ac06]/10 blur-[90px]" />
           <div className="absolute right-[-10%] top-8 h-64 w-64 rounded-full bg-[#224bc3]/10 blur-[110px]" />
         </div>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="relative rounded-[30px] border border-black/10 bg-[#fffffa]/85 p-5 shadow-[0_24px_56px_-42px_rgba(0,0,0,0.55)] backdrop-blur-sm md:p-7">
+          <div className="relative rounded-[30px] border border-border bg-card/85 p-5 shadow-[0_24px_56px_-42px_rgba(0,0,0,0.55)] backdrop-blur-sm md:p-7">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="max-w-2xl">
-                <p className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/25 bg-white/90 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]">
+                <p className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/25 bg-card/90 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]">
                   <Sparkles className="h-3.5 w-3.5" />
                   Healthcare AI Insights
                 </p>
-                <h2 className="mt-3 text-3xl font-bold tracking-tight text-black md:text-[2.25rem]">
+                <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-[2.25rem]">
                   Practical intelligence for intake workflows
                 </h2>
-                <p className="mt-3 text-sm text-black/65 md:text-base">
+                <p className="mt-3 text-sm text-muted-foreground md:text-base">
                   Practical research and product insights for patient intake and clinical workflows.
                 </p>
               </div>
               <Link
                 href="/blog"
-                className="group inline-flex items-center justify-center gap-2 rounded-full border border-[#224bc3]/30 bg-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#224bc3] transition hover:bg-[#224bc3]/10"
+                className="group inline-flex items-center justify-center gap-2 rounded-full border border-[#224bc3]/30 bg-card px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#224bc3] transition hover:bg-[#224bc3]/10"
               >
                 Visit the Blog
                 <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
@@ -84,7 +84,7 @@ export default async function Home() {
               <div className="mt-5 grid gap-3 lg:grid-cols-[1.2fr_0.8fr] lg:items-stretch">
                 <Link
                   href={`/blog/${featuredPost.slug}`}
-                  className="group relative overflow-hidden rounded-2xl border border-black/10 bg-white/92 transition hover:-translate-y-1 hover:border-[#224bc3]/35 hover:shadow-[0_20px_44px_-32px_rgba(34,75,195,0.65)]"
+                  className="group relative overflow-hidden rounded-2xl border border-border bg-card/92 transition hover:-translate-y-1 hover:border-[#224bc3]/35 hover:shadow-[0_20px_44px_-32px_rgba(34,75,195,0.65)]"
                 >
                   <div className="relative h-52 overflow-hidden md:h-56">
                     <Image
@@ -96,13 +96,13 @@ export default async function Home() {
                       className="object-cover transition duration-500 group-hover:scale-[1.04]"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/5 to-transparent" />
-                    <div className="absolute left-3 top-3 rounded-full border border-white/30 bg-white/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white">
+                    <div className="absolute left-3 top-3 rounded-full border border-white/30 bg-card/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white">
                       Featured
                     </div>
                   </div>
 
                   <div className="p-4 md:p-5">
-                    <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium uppercase tracking-[0.13em] text-black/55">
+                    <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium uppercase tracking-[0.13em] text-muted-foreground">
                       <span className="rounded-full border border-[#38ac06]/25 bg-[#38ac06]/10 px-2.5 py-1 text-[#2f8f07]">
                         {featuredPost.category}
                       </span>
@@ -110,10 +110,10 @@ export default async function Home() {
                       <span className="h-1 w-1 rounded-full bg-[#224bc3]/60" />
                       <span>{featuredPost.readingTimeMinutes} min read</span>
                     </div>
-                    <h3 className="mt-3 line-clamp-2 text-xl font-semibold leading-7 text-black transition group-hover:text-[#224bc3] md:text-2xl">
+                    <h3 className="mt-3 line-clamp-2 text-xl font-semibold leading-7 text-foreground transition group-hover:text-[#224bc3] md:text-2xl">
                       {featuredPost.title}
                     </h3>
-                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-black/65">
+                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
                       {featuredPost.excerpt}
                     </p>
                     <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#224bc3]">
@@ -128,9 +128,9 @@ export default async function Home() {
                     <Link
                       key={post.slug}
                       href={`/blog/${post.slug}`}
-                      className="group flex items-center gap-3 rounded-2xl border border-black/10 bg-white/88 p-3 transition hover:-translate-y-0.5 hover:border-[#224bc3]/30"
+                      className="group flex items-center gap-3 rounded-2xl border border-border bg-card/88 p-3 transition hover:-translate-y-0.5 hover:border-[#224bc3]/30"
                     >
-                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-black/10">
+                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-border">
                         <Image
                           src={post.coverImage}
                           alt={post.title}
@@ -144,10 +144,10 @@ export default async function Home() {
                         <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#224bc3]/80">
                           {post.category}
                         </p>
-                        <p className="mt-1 line-clamp-2 text-sm font-semibold leading-5 text-black group-hover:text-[#224bc3]">
+                        <p className="mt-1 line-clamp-2 text-sm font-semibold leading-5 text-foreground group-hover:text-[#224bc3]">
                           {post.title}
                         </p>
-                        <p className="mt-1 text-[11px] text-black/55">{formatDate(post.date)}</p>
+                        <p className="mt-1 text-[11px] text-muted-foreground">{formatDate(post.date)}</p>
                       </div>
                     </Link>
                   ))}
