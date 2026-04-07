@@ -81,7 +81,7 @@ export default function PricingPageContent() {
   }) => {
     const estimate = calculateCustomPricing(reports);
     setPaymentNotice(
-      `${planName}: ${reports} reports for ${doctors} doctor${doctors > 1 ? "s" : ""} estimated at ${estimate.estimatedCostText}. Payment UI is ready for Razorpay, UPI, and Cards; backend payment wiring can be connected next.`,
+      `${planName}: ${reports} reports for ${doctors} doctor${doctors > 1 ? "s" : ""} estimated at ${estimate.estimatedCostText}. Online payment is currently unavailable because Razorpay is not integrated yet. Please use the Contact page to request onboarding and manual payment support.`,
     );
   };
 
@@ -301,7 +301,7 @@ export default function PricingPageContent() {
           </div>
 
           {paymentNotice && (
-            <div className="mt-6 rounded-2xl border border-[#224bc3]/25 bg-white/90 px-5 py-4 text-sm text-black/70">
+            <div className="mt-6 rounded-2xl border border-[#224bc3]/25 bg-[#224bc3]/10 px-5 py-4 text-sm text-black/80">
               {paymentNotice}
             </div>
           )}

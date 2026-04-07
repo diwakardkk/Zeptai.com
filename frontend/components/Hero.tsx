@@ -40,9 +40,9 @@ export default function Hero() {
           </span>
 
           <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-[3.45rem] lg:leading-[1.02]">
-            Simplify Patient Intake<br className="hidden sm:block" />
+            Reducing Doctor Stress with<br className="hidden sm:block" />
             <span className="bg-gradient-to-r from-[#38ac06] to-[#224bc3] bg-clip-text text-transparent">
-              with Healthcare AI
+              Intelligent Patient Intake
             </span>
           </h1>
 
