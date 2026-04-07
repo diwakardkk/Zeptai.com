@@ -4,7 +4,6 @@ import Image from "next/image";
 import { ArrowRight, Sparkles } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import USPSection from "@/components/USPSection";
 import HowItWorks from "@/components/HowItWorks";
 import Features from "@/components/Features";
 import Research from "@/components/Research";
@@ -46,7 +45,6 @@ export default async function Home() {
     <main className="min-h-screen bg-background text-foreground flex flex-col pt-16 selection:bg-primary/30 selection:text-white">
       <Navbar />
       <Hero />
-      <USPSection />
       <HowItWorks />
       <Features />
       <Research />

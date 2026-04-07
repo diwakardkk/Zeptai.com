@@ -43,12 +43,6 @@ export default function Navbar() {
           </nav>
           <div className="hidden md:flex items-center space-x-3">
             <Link
-              href="/#demo"
-              className="text-sm font-medium text-foreground hover:text-primary transition-colors duration-200"
-            >
-              Try Live Intake
-            </Link>
-            <Link
               href="/contact"
               className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-full shadow-sm text-sm font-bold text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
             >
@@ -82,7 +76,6 @@ export default function Navbar() {
             <Link href="/blog" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">Blog</Link>
             <Link href="/#how-it-works" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">How It Works</Link>
             <Link href="/#features" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">Features</Link>
-            <Link href="/#demo" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-muted">Try Live Intake</Link>
             <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-primary hover:bg-muted">Explore API</Link>
           </div>
         </motion.div>
