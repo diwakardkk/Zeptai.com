@@ -407,7 +407,7 @@ export default function NurseChat() {
 
     return {
       label: "Ready",
-      chipClass: "border-black/15 bg-white/80 text-black/65",
+      chipClass: "border-border bg-card/90 text-muted-foreground",
     };
   }, [assistantState]);
 
@@ -452,8 +452,8 @@ export default function NurseChat() {
   const isOrbActive = assistantState === "listening" || assistantState === "processing" || assistantState === "bot_speaking";
 
   return (
-    <div className="flex h-full flex-col bg-[radial-gradient(circle_at_top_right,rgba(34,75,195,0.08),transparent_40%),radial-gradient(circle_at_top_left,rgba(56,172,6,0.1),transparent_38%)]">
-      <div className="border-b border-black/10 bg-[#fffffa]/85 px-4 py-3 backdrop-blur-sm">
+    <div className="flex h-full flex-col bg-[radial-gradient(circle_at_top_right,rgba(34,75,195,0.1),transparent_40%),radial-gradient(circle_at_top_left,rgba(56,172,6,0.12),transparent_38%)]">
+      <div className="border-b border-border bg-card/88 px-4 py-3 backdrop-blur-sm">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="relative flex h-10 w-10 items-center justify-center">
@@ -469,8 +469,8 @@ export default function NurseChat() {
               <span className="relative inline-flex h-5 w-5 rounded-full bg-gradient-to-br from-[#38ac06] to-[#224bc3]" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-black">ZeptAI Intake Assistant</p>
-              <p className="text-xs text-black/55">{statusText}</p>
+              <p className="text-sm font-semibold text-foreground">ZeptAI Intake Assistant</p>
+              <p className="text-xs text-muted-foreground">{statusText}</p>
             </div>
           </div>
 
@@ -479,9 +479,9 @@ export default function NurseChat() {
           </span>
         </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-black/55">
-          {apiBase && <span className="rounded-full border border-black/10 bg-white/80 px-2.5 py-1">API: {apiBase}</span>}
-          <span className="rounded-full border border-black/10 bg-white/80 px-2.5 py-1">
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+          {apiBase && <span className="rounded-full border border-border bg-card/90 px-2.5 py-1">API: {apiBase}</span>}
+          <span className="rounded-full border border-border bg-card/90 px-2.5 py-1">
             Turn: {isListening ? "Patient" : lastMessage?.from === "bot" ? "Assistant" : "Waiting"}
           </span>
         </div>
@@ -502,7 +502,7 @@ export default function NurseChat() {
                   transition={{ duration: 0.9, repeat: Infinity, delay: bar * 0.08 }}
                 />
               ))}
-              <span className="ml-1 text-[11px] text-black/60">Listening for your response...</span>
+              <span className="ml-1 text-[11px] text-muted-foreground">Listening for your response...</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -510,46 +510,46 @@ export default function NurseChat() {
 
       <div ref={scrollAreaRef} className="flex-1 overflow-y-auto px-4 py-4">
         {reportOnly && report ? (
-          <div className="space-y-4 rounded-2xl border border-[#224bc3]/20 bg-white/90 p-4 shadow-[0_18px_45px_-35px_rgba(34,75,195,0.65)]">
+          <div className="space-y-4 rounded-2xl border border-[#224bc3]/20 bg-card/92 p-4 shadow-[0_18px_45px_-35px_rgba(34,75,195,0.65)]">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
                 <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-[#38ac06]/15 text-[#2f8f07]">
                   <CheckCircle2 className="h-4 w-4" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-black">Clinical Intake Report</p>
-                  <p className="text-xs text-black/55">Structured summary generated successfully</p>
+                  <p className="text-sm font-semibold text-foreground">Clinical Intake Report</p>
+                  <p className="text-xs text-muted-foreground">Structured summary generated successfully</p>
                 </div>
               </div>
               {report.generated_at && (
-                <div className="text-[11px] text-black/55">
+                <div className="text-[11px] text-muted-foreground">
                   {new Date(report.generated_at).toLocaleString()}
                 </div>
               )}
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl border border-black/10 bg-[#fffffa] p-3">
-                <div className="text-[10px] uppercase tracking-[0.14em] text-black/45">Chief Complaint</div>
-                <div className="mt-1 text-sm text-black/75">{report.summary?.chief_complaint || "Not available"}</div>
+              <div className="rounded-xl border border-border bg-background/85 p-3">
+                <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Chief Complaint</div>
+                <div className="mt-1 text-sm text-foreground/85">{report.summary?.chief_complaint || "Not available"}</div>
               </div>
-              <div className="rounded-xl border border-black/10 bg-[#fffffa] p-3">
-                <div className="text-[10px] uppercase tracking-[0.14em] text-black/45">Risk Level</div>
-                <div className="mt-1 text-sm font-medium text-black/75">{report.analysis?.risk_level || "Not available"}</div>
+              <div className="rounded-xl border border-border bg-background/85 p-3">
+                <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Risk Level</div>
+                <div className="mt-1 text-sm font-medium text-foreground/85">{report.analysis?.risk_level || "Not available"}</div>
               </div>
             </div>
 
-            <div className="rounded-xl border border-black/10 bg-[#fffffa] p-3">
-              <div className="text-[10px] uppercase tracking-[0.14em] text-black/45">Summary</div>
-              <div className="mt-1 whitespace-pre-wrap text-sm leading-6 text-black/75">
+            <div className="rounded-xl border border-border bg-background/85 p-3">
+              <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Summary</div>
+              <div className="mt-1 whitespace-pre-wrap text-sm leading-6 text-foreground/85">
                 {report.summary?.summary_text || "Not available"}
               </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl border border-black/10 bg-[#fffffa] p-3">
-                <div className="text-[10px] uppercase tracking-[0.14em] text-black/45">Key Findings</div>
-                <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-black/75">
+              <div className="rounded-xl border border-border bg-background/85 p-3">
+                <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Key Findings</div>
+                <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-foreground/85">
                   {(report.analysis?.key_findings || []).length > 0 ? (
                     report.analysis?.key_findings?.map((item, idx) => <li key={idx}>{item}</li>)
                   ) : (
@@ -557,9 +557,9 @@ export default function NurseChat() {
                   )}
                 </ul>
               </div>
-              <div className="rounded-xl border border-black/10 bg-[#fffffa] p-3">
-                <div className="text-[10px] uppercase tracking-[0.14em] text-black/45">Red Flags</div>
-                <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-black/75">
+              <div className="rounded-xl border border-border bg-background/85 p-3">
+                <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Red Flags</div>
+                <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-foreground/85">
                   {(report.analysis?.red_flags || []).length > 0 ? (
                     report.analysis?.red_flags?.map((item, idx) => <li key={idx}>{item}</li>)
                   ) : (
@@ -571,7 +571,7 @@ export default function NurseChat() {
 
             <button
               onClick={startNewConversation}
-              className="inline-flex items-center gap-2 rounded-full border border-black/15 bg-white px-4 py-2 text-xs font-semibold text-black/75 transition hover:bg-white/80"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold text-foreground/80 transition hover:bg-muted"
             >
               <RefreshCcw className="h-3.5 w-3.5" /> New Conversation
             </button>
@@ -585,7 +585,7 @@ export default function NurseChat() {
                 animate={{ opacity: 1, y: 0 }}
                 className={`max-w-[92%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm ${
                   m.from === "bot"
-                    ? "border border-black/10 bg-[#fffffa] text-black/80"
+                    ? "border border-border bg-card/92 text-foreground/85"
                     : "ml-auto bg-gradient-to-br from-[#224bc3] to-[#1d3ea1] text-white"
                 }`}
               >
@@ -598,13 +598,13 @@ export default function NurseChat() {
             ))}
 
             {loading && (
-              <div className="inline-flex items-center gap-2 rounded-xl border border-[#224bc3]/20 bg-white/85 px-3 py-2 text-xs text-[#224bc3]">
+              <div className="inline-flex items-center gap-2 rounded-xl border border-[#224bc3]/20 bg-card/90 px-3 py-2 text-xs text-[#224bc3]">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" /> Assistant is processing...
               </div>
             )}
 
             {error && (
-              <div className="rounded-xl border border-red-400/35 bg-red-50 px-3 py-2 text-xs text-red-600">
+              <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-700 dark:text-red-300">
                 Error: {error}
               </div>
             )}
@@ -613,12 +613,12 @@ export default function NurseChat() {
       </div>
 
       {!reportOnly && (
-        <div className="border-t border-black/10 bg-[#fffffa]/90 p-3 backdrop-blur-sm">
+        <div className="border-t border-border bg-card/90 p-3 backdrop-blur-sm">
           <div className="mb-2 flex flex-wrap gap-2">
             <button
               onClick={generateReport}
               disabled={reportLoading || !conversationId || loading}
-              className="inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-white px-3 py-2 text-xs font-semibold text-black/75 transition hover:bg-white/80 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-2 text-xs font-semibold text-foreground/80 transition hover:bg-muted disabled:opacity-50"
             >
               {reportLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
               {reportLoading ? "Generating report..." : "Generate Report"}
@@ -627,7 +627,7 @@ export default function NurseChat() {
             <button
               onClick={startNewConversation}
               disabled={loading}
-              className="inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-white px-3 py-2 text-xs font-semibold text-black/75 transition hover:bg-white/80 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-2 text-xs font-semibold text-foreground/80 transition hover:bg-muted disabled:opacity-50"
             >
               <RefreshCcw className="h-3.5 w-3.5" /> New Conversation
             </button>
@@ -652,7 +652,7 @@ export default function NurseChat() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && void sendMessage()}
               placeholder={isListening ? "Listening... say your symptoms" : "Describe your symptoms..."}
-              className="flex-1 rounded-2xl border border-black/15 bg-white px-3.5 py-2.5 text-sm text-black/80 outline-none transition focus:border-[#224bc3]/40 focus:ring-2 focus:ring-[#224bc3]/20"
+              className="flex-1 rounded-2xl border border-border bg-card px-3.5 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-[#224bc3]/40 focus:ring-2 focus:ring-[#224bc3]/20"
             />
             <button
               onClick={() => void sendMessage()}
@@ -666,7 +666,7 @@ export default function NurseChat() {
       )}
 
       {reportOnly && (
-        <div className="border-t border-black/10 bg-[#fffffa]/90 p-3 text-xs text-black/55">
+        <div className="border-t border-border bg-card/90 p-3 text-xs text-muted-foreground">
           Report view is active. Start a new conversation to run another live intake.
         </div>
       )}

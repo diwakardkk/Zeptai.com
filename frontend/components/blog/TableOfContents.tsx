@@ -68,9 +68,9 @@ export default function TableOfContents({ items }: TableOfContentsProps) {
 
   return (
     <nav aria-label="Table of contents" className="sticky top-28">
-      <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-[#fffffa]/80 p-4 shadow-[0_18px_40px_-26px_rgba(0,0,0,0.45)] backdrop-blur-md">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/50 to-transparent" />
-        <p className="mb-3 text-[0.67rem] font-semibold uppercase tracking-[0.16em] text-black/45">On this page</p>
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-card/88 p-4 shadow-[0_18px_40px_-26px_rgba(0,0,0,0.45)] backdrop-blur-md">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-card/50 to-transparent" />
+        <p className="mb-3 text-[0.67rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">On this page</p>
         <div className="max-h-[calc(100vh-9.5rem)] overflow-y-auto pr-1">
           <ul className="relative space-y-1 border-l border-[#224bc3]/15 pl-3">
             {items.map((item) => {
@@ -84,8 +84,8 @@ export default function TableOfContents({ items }: TableOfContentsProps) {
                     onClick={(event) => onLinkClick(event, item.id)}
                     className={`group relative block rounded-lg border-l-2 py-1.5 pl-3 pr-2 transition-all duration-200 ${
                       isActive
-                        ? "border-[#38ac06] bg-white/80 font-semibold text-[#224bc3] shadow-[0_8px_20px_-16px_rgba(34,75,195,0.9)]"
-                        : "border-transparent text-black/70 hover:border-[#38ac06]/60 hover:bg-white/65 hover:text-black/90"
+                        ? "border-[#38ac06] bg-card/95 font-semibold text-[#224bc3] shadow-[0_8px_20px_-16px_rgba(34,75,195,0.9)]"
+                        : "border-transparent text-muted-foreground hover:border-[#38ac06]/60 hover:bg-muted/65 hover:text-foreground"
                     } ${isH3 ? "ml-2 text-[0.82rem]" : "text-[0.9rem]"}`}
                   >
                     <span

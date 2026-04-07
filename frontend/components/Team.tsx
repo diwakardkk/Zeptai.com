@@ -68,13 +68,13 @@ export default function Team() {
             viewport={{ once: true }}
             transition={{ duration: 0.45 }}
             whileHover={{ y: -3 }}
-            className="group relative overflow-hidden rounded-3xl border border-border bg-card/85 p-4 shadow-[0_24px_52px_-42px_rgba(0,0,0,0.6)] backdrop-blur-sm"
+            className="group relative overflow-hidden rounded-3xl border border-border bg-card/85 p-5 shadow-[0_24px_52px_-42px_rgba(0,0,0,0.6)] backdrop-blur-sm md:p-6"
           >
             <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[#224bc3]/12 blur-2xl transition-opacity group-hover:opacity-90" />
             <div className="pointer-events-none absolute -left-8 bottom-0 h-24 w-24 rounded-full bg-[#38ac06]/12 blur-2xl transition-opacity group-hover:opacity-90" />
 
-            <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-center sm:text-left">
-              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-border bg-card p-1.5 shadow-sm md:h-24 md:w-24">
+            <div className="flex flex-col items-center gap-4 text-center">
+              <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-border bg-card p-1.5 shadow-sm md:h-28 md:w-28">
                 <Image
                   src={founder.image}
                   alt={founder.name}
@@ -87,33 +87,23 @@ export default function Team() {
               </div>
 
               <div className="flex-1">
-                <span
-                  className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${founderTagStyle}`}
-                >
+                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${founderTagStyle}`}>
                   {founder.tag}
                 </span>
-                <h3 className="mt-1.5 text-xl font-bold text-foreground md:text-2xl">{founder.name}</h3>
-                <p className="text-sm font-semibold text-[#224bc3]">{founder.role}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{founder.line}</p>
+                <h3 className="mt-2 text-2xl font-bold text-foreground md:text-[1.9rem]">{founder.name}</h3>
+                <p className="text-base font-semibold text-[#224bc3]">{founder.role}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{founder.line}</p>
 
-                <div className="mt-2.5 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+                <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
                   <a
                     href={founder.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${founder.name} LinkedIn`}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:border-[#224bc3]/35 hover:text-[#224bc3]"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground transition hover:border-[#224bc3]/35 hover:text-[#224bc3]"
                   >
                     <Link className="h-3.5 w-3.5" />
                     LinkedIn
-                  </a>
-                  <a
-                    href={`mailto:${founder.email}`}
-                    aria-label={`Email ${founder.name}`}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:border-[#38ac06]/35 hover:text-[#2f8f07]"
-                  >
-                    <Mail className="h-3.5 w-3.5" />
-                    Email
                   </a>
                 </div>
               </div>
@@ -132,7 +122,7 @@ export default function Team() {
                 className="rounded-2xl border border-border bg-card/90 p-3.5"
               >
                 <div className="flex items-center gap-3">
-                  <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-border bg-[#fffffa] p-1">
+                  <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-border bg-card/92 p-1">
                     <Image
                       src={member.image}
                       alt={member.name}

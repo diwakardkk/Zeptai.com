@@ -8,6 +8,7 @@ import HowItWorks from "@/components/HowItWorks";
 import Features from "@/components/Features";
 import Research from "@/components/Research";
 import AppDownload from "@/components/AppDownload";
+import SecurityPrivacy from "@/components/SecurityPrivacy";
 import Team from "@/components/Team";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
@@ -48,6 +49,7 @@ export default async function Home() {
       <HowItWorks />
       <Features />
       <Research />
+      <SecurityPrivacy />
       <AppDownload />
       <section className="relative overflow-hidden border-y border-border bg-background py-14 md:py-16">
         <div className="pointer-events-none absolute inset-0">

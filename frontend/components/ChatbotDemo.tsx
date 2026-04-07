@@ -73,7 +73,7 @@ export default function ChatbotDemo() {
     return {
       label: "Ready",
       description: "Start conversation to begin the live AI intake workflow.",
-      chipClass: "border-black/15 bg-white/80 text-black/65",
+      chipClass: "border-border bg-card/90 text-muted-foreground",
     };
   }, [assistantState]);
 
@@ -81,7 +81,7 @@ export default function ChatbotDemo() {
     assistantState === "listening" || assistantState === "processing" || assistantState === "bot_speaking";
 
   return (
-    <section id="demo" className="relative overflow-hidden border-y border-black/10 bg-[#fffffa] py-24">
+    <section id="demo" className="relative overflow-hidden border-y border-border bg-background py-24">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-[-10%] top-8 h-72 w-72 rounded-full bg-[#38ac06]/10 blur-[120px]" />
         <div className="absolute right-[-12%] top-0 h-96 w-96 rounded-full bg-[#224bc3]/12 blur-[140px]" />
@@ -94,34 +94,34 @@ export default function ChatbotDemo() {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              className="mb-3 inline-flex rounded-full border border-[#224bc3]/25 bg-white/80 px-3.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]"
+              className="mb-3 inline-flex rounded-full border border-[#224bc3]/25 bg-card/88 px-3.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]"
             >
               Try Live Intake
             </motion.span>
 
-            <h2 className="text-3xl font-extrabold tracking-tight text-black md:text-5xl md:leading-tight">
+            <h2 className="text-3xl font-extrabold tracking-tight text-foreground md:text-5xl md:leading-tight">
               Experience a Conversational AI Intake Assistant in Real Time
             </h2>
 
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-black/70">
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
               This live website demo simulates a guided patient intake conversation with voice capture,
               AI follow-up questions, and structured report generation for clinical review.
             </p>
 
-            <div className="mt-6 rounded-2xl border border-black/10 bg-white/85 p-4 shadow-[0_20px_38px_-28px_rgba(0,0,0,0.4)]">
+            <div className="mt-6 rounded-2xl border border-border bg-card/88 p-4 shadow-[0_20px_38px_-28px_rgba(0,0,0,0.4)]">
               <div className="flex items-center gap-2">
                 <span className={`rounded-full border px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.13em] ${stateMeta.chipClass}`}>
                   {stateMeta.label}
                 </span>
               </div>
-              <p className="mt-2 text-sm text-black/65">{stateMeta.description}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{stateMeta.description}</p>
             </div>
 
-            <div className="mt-6 grid gap-3 text-sm text-black/70 sm:grid-cols-2">
-              <p className="flex items-center gap-2 rounded-xl border border-black/10 bg-white/80 p-3">
+            <div className="mt-6 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
+              <p className="flex items-center gap-2 rounded-xl border border-border bg-card/88 p-3">
                 <Cpu className="h-4 w-4 text-[#224bc3]" /> Live conversational turn handling
               </p>
-              <p className="flex items-center gap-2 rounded-xl border border-black/10 bg-white/80 p-3">
+              <p className="flex items-center gap-2 rounded-xl border border-border bg-card/88 p-3">
                 <Activity className="h-4 w-4 text-[#38ac06]" /> Voice capture + structured reporting
               </p>
             </div>
@@ -133,9 +133,9 @@ export default function ChatbotDemo() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.45 }}
-              className="relative overflow-hidden rounded-[2rem] border border-black/10 bg-[#fffffa]/88 p-2 shadow-[0_30px_75px_-45px_rgba(0,0,0,0.65)] backdrop-blur-sm"
+              className="relative overflow-hidden rounded-[2rem] border border-border bg-card/88 p-2 shadow-[0_30px_75px_-45px_rgba(0,0,0,0.65)] backdrop-blur-sm"
             >
-              <div className="rounded-[1.4rem] border border-black/10 bg-white/85 px-5 py-3">
+              <div className="rounded-[1.4rem] border border-border bg-card/88 px-5 py-3">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <div className="relative flex h-8 w-8 items-center justify-center">
@@ -151,8 +151,8 @@ export default function ChatbotDemo() {
                       <span className="relative inline-flex h-4 w-4 rounded-full bg-gradient-to-br from-[#38ac06] to-[#224bc3]" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-black">ZeptAI Conversational Intake</p>
-                      <p className="text-xs text-black/55">Website demo · Voice + Chat + Report</p>
+                      <p className="text-sm font-semibold text-foreground">ZeptAI Conversational Intake</p>
+                      <p className="text-xs text-muted-foreground">Website demo · Voice + Chat + Report</p>
                     </div>
                   </div>
 
@@ -162,11 +162,11 @@ export default function ChatbotDemo() {
                 </div>
               </div>
 
-              <div className="mt-2 h-[560px] overflow-hidden rounded-[1.4rem] border border-black/10 bg-white/70">
+              <div className="mt-2 h-[560px] overflow-hidden rounded-[1.4rem] border border-border bg-card/75">
                 <NurseChat />
               </div>
 
-              <div className="mt-2 rounded-[1.4rem] border border-black/10 bg-white/85 p-3">
+              <div className="mt-2 rounded-[1.4rem] border border-border bg-card/88 p-3">
                 <button
                   onClick={toggleSpeaking}
                   className={`inline-flex w-full items-center justify-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition ${

@@ -52,7 +52,7 @@ export default function Contact({ variant = "section" }: ContactProps) {
   };
 
   const inputClass =
-    "w-full rounded-xl border border-border bg-[#fffffa] px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#224bc3]/25 focus:border-[#224bc3]/30 transition";
+    "w-full rounded-xl border border-border bg-card/92 px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#224bc3]/25 focus:border-[#224bc3]/30 transition";
 
   const successView = (
     <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
@@ -67,7 +67,7 @@ export default function Contact({ variant = "section" }: ContactProps) {
           setIsSuccess(false);
           setIsFormOpen(true);
         }}
-        className="mt-4 inline-flex rounded-full border border-border bg-[#fffffa] px-4 py-2 text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground transition hover:border-[#224bc3]/30 hover:text-[#224bc3]"
+        className="mt-4 inline-flex rounded-full border border-border bg-card/92 px-4 py-2 text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground transition hover:border-[#224bc3]/30 hover:text-[#224bc3]"
       >
         Send Another
       </button>

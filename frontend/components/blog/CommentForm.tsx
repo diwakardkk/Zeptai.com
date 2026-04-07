@@ -88,23 +88,23 @@ export default function CommentForm({ postSlug, onSubmitted }: CommentFormProps)
   }
 
   const fieldClassName =
-    "w-full rounded-2xl border border-[#224bc3]/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,255,250,0.92))] px-4 py-3 text-sm text-black shadow-[0_8px_26px_rgba(9,9,9,0.04)] outline-none transition placeholder:text-black/40 hover:border-[#224bc3]/25 focus:border-[#224bc3]/45 focus:ring-4 focus:ring-[#38ac06]/15";
+    "w-full rounded-2xl border border-[#224bc3]/20 bg-card/95 px-4 py-3 text-sm text-foreground shadow-[0_8px_26px_rgba(9,9,9,0.04)] outline-none transition placeholder:text-muted-foreground hover:border-[#224bc3]/30 focus:border-[#224bc3]/45 focus:ring-4 focus:ring-[#38ac06]/15";
 
   const statusClassName =
     status?.tone === "success"
-      ? "border-[#38ac06]/30 bg-[#38ac06]/8 text-[#0d4412]"
+      ? "border-[#38ac06]/35 bg-[#38ac06]/12 text-[#15531b] dark:text-[#79d25c]"
       : status?.tone === "error"
-        ? "border-[#224bc3]/25 bg-[#224bc3]/8 text-[#11214f]"
-        : "border-black/10 bg-white/70 text-black/65";
+        ? "border-[#224bc3]/35 bg-[#224bc3]/12 text-[#11214f] dark:text-[#98b7ff]"
+        : "border-border bg-card/85 text-muted-foreground";
 
   return (
-    <div className="rounded-[1.6rem] border border-black/10 bg-[linear-gradient(160deg,rgba(255,255,255,0.92),rgba(255,255,250,0.85))] p-5 shadow-[0_16px_40px_rgba(9,9,9,0.08)] md:p-6">
+    <div className="rounded-[1.6rem] border border-border bg-[linear-gradient(160deg,hsl(var(--card)),rgba(34,75,195,0.06),rgba(56,172,6,0.06))] p-5 shadow-[0_16px_40px_rgba(9,9,9,0.08)] md:p-6">
       <div className="mb-5 flex items-center justify-between gap-3">
         <div>
-          <h4 className="text-lg font-semibold tracking-tight text-black">Share Your Perspective</h4>
-          <p className="mt-1 text-xs text-black/60">Professional, respectful comments help everyone.</p>
+          <h4 className="text-lg font-semibold tracking-tight text-foreground">Share Your Perspective</h4>
+          <p className="mt-1 text-xs text-muted-foreground">Professional, respectful comments help everyone.</p>
         </div>
-        <div className="hidden rounded-full border border-[#224bc3]/15 bg-white/80 p-2 text-[#224bc3] md:inline-flex">
+        <div className="hidden rounded-full border border-[#224bc3]/15 bg-card/90 p-2 text-[#224bc3] md:inline-flex">
           <MessageSquarePlus className="h-4 w-4" />
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function CommentForm({ postSlug, onSubmitted }: CommentFormProps)
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div className="space-y-1.5">
-            <label htmlFor="comment-name" className="text-xs font-semibold uppercase tracking-[0.16em] text-black/62">
+            <label htmlFor="comment-name" className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               Name
             </label>
             <input
@@ -127,7 +127,7 @@ export default function CommentForm({ postSlug, onSubmitted }: CommentFormProps)
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="comment-email" className="text-xs font-semibold uppercase tracking-[0.16em] text-black/62">
+            <label htmlFor="comment-email" className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               Email
             </label>
             <input
@@ -144,7 +144,7 @@ export default function CommentForm({ postSlug, onSubmitted }: CommentFormProps)
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="comment-mobile" className="text-xs font-semibold uppercase tracking-[0.16em] text-black/62">
+          <label htmlFor="comment-mobile" className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             Mobile
           </label>
           <input
@@ -159,7 +159,7 @@ export default function CommentForm({ postSlug, onSubmitted }: CommentFormProps)
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="comment-body" className="text-xs font-semibold uppercase tracking-[0.16em] text-black/62">
+          <label htmlFor="comment-body" className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             Comment
           </label>
           <textarea
@@ -171,7 +171,7 @@ export default function CommentForm({ postSlug, onSubmitted }: CommentFormProps)
             className={`${fieldClassName} resize-none leading-6`}
             required
           />
-          <p className="text-xs text-black/50">At least 8 characters. Keep it constructive and relevant.</p>
+          <p className="text-xs text-muted-foreground">At least 8 characters. Keep it constructive and relevant.</p>
         </div>
 
         <input

@@ -5,13 +5,13 @@
 @layer base {
   :root {
     --background: 48 100% 98%;
-    --foreground: 222 24% 11%;
+    --foreground: 222 27% 12%;
 
     --card: 50 100% 99%;
-    --card-foreground: 222 24% 13%;
+    --card-foreground: 222 26% 14%;
 
     --popover: 50 100% 99%;
-    --popover-foreground: 222 24% 13%;
+    --popover-foreground: 222 26% 14%;
 
     --primary: 224.7 70.3% 44.9%;
     --primary-foreground: 0 0% 100%;
@@ -19,8 +19,8 @@
     --secondary: 101.9 93.3% 34.9%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 20% 94%;
-    --muted-foreground: 222 12% 40%;
+    --muted: 220 22% 94%;
+    --muted-foreground: 222 13% 34%;
 
     --accent: 101.9 93.3% 34.9%;
     --accent-foreground: 0 0% 100%;
@@ -28,21 +28,21 @@
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 16% 86%;
-    --input: 220 20% 96%;
+    --border: 220 15% 82%;
+    --input: 220 20% 95%;
     --ring: 224.7 70.3% 44.9%;
 
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222 29% 10%;
-    --foreground: 48 40% 95%;
+    --background: 222 30% 11%;
+    --foreground: 48 38% 95%;
 
-    --card: 222 24% 14%;
+    --card: 222 23% 15%;
     --card-foreground: 48 38% 95%;
 
-    --popover: 222 24% 14%;
+    --popover: 222 23% 15%;
     --popover-foreground: 48 38% 95%;
 
     --primary: 224.7 70.3% 56%;
@@ -51,8 +51,8 @@
     --secondary: 101.9 78% 43%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 222 18% 19%;
-    --muted-foreground: 220 14% 74%;
+    --muted: 222 18% 20%;
+    --muted-foreground: 220 16% 80%;
 
     --accent: 101.9 78% 43%;
     --accent-foreground: 0 0% 100%;
@@ -60,8 +60,8 @@
     --destructive: 0 63% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 222 16% 26%;
-    --input: 222 18% 20%;
+    --border: 222 15% 30%;
+    --input: 222 17% 22%;
     --ring: 224.7 70.3% 56%;
   }
 
@@ -80,6 +80,8 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+    line-height: 1.55;
+    text-rendering: optimizeLegibility;
   }
 }
 

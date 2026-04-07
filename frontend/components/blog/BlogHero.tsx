@@ -28,7 +28,7 @@ export default function BlogHero({ title, headline, description, tags }: BlogHer
       </div>
 
       <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl rounded-[34px] border border-black/10 bg-white/72 px-6 py-10 shadow-[0_30px_90px_rgba(9,9,9,0.08)] backdrop-blur-xl md:px-10 md:py-12">
+        <div className="mx-auto max-w-5xl rounded-[34px] border border-border bg-card/80 px-6 py-10 shadow-[0_30px_90px_rgba(9,9,9,0.08)] backdrop-blur-xl md:px-10 md:py-12">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -48,7 +48,7 @@ export default function BlogHero({ title, headline, description, tags }: BlogHer
             viewport={{ once: true }}
             transition={{ duration: 0.65, delay: 0.08, ease: "easeOut" }}
           >
-            <h1 className="text-4xl font-semibold leading-tight tracking-[-0.045em] text-black md:text-6xl">
+            <h1 className="text-4xl font-bold leading-tight tracking-[-0.045em] text-foreground md:text-6xl">
               {headline}
             </h1>
           </motion.div>
@@ -60,13 +60,13 @@ export default function BlogHero({ title, headline, description, tags }: BlogHer
             transition={{ duration: 0.65, delay: 0.16, ease: "easeOut" }}
           >
             <div className="mt-5 h-px w-28 bg-[linear-gradient(90deg,#38ac06_0%,#224bc3_100%)]" />
-            <p className="mt-6 max-w-3xl text-lg leading-8 text-black/72 md:text-xl">
+            <p className="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground md:text-xl">
               {description}
             </p>
           </motion.div>
 
           <motion.div
-            className="mt-8 flex flex-wrap justify-center gap-3 text-sm text-black/72 md:justify-start"
+            className="mt-8 flex flex-wrap justify-center gap-3 text-sm font-medium text-muted-foreground md:justify-start"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

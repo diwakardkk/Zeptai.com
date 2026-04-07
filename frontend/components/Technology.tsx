@@ -73,7 +73,7 @@ export default function Technology() {
 
           <div className="mt-3 flex justify-center">
             <motion.div
-              className="relative w-full max-w-md rounded-2xl border border-[#224bc3]/30 bg-gradient-to-br from-white to-[#224bc3]/[0.08] px-4 py-3.5 text-center"
+              className="relative w-full max-w-md rounded-2xl border border-[#224bc3]/30 bg-gradient-to-br from-card to-[#224bc3]/[0.08] px-4 py-3.5 text-center"
               animate={{
                 boxShadow: [
                   "0 0 0 rgba(34,75,195,0.18)",
@@ -120,7 +120,7 @@ export default function Technology() {
                     return (
                       <div
                         key={chip.label}
-                        className="rounded-xl border border-border bg-[#fffffa] px-3 py-2 text-xs text-muted-foreground"
+                        className="rounded-xl border border-border bg-card/92 px-3 py-2 text-xs text-muted-foreground"
                       >
                         <p className="inline-flex items-center gap-2 font-medium">
                           <Icon className="h-3.5 w-3.5 text-[#2f8f07]" />
@@ -143,7 +143,7 @@ export default function Technology() {
                     return (
                       <div
                         key={chip.label}
-                        className="rounded-xl border border-border bg-[#fffffa] px-3 py-2 text-xs text-muted-foreground"
+                        className="rounded-xl border border-border bg-card/92 px-3 py-2 text-xs text-muted-foreground"
                       >
                         <p className="inline-flex items-center gap-2 font-medium">
                           <Icon className="h-3.5 w-3.5 text-[#224bc3]" />

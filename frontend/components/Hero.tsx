@@ -30,7 +30,7 @@ export default function Hero() {
           transition={{ duration: 0.55 }}
           className="text-center lg:text-left"
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/25 bg-white/90 px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[#224bc3]">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/25 bg-card/90 px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[#224bc3]">
             <motion.span
               className="h-2 w-2 rounded-full bg-[#38ac06]"
               animate={{ scale: [1, 1.18, 1], opacity: [0.55, 1, 0.55] }}

@@ -69,22 +69,22 @@ export default function AboutPageContent() {
           transition={{ duration: 0.45 }}
           className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-stretch"
         >
-          <article className="rounded-[2rem] border border-black/10 bg-[#fffffa]/88 p-7 shadow-[0_28px_68px_-46px_rgba(0,0,0,0.65)] backdrop-blur-sm sm:p-9">
-            <p className="inline-flex rounded-full border border-[#224bc3]/25 bg-white/80 px-4 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]">
+          <article className="rounded-[2rem] border border-border bg-card/90 p-7 shadow-[0_28px_68px_-46px_rgba(0,0,0,0.65)] backdrop-blur-sm sm:p-9">
+            <p className="inline-flex rounded-full border border-[#224bc3]/25 bg-card/90 px-4 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]">
               About ZeptAI
             </p>
 
-            <h1 className="mt-5 max-w-3xl text-3xl font-extrabold tracking-tight text-black sm:text-4xl lg:text-5xl lg:leading-[1.08]">
+            <h1 className="mt-5 max-w-3xl text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl lg:text-5xl lg:leading-[1.08]">
               Research-driven healthcare AI designed for real clinical workflows
             </h1>
 
-            <p className="mt-5 max-w-2xl text-base leading-8 text-black/70 md:text-lg">
+            <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground md:text-lg">
               ZeptAI develops healthcare AI systems grounded in research and real clinical needs. We
               translate evidence-based innovation into voice-driven patient intake, structured
               summaries, and scalable APIs that fit seamlessly into healthcare workflows.
             </p>
 
-            <p className="mt-4 max-w-2xl text-base leading-8 text-black/65">
+            <p className="mt-4 max-w-2xl text-base leading-8 text-muted-foreground">
               From research to real-world impact, our focus is building AI that is reliable,
               explainable, and clinically usable.
             </p>
@@ -93,7 +93,7 @@ export default function AboutPageContent() {
               {valueStrip.map((item) => (
                 <span
                   key={item}
-                  className="rounded-full border border-black/10 bg-white px-3.5 py-1.5 text-xs font-semibold text-black/70"
+                  className="rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-foreground/80"
                 >
                   {item}
                 </span>
@@ -109,18 +109,18 @@ export default function AboutPageContent() {
               </Link>
               <Link
                 href="/#demo"
-                className="inline-flex items-center justify-center rounded-full border border-black/15 bg-white px-6 py-3 text-sm font-semibold text-black/75 transition hover:bg-white/80"
+                className="inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground/85 transition hover:bg-muted"
               >
                 Try Product Demo
               </Link>
             </div>
           </article>
 
-          <article className="rounded-[2rem] border border-[#224bc3]/20 bg-gradient-to-br from-white/92 via-[#fffffa]/94 to-[#224bc3]/[0.08] p-7 shadow-[0_34px_72px_-50px_rgba(34,75,195,0.8)] sm:p-8">
+          <article className="rounded-[2rem] border border-[#224bc3]/20 bg-gradient-to-br from-card/92 via-background/94 to-[#224bc3]/[0.08] p-7 shadow-[0_34px_72px_-50px_rgba(34,75,195,0.8)] sm:p-8">
             <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]/80">
               Product Credibility
             </p>
-            <h2 className="mt-2 text-2xl font-bold tracking-tight text-black">
+            <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground">
               Evidence-led systems, operationally aligned
             </h2>
 
@@ -132,10 +132,10 @@ export default function AboutPageContent() {
               ].map((item) => (
                 <div
                   key={item}
-                  className="flex items-start gap-2.5 rounded-2xl border border-black/10 bg-white/85 px-4 py-3"
+                  className="flex items-start gap-2.5 rounded-2xl border border-border bg-card/90 px-4 py-3"
                 >
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#38ac06]" />
-                  <p className="text-sm leading-6 text-black/70">{item}</p>
+                  <p className="text-sm leading-6 text-muted-foreground">{item}</p>
                 </div>
               ))}
             </div>
@@ -144,11 +144,11 @@ export default function AboutPageContent() {
               {[
                 { label: "Reliability", tone: "text-[#224bc3]" },
                 { label: "Explainability", tone: "text-[#38ac06]" },
-                { label: "Usability", tone: "text-black" },
+                { label: "Usability", tone: "text-foreground" },
               ].map((signal) => (
                 <div
                   key={signal.label}
-                  className="rounded-2xl border border-black/10 bg-white/85 px-3 py-3 text-center"
+                  className="rounded-2xl border border-border bg-card/90 px-3 py-3 text-center"
                 >
                   <p className={`text-sm font-semibold ${signal.tone}`}>{signal.label}</p>
                 </div>
@@ -169,13 +169,13 @@ export default function AboutPageContent() {
             return (
               <article
                 key={item.title}
-                className="rounded-3xl border border-black/10 bg-[#fffffa]/88 p-6 shadow-[0_24px_48px_-40px_rgba(0,0,0,0.65)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-[#224bc3]/25"
+                className="rounded-3xl border border-border bg-card/90 p-6 shadow-[0_24px_48px_-40px_rgba(0,0,0,0.65)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-[#224bc3]/25"
               >
                 <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#38ac06]/20 to-[#224bc3]/20 text-[#224bc3]">
                   <Icon className="h-5 w-5" />
                 </div>
-                <h3 className="mt-4 text-xl font-semibold tracking-tight text-black">{item.title}</h3>
-                <p className="mt-2 text-sm leading-7 text-black/65">{item.description}</p>
+                <h3 className="mt-4 text-xl font-semibold tracking-tight text-foreground">{item.title}</h3>
+                <p className="mt-2 text-sm leading-7 text-muted-foreground">{item.description}</p>
               </article>
             );
           })}
@@ -186,7 +186,7 @@ export default function AboutPageContent() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.45 }}
-          className="rounded-[2rem] border border-black/10 bg-gradient-to-r from-[#fffffa]/95 via-white/90 to-[#fffffa]/95 p-7 shadow-[0_28px_62px_-44px_rgba(0,0,0,0.6)] sm:p-8"
+          className="rounded-[2rem] border border-border bg-gradient-to-r from-card/95 via-card/90 to-background/95 p-7 shadow-[0_28px_62px_-44px_rgba(0,0,0,0.6)] sm:p-8"
         >
           <div className="grid gap-4 md:grid-cols-3">
             {trustSignals.map((signal) => {
@@ -194,13 +194,13 @@ export default function AboutPageContent() {
               return (
                 <article
                   key={signal.title}
-                  className="rounded-2xl border border-black/10 bg-white/85 p-5"
+                  className="rounded-2xl border border-border bg-card/90 p-5"
                 >
                   <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#224bc3]/10 text-[#224bc3]">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <h3 className="mt-3 text-lg font-semibold text-black">{signal.title}</h3>
-                  <p className="mt-1.5 text-sm leading-6 text-black/65">{signal.description}</p>
+                  <h3 className="mt-3 text-lg font-semibold text-foreground">{signal.title}</h3>
+                  <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{signal.description}</p>
                 </article>
               );
             })}
