@@ -9,28 +9,26 @@ const pillars = [
     description: "ZeptAI minimizes data collection and captures only the information required for clinical intake workflows.",
     icon: ShieldCheck,
     accent: "text-[#2f8f07]",
-    tone: "border-[#38ac06]/25 bg-[#38ac06]/10",
   },
   {
     title: "Data Handling & Storage",
-    description: "Data is processed through structured pipelines and stored using secure cloud infrastructure with controlled access and retention practices.",
+    description:
+      "Data is processed through structured pipelines and stored using secure cloud infrastructure with controlled access and retention practices.",
     icon: Database,
     accent: "text-[#224bc3]",
-    tone: "border-[#224bc3]/25 bg-[#224bc3]/10",
   },
   {
     title: "Encryption & Access Control",
     description: "Data is protected using encrypted transmission (HTTPS/TLS) and controlled through role-based access mechanisms.",
     icon: LockKeyhole,
     accent: "text-[#224bc3]",
-    tone: "border-[#224bc3]/25 bg-[#224bc3]/10",
   },
   {
     title: "Designed for Compliance",
-    description: "ZeptAI is designed to align with healthcare data protection standards and supports integration into compliance-driven environments.",
+    description:
+      "ZeptAI is designed to align with healthcare data protection standards and supports integration into compliance-driven environments.",
     icon: FileCheck2,
     accent: "text-[#2f8f07]",
-    tone: "border-[#38ac06]/25 bg-[#38ac06]/10",
   },
 ];
 
@@ -50,11 +48,9 @@ export default function SecurityPrivacy() {
                 🔒 Security & Privacy
               </p>
               <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Security & Privacy</h2>
-              <p className="mt-1.5 text-sm text-muted-foreground md:text-base">
-                Built with healthcare data protection principles
-              </p>
+              <p className="mt-1.5 text-sm text-muted-foreground md:text-base">Built with healthcare data protection principles</p>
 
-              <div className="mt-3 rounded-2xl border border-border bg-background/85 px-3.5 py-3">
+              <div className="mt-3 px-0.5 py-0.5">
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-foreground">🏥 Trust Signals</p>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <span className="rounded-full border border-[#224bc3]/25 bg-[#224bc3]/10 px-2.5 py-1 text-[11px] font-semibold text-[#224bc3]">
@@ -77,12 +73,10 @@ export default function SecurityPrivacy() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.3, delay: idx * 0.04 }}
-                    whileHover={{ y: -2 }}
-                    className="rounded-xl border border-border bg-background/90 p-3"
+                    whileHover={{ y: -1 }}
+                    className="p-0.5"
                   >
-                    <div className={`inline-flex items-center justify-center rounded-lg border p-1.5 ${item.tone}`}>
-                      <Icon className={`h-3.5 w-3.5 ${item.accent}`} />
-                    </div>
+                    <Icon className={`h-3.5 w-3.5 ${item.accent}`} />
                     <h3 className="mt-2 text-sm font-semibold leading-5 text-foreground">{item.title}</h3>
                     <p className="mt-1 text-xs leading-5 text-muted-foreground">{item.description}</p>
                   </motion.article>
@@ -91,7 +85,7 @@ export default function SecurityPrivacy() {
             </div>
           </div>
 
-          <div className="mt-3 rounded-xl border border-border bg-background/80 px-3.5 py-3">
+          <div className="mt-3 px-0.5 py-0.5">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-foreground">📌 Transparency Note</p>
             <p className="mt-1.5 text-xs leading-5 text-muted-foreground md:text-sm">
               Healthcare compliance requirements vary across regions and use cases.
