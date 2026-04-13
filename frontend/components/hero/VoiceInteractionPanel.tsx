@@ -216,9 +216,15 @@ export default function VoiceInteractionPanel() {
       try {
         stopSpeaking();
         const utterance = new SpeechSynthesisUtterance(cleanText);
-        utterance.lang = "en-US";
-        utterance.rate = 1;
-        utterance.pitch = 1;
+
+        // Keep voice output unmodified by using browser defaults.
+        const defaultVoice = window.speechSynthesis
+          .getVoices()
+          .find((voice) => voice.default);
+        if (defaultVoice) {
+          utterance.voice = defaultVoice;
+        }
+
         utterance.onend = () => resolve();
         utterance.onerror = () => resolve();
         window.speechSynthesis.speak(utterance);
