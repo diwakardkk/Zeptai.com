@@ -37,15 +37,38 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    {
+      url: `${siteConfig.url}/privacy-policy`,
+      lastModified: currentDate,
+      changeFrequency: "yearly",
+      priority: 0.6,
+    },
+    {
+      url: `${siteConfig.url}/terms`,
+      lastModified: currentDate,
+      changeFrequency: "yearly",
+      priority: 0.6,
+    },
   ];
+
+  const seenBlogUrls = new Set<string>();
+  const blogRoutes: MetadataRoute.Sitemap = [];
+
+  for (const post of blogPosts) {
+    const url = `${siteConfig.url}/blog/${post.slug}`;
+    if (seenBlogUrls.has(url)) continue;
+    seenBlogUrls.add(url);
+
+    blogRoutes.push({
+      url,
+      lastModified: new Date(post.updatedAt ?? post.date),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    });
+  }
 
   return [
     ...staticRoutes,
-    ...blogPosts.map((post) => ({
-      url: `${siteConfig.url}/blog/${post.slug}`,
-      lastModified: new Date(post.updatedAt ?? post.date),
-      changeFrequency: "monthly" as const,
-      priority: 0.8,
-    })),
+    ...blogRoutes,
   ];
 }

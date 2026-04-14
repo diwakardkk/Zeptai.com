@@ -12,7 +12,6 @@ export const siteConfig = {
     "patient intake AI",
     "clinical summaries AI",
     "voice AI healthcare",
-    "",
     "conversational AI healthcare",
   ],
 } as const;

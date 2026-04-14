@@ -9,6 +9,20 @@ export async function getAllPosts(): Promise<BlogPost[]> {
     .sort();
 
   const posts = await Promise.all(files.map((file) => parsePostFile(file)));
-  return posts.sort((a, b) => +new Date(b.date) - +new Date(a.date));
-}
+  const sortedPosts = posts.sort((a, b) => +new Date(b.date) - +new Date(a.date));
 
+  const seenSlugs = new Set<string>();
+  const uniquePosts: BlogPost[] = [];
+
+  for (const post of sortedPosts) {
+    const normalizedSlug = post.slug.trim().toLowerCase();
+    if (seenSlugs.has(normalizedSlug)) {
+      console.warn(`[blog] Duplicate slug "${post.slug}" skipped in getAllPosts().`);
+      continue;
+    }
+    seenSlugs.add(normalizedSlug);
+    uniquePosts.push(post);
+  }
+
+  return uniquePosts;
+}

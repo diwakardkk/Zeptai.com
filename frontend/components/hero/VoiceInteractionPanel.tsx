@@ -156,9 +156,19 @@ function getRecognitionCtor() {
   return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
 }
 
+function stripQuestionLabels(text: string) {
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.replace(/^\s*q\d+\s*[:.)-]?\s*/i, ""))
+    .filter((line) => line.trim().length > 0)
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 function mergeBotText(responseText: string, nextQuestionText: string) {
-  const response = (responseText || "").trim();
-  const next = (nextQuestionText || "").trim();
+  const response = stripQuestionLabels(responseText || "");
+  const next = stripQuestionLabels(nextQuestionText || "");
 
   if (!next) return response;
   if (!response) return next;
@@ -303,9 +313,16 @@ export default function VoiceInteractionPanel() {
     if (!cleanText) return;
 
     try {
+      setError(null);
       await speakWithElevenLabs(cleanText);
       return;
-    } catch {
+    } catch (err: unknown) {
+      const fallbackReason = err instanceof Error ? err.message.toLowerCase() : "";
+      if (fallbackReason.includes("quota_exceeded")) {
+        setError("ElevenLabs quota exceeded. Falling back to browser voice.");
+      } else {
+        setError("ElevenLabs unavailable right now. Falling back to browser voice.");
+      }
       await speakWithBrowser(cleanText);
     }
   }, [speakWithBrowser, speakWithElevenLabs]);
@@ -398,7 +415,7 @@ export default function VoiceInteractionPanel() {
     const data = await parseJsonOrThrow(r);
     const cid = String(data.conversation_id ?? "");
     if (!cid) throw new Error("Missing conversation_id from API.");
-    const greeting = typeof data.greeting === "string" ? data.greeting.trim() : "";
+    const greeting = typeof data.greeting === "string" ? stripQuestionLabels(data.greeting) : "";
 
     setConversationId(cid);
     return { base, cid, greeting };
