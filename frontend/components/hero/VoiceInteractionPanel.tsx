@@ -142,23 +142,14 @@ function getRecognitionCtor() {
   return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
 }
 
-function stripQuestionIds(text: string) {
-  return text
-    .split(/\r?\n/)
-    .filter((line) => !/^q\d+\s*$/i.test(line.trim()))
-    .join("\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
-
 function mergeBotText(responseText: string, nextQuestionText: string) {
-  const cleanResponse = stripQuestionIds(responseText || "");
-  const cleanNext = stripQuestionIds(nextQuestionText || "");
+  const response = (responseText || "").trim();
+  const next = (nextQuestionText || "").trim();
 
-  if (!cleanNext) return cleanResponse;
-  if (!cleanResponse) return cleanNext;
-  if (cleanResponse === cleanNext) return cleanResponse;
-  return `${cleanResponse}\n\n${cleanNext}`;
+  if (!next) return response;
+  if (!response) return next;
+  if (response === next) return response;
+  return `${response}\n\n${next}`;
 }
 
 export default function VoiceInteractionPanel() {
@@ -217,14 +208,6 @@ export default function VoiceInteractionPanel() {
         stopSpeaking();
         const utterance = new SpeechSynthesisUtterance(cleanText);
 
-        // Keep voice output unmodified by using browser defaults.
-        const defaultVoice = window.speechSynthesis
-          .getVoices()
-          .find((voice) => voice.default);
-        if (defaultVoice) {
-          utterance.voice = defaultVoice;
-        }
-
         utterance.onend = () => resolve();
         utterance.onerror = () => resolve();
         window.speechSynthesis.speak(utterance);
@@ -257,7 +240,7 @@ export default function VoiceInteractionPanel() {
     const data = await parseJsonOrThrow(r);
     const cid = String(data.conversation_id ?? "");
     if (!cid) throw new Error("Missing conversation_id from API.");
-    const greeting = typeof data.greeting === "string" ? stripQuestionIds(data.greeting) : "";
+    const greeting = typeof data.greeting === "string" ? data.greeting.trim() : "";
 
     setConversationId(cid);
     return { base, cid, greeting };
