@@ -89,6 +89,38 @@ service cloud.firestore {
       allow read, update, delete: if false;
     }
 
+    match /demo_feedback_submissions/{documentId} {
+      allow create: if
+        onlyKeys(
+          request.resource.data,
+          ["name", "email", "feedback", "sourcePage", "conversationId", "status", "createdAt"]
+        ) &&
+        isString(request.resource.data.name) &&
+        request.resource.data.name.size() >= 2 &&
+        request.resource.data.name.size() <= 120 &&
+        isString(request.resource.data.email) &&
+        request.resource.data.email.size() >= 5 &&
+        request.resource.data.email.size() <= 320 &&
+        isString(request.resource.data.feedback) &&
+        request.resource.data.feedback.size() >= 10 &&
+        request.resource.data.feedback.size() <= 1000 &&
+        isString(request.resource.data.sourcePage) &&
+        request.resource.data.sourcePage.size() > 0 &&
+        request.resource.data.sourcePage.size() <= 120 &&
+        (
+          request.resource.data.conversationId == null ||
+          (
+            isString(request.resource.data.conversationId) &&
+            request.resource.data.conversationId.size() > 0 &&
+            request.resource.data.conversationId.size() <= 200
+          )
+        ) &&
+        request.resource.data.status == "new" &&
+        request.resource.data.createdAt is timestamp;
+
+      allow read, update, delete: if false;
+    }
+
     // Deny everything else by default.
     match /{document=**} {
       allow read, write: if false;

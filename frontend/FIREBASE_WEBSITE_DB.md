@@ -8,6 +8,7 @@ This website uses Firestore for website forms and engagement data.
 - Contact form submissions: Firestore `contact_submissions`
 - Blog comments: Firestore `blog_comments`
 - Blog lead capture: Firestore `blog_leads`
+- Demo report feedback: Firestore `demo_feedback_submissions`
 
 Do not move blog article content to Firestore in this setup.
 
@@ -67,6 +68,24 @@ Schema:
   "email": "string",
   "mobile": "string",
   "sourcePage": "string",
+  "createdAt": "timestamp"
+}
+```
+
+### `demo_feedback_submissions`
+
+Written by:
+- `frontend/app/api/feedback/route.ts`
+
+Schema:
+```json
+{
+  "name": "string",
+  "email": "string",
+  "feedback": "string",
+  "sourcePage": "string",
+  "conversationId": "string | null",
+  "status": "new",
   "createdAt": "timestamp"
 }
 ```
@@ -161,6 +180,11 @@ If blog comment submission fails with `Unable to submit comment. Please try agai
 2. Confirm `FIREBASE_ADMIN_PRIVATE_KEY` keeps newlines (or use `FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON`).
 3. Confirm Firestore database is created in the same Firebase project id.
 4. Redeploy after updating env variables.
+
+If demo feedback submission fails and you are using fallback mode without Admin credentials:
+
+1. Confirm all `NEXT_PUBLIC_FIREBASE_*` variables are set in Netlify.
+2. Deploy the latest `frontend/firebase/firestore.rules` so `demo_feedback_submissions` create is allowed.
 
 ## Apply rules and indexes (optional but recommended)
 

@@ -37,7 +37,7 @@ export default function Footer() {
         </div>
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} ZeptAI. All rights reserved.
+            &copy; {new Date().getFullYear()} ZEPTA FOCUSAI TECHNOLOGY PRIVATE LIMITED. All rights reserved.
           </p>
           <div className="flex space-x-6 text-sm text-muted-foreground">
             Healthcare AI Research and Enterprise AI Platform

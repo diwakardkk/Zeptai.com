@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, AudioLines, FileText } from "lucide-react";
@@ -86,6 +87,10 @@ const STATE_META: Record<
 
 const ENV_API_BASE = process.env.NEXT_PUBLIC_NURSE_API_BASE;
 const BARS = Array.from({ length: 20 }, (_, i) => i);
+const MAX_CONVERSATION_MS = 5 * 60 * 1000;
+const LISTENING_IDLE_TIMEOUT_MS = 90 * 1000;
+const API_RESPONSE_TIMEOUT_MS = 45 * 1000;
+const REPORT_RESPONSE_TIMEOUT_MS = 60 * 1000;
 
 function getApiCandidates() {
   const candidates: string[] = [];
@@ -176,21 +181,40 @@ function mergeBotText(responseText: string, nextQuestionText: string) {
   return `${response}\n\n${next}`;
 }
 
+function formatTimeLeft(ms: number) {
+  const safeMs = Math.max(0, ms);
+  const totalSeconds = Math.ceil(safeMs / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
 export default function VoiceInteractionPanel() {
   const [state, setState] = useState<VoiceState>("idle");
   const [showReport, setShowReport] = useState(false);
   const [report, setReport] = useState<ReportPayload | null>(null);
   const [apiBase, setApiBase] = useState<string | null>(null);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [sessionEndsAt, setSessionEndsAt] = useState<number | null>(null);
+  const [timeLeftLabel, setTimeLeftLabel] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [connectionLabel, setConnectionLabel] = useState("Not connected");
+  const [feedbackName, setFeedbackName] = useState("");
+  const [feedbackEmail, setFeedbackEmail] = useState("");
+  const [feedbackText, setFeedbackText] = useState("");
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+  const [feedbackMessageType, setFeedbackMessageType] = useState<"success" | "error" | null>(null);
 
   const timerRef = useRef<number[]>([]);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const transcriptRef = useRef("");
+  const listeningIdleTimerRef = useRef<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUrlRef = useRef<string | null>(null);
   const shouldProcessOnEndRef = useRef(true);
+  const autoReportTriggeredRef = useRef(false);
+  const generateReportRef = useRef<() => Promise<void>>(async () => {});
   const runAssistantTurnRef = useRef<(userText: string) => Promise<void>>(async () => {});
 
   const meta = STATE_META[state];
@@ -202,13 +226,21 @@ export default function VoiceInteractionPanel() {
     timerRef.current = [];
   }, []);
 
+  const clearListeningIdleTimer = useCallback(() => {
+    if (listeningIdleTimerRef.current !== null) {
+      window.clearTimeout(listeningIdleTimerRef.current);
+      listeningIdleTimerRef.current = null;
+    }
+  }, []);
+
   const stopListening = useCallback((processOnEnd = false) => {
+    clearListeningIdleTimer();
     shouldProcessOnEndRef.current = processOnEnd;
     if (recognitionRef.current) {
       recognitionRef.current.stop();
       recognitionRef.current = null;
     }
-  }, []);
+  }, [clearListeningIdleTimer]);
 
   const stopSpeaking = useCallback(() => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -226,6 +258,27 @@ export default function VoiceInteractionPanel() {
       audioUrlRef.current = null;
     }
   }, []);
+
+  const fetchWithTimeout = useCallback(
+    async (url: string, init: RequestInit, timeoutMs = API_RESPONSE_TIMEOUT_MS) => {
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+      try {
+        return await fetch(url, { ...init, signal: controller.signal });
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          throw new Error(
+            "No response received for a while. Conversation was paused for privacy and safety.",
+          );
+        }
+        throw error;
+      } finally {
+        window.clearTimeout(timeoutId);
+      }
+    },
+    [],
+  );
 
   const speakWithBrowser = useCallback((cleanText: string) => {
     return new Promise<void>((resolve) => {
@@ -341,6 +394,20 @@ export default function VoiceInteractionPanel() {
     setState("listening");
     setError(null);
 
+    const armListeningIdleTimer = () => {
+      clearListeningIdleTimer();
+      listeningIdleTimerRef.current = window.setTimeout(() => {
+        stopListening(false);
+        setState("ready");
+        setConnectionLabel("Session paused");
+        setError(
+          "No response detected for 90 seconds. Listening stopped to protect privacy. Restart when ready.",
+        );
+      }, LISTENING_IDLE_TIMEOUT_MS);
+    };
+
+    armListeningIdleTimer();
+
     const recognition = new Ctor();
     recognition.continuous = false;
     recognition.interimResults = true;
@@ -357,7 +424,10 @@ export default function VoiceInteractionPanel() {
       }
 
       const clean = transcript.trim();
-      if (clean) transcriptRef.current = clean;
+      if (clean) {
+        transcriptRef.current = clean;
+        armListeningIdleTimer();
+      }
     };
 
     recognition.onerror = (event: any) => {
@@ -368,6 +438,7 @@ export default function VoiceInteractionPanel() {
     };
 
     recognition.onend = () => {
+      clearListeningIdleTimer();
       recognitionRef.current = null;
 
       if (!shouldProcessOnEndRef.current) {
@@ -390,7 +461,7 @@ export default function VoiceInteractionPanel() {
 
     recognitionRef.current = recognition;
     recognition.start();
-  }, [stopListening]);
+  }, [clearListeningIdleTimer, stopListening]);
 
   useEffect(() => {
     return () => {
@@ -400,6 +471,25 @@ export default function VoiceInteractionPanel() {
     };
   }, [clearTimers, stopListening, stopSpeaking]);
 
+  useEffect(() => {
+    if (!sessionEndsAt) {
+      setTimeLeftLabel(null);
+      return;
+    }
+
+    const updateTimeLeft = () => {
+      const remainingMs = sessionEndsAt - Date.now();
+      setTimeLeftLabel(formatTimeLeft(remainingMs));
+    };
+
+    updateTimeLeft();
+    const intervalId = window.setInterval(updateTimeLeft, 1000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [sessionEndsAt]);
+
   const ensureConversation = useCallback(async () => {
     if (apiBase && conversationId) return { base: apiBase, cid: conversationId, greeting: "" };
 
@@ -407,7 +497,7 @@ export default function VoiceInteractionPanel() {
     setApiBase(base);
     setConnectionLabel("Connected");
 
-    const r = await fetch(`${base}/chat/start`, {
+    const r = await fetchWithTimeout(`${base}/chat/start`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ language: "en", voice_mode: false }),
@@ -419,7 +509,7 @@ export default function VoiceInteractionPanel() {
 
     setConversationId(cid);
     return { base, cid, greeting };
-  }, [apiBase, conversationId]);
+  }, [apiBase, conversationId, fetchWithTimeout]);
 
   const runAssistantTurn = useCallback(
     async (userText: string) => {
@@ -429,34 +519,43 @@ export default function VoiceInteractionPanel() {
         return;
       }
 
-      const { base, cid } = await ensureConversation();
-      setState("processing");
+      try {
+        const { base, cid } = await ensureConversation();
+        setState("processing");
 
-      const r = await fetch(`${base}/chat/message`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-conversation-id": cid,
-        },
-        body: JSON.stringify({ conversation_id: cid, message: text }),
-      });
-      const data = await parseJsonOrThrow(r);
-      const reply = String(data.response ?? "I could not generate a response.");
-      const nextQuestion =
-        data.next_question && typeof data.next_question === "string" ? data.next_question.trim() : "";
-      const spokenText = mergeBotText(reply, nextQuestion);
+        const r = await fetchWithTimeout(`${base}/chat/message`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-conversation-id": cid,
+          },
+          body: JSON.stringify({ conversation_id: cid, message: text }),
+        });
+        const data = await parseJsonOrThrow(r);
+        const reply = String(data.response ?? "I could not generate a response.");
+        const nextQuestion =
+          data.next_question && typeof data.next_question === "string" ? data.next_question.trim() : "";
+        const spokenText = mergeBotText(reply, nextQuestion);
 
-      setState("speaking");
-      await speakAssistant(spokenText);
-      setState("ready");
+        setState("speaking");
+        await speakAssistant(spokenText);
+        setState("ready");
 
-      timerRef.current.push(
-        window.setTimeout(() => {
-          listenForPatient();
-        }, 220),
-      );
+        if (autoReportTriggeredRef.current) return;
+
+        timerRef.current.push(
+          window.setTimeout(() => {
+            listenForPatient();
+          }, 220),
+        );
+      } catch (err: unknown) {
+        stopListening(false);
+        setState("ready");
+        setConnectionLabel("Session paused");
+        setError(err instanceof Error ? err.message : "Conversation paused. No response received.");
+      }
     },
-    [ensureConversation, listenForPatient, speakAssistant],
+    [ensureConversation, fetchWithTimeout, listenForPatient, speakAssistant, stopListening],
   );
 
   useEffect(() => {
@@ -469,19 +568,41 @@ export default function VoiceInteractionPanel() {
     clearTimers();
     stopListening(false);
     stopSpeaking();
+    setSessionEndsAt(null);
+    setTimeLeftLabel(null);
     setShowReport(false);
     setReport(null);
     setError(null);
+    setFeedbackName("");
+    setFeedbackEmail("");
+    setFeedbackText("");
+    setFeedbackMessage(null);
+    setFeedbackMessageType(null);
     setConnectionLabel("Connecting...");
 
     try {
       const { greeting } = await ensureConversation();
       setConnectionLabel("Connected");
+      autoReportTriggeredRef.current = false;
+      const deadline = Date.now() + MAX_CONVERSATION_MS;
+      setSessionEndsAt(deadline);
+      setTimeLeftLabel(formatTimeLeft(MAX_CONVERSATION_MS));
 
       if (greeting) {
         setState("speaking");
         await speakAssistant(greeting);
       }
+
+      timerRef.current.push(
+        window.setTimeout(() => {
+          if (autoReportTriggeredRef.current) return;
+          autoReportTriggeredRef.current = true;
+          setConnectionLabel("Time limit reached");
+          setSessionEndsAt(null);
+          setTimeLeftLabel(null);
+          void generateReportRef.current();
+        }, MAX_CONVERSATION_MS),
+      );
 
       listenForPatient();
     } catch (err: unknown) {
@@ -495,18 +616,25 @@ export default function VoiceInteractionPanel() {
     clearTimers();
     stopListening(false);
     stopSpeaking();
+    setSessionEndsAt(null);
+    setTimeLeftLabel(null);
     setError(null);
+    autoReportTriggeredRef.current = true;
 
     try {
       const { base, cid } = await ensureConversation();
       setState("reporting");
 
-      const r = await fetch(`${base}/report/full/${cid}`, {
+      const r = await fetchWithTimeout(
+        `${base}/report/full/${cid}`,
+        {
         method: "GET",
         headers: {
           "x-conversation-id": cid,
         },
-      });
+        },
+        REPORT_RESPONSE_TIMEOUT_MS,
+      );
       const data = (await parseJsonOrThrow(r)) as unknown as ReportPayload;
       setReport(data);
 
@@ -520,7 +648,55 @@ export default function VoiceInteractionPanel() {
       setState("ready");
       setError(err instanceof Error ? err.message : "Unable to generate report.");
     }
-  }, [clearTimers, ensureConversation, stopListening, stopSpeaking]);
+  }, [clearTimers, ensureConversation, fetchWithTimeout, stopListening, stopSpeaking]);
+
+  useEffect(() => {
+    generateReportRef.current = generateReport;
+  }, [generateReport]);
+
+  const submitFeedback = useCallback(async () => {
+    if (feedbackSubmitting) return;
+
+    const name = feedbackName.trim();
+    const email = feedbackEmail.trim().toLowerCase();
+    const feedback = feedbackText.trim();
+
+    if (!name || !email || !feedback) {
+      setFeedbackMessageType("error");
+      setFeedbackMessage("Name, email, and feedback are required.");
+      return;
+    }
+
+    try {
+      setFeedbackSubmitting(true);
+      setFeedbackMessage(null);
+      setFeedbackMessageType(null);
+
+      const response = await fetch("/api/feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          feedback,
+          conversationId,
+          sourcePage: "home_demo_report",
+        }),
+      });
+
+      await parseJsonOrThrow(response);
+      setFeedbackMessageType("success");
+      setFeedbackMessage("Thanks. Your feedback was saved.");
+      setFeedbackText("");
+    } catch (err: unknown) {
+      setFeedbackMessageType("error");
+      setFeedbackMessage(err instanceof Error ? err.message : "Unable to save feedback right now.");
+    } finally {
+      setFeedbackSubmitting(false);
+    }
+  }, [conversationId, feedbackEmail, feedbackName, feedbackSubmitting, feedbackText]);
 
   const waveConfig = useMemo(() => {
     if (state === "listening") return { base: 26, variance: 16, duration: 0.62, ease: "easeInOut" as const };
@@ -638,6 +814,11 @@ export default function VoiceInteractionPanel() {
             {meta.label}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">{meta.helper}</p>
+          {timeLeftLabel && !showReport && (
+            <p className="mt-1 text-xs font-medium text-muted-foreground">
+              Time left: {timeLeftLabel}
+            </p>
+          )}
 
           <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
             <button
@@ -681,11 +862,21 @@ export default function VoiceInteractionPanel() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="mt-4 max-h-[320px] overflow-y-auto rounded-xl border border-border bg-background p-3"
+              className="mt-4 max-h-[320px] overflow-y-auto rounded-xl border border-[#224bc3]/20 bg-[linear-gradient(180deg,rgba(34,75,195,0.06),rgba(56,172,6,0.05))] p-3"
             >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#224bc3]">
-                Structured Clinical Summary
-              </p>
+              <div className="rounded-lg border border-[#224bc3]/25 bg-[linear-gradient(115deg,rgba(34,75,195,0.2),rgba(56,172,6,0.16))] p-2.5 shadow-[0_8px_26px_-20px_rgba(34,75,195,0.55)]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#224bc3]">
+                  Structured Clinical Summary
+                </p>
+                <p className="mt-1 text-[10px] leading-4 text-foreground/90">
+                  Demo only. This preview is not medical advice. For production onboarding,{" "}
+                  <Link href="/contact" className="font-semibold text-[#224bc3] underline underline-offset-2">
+                    contact our team
+                  </Link>
+                  .
+                </p>
+              </div>
+
               <div className="mt-2.5 space-y-1.5">
                 {[
                   report?.summary?.chief_complaint ? 92 : 72,
@@ -695,7 +886,7 @@ export default function VoiceInteractionPanel() {
                 ].map((width, idx) => (
                   <motion.div
                     key={`${width}-${idx}`}
-                    className="h-2 rounded-full bg-[linear-gradient(90deg,rgba(56,172,6,0.3),rgba(34,75,195,0.28))]"
+                    className="h-2 rounded-full bg-[linear-gradient(90deg,rgba(56,172,6,0.58),rgba(34,75,195,0.52))]"
                     initial={{ width: 0, opacity: 0 }}
                     animate={{ width: `${width}%`, opacity: 1 }}
                     transition={{ duration: 0.35, delay: idx * 0.1, ease: "easeOut" }}
@@ -704,38 +895,40 @@ export default function VoiceInteractionPanel() {
               </div>
 
               <div className="mt-3 space-y-2">
-                <div className="rounded-lg border border-border bg-card/70 p-2">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-muted-foreground">
-                    Chief Complaint
-                  </p>
-                  <p className="mt-1 text-[11px] leading-4 text-foreground/85">{reportChiefComplaint}</p>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <div className="rounded-lg border border-[#224bc3]/20 bg-background/85 p-2">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-[#224bc3]/85">
+                      Chief Complaint
+                    </p>
+                    <p className="mt-1 text-[11px] leading-4 text-foreground">{reportChiefComplaint}</p>
+                  </div>
+
+                  <div className="rounded-lg border border-[#38ac06]/20 bg-background/85 p-2">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-[#2f8f07]/90">
+                      Duration
+                    </p>
+                    <p className="mt-1 text-[11px] leading-4 text-foreground">{reportDuration}</p>
+                  </div>
                 </div>
 
-                <div className="rounded-lg border border-border bg-card/70 p-2">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-muted-foreground">
-                    Duration
-                  </p>
-                  <p className="mt-1 text-[11px] leading-4 text-foreground/85">{reportDuration}</p>
-                </div>
-
-                <div className="rounded-lg border border-border bg-card/70 p-2">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-muted-foreground">
+                <div className="rounded-lg border border-[#38ac06]/28 bg-background/90 p-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-[#2f8f07]/90">
                     Summary
                   </p>
-                  <p className="mt-1 max-h-16 overflow-y-auto pr-1 text-[11px] leading-4 text-foreground/85">
+                  <p className="mt-1 max-h-16 overflow-y-auto pr-1 text-[11px] leading-4 text-foreground/95">
                     {reportSummary}
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-border bg-card/70 p-2">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-muted-foreground">
+                <div className="rounded-lg border border-[#224bc3]/28 bg-background/90 p-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-[#224bc3]/90">
                     Key Findings
                   </p>
                   {keyFindings.length > 0 ? (
-                    <ul className="mt-1 space-y-1 text-[11px] leading-4 text-foreground/85">
+                    <ul className="mt-1 space-y-1 text-[11px] leading-4 text-foreground/95">
                       {keyFindings.map((finding, idx) => (
                         <li key={`${finding}-${idx}`} className="flex items-start gap-1.5">
-                          <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-[#224bc3]" />
+                          <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-[#38ac06]" />
                           <span>{finding}</span>
                         </li>
                       ))}
@@ -748,22 +941,87 @@ export default function VoiceInteractionPanel() {
                 {(turnsCompleted !== null || totalTurns !== null || report?.generated_at) && (
                   <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground">
                     {turnsCompleted !== null && (
-                      <span className="rounded-full border border-border bg-card/80 px-2 py-0.5">
+                      <span className="rounded-full border border-[#38ac06]/30 bg-[#38ac06]/10 px-2 py-0.5 text-[#2f8f07]">
                         Questions: {turnsCompleted}
                       </span>
                     )}
                     {totalTurns !== null && (
-                      <span className="rounded-full border border-border bg-card/80 px-2 py-0.5">
+                      <span className="rounded-full border border-[#224bc3]/30 bg-[#224bc3]/10 px-2 py-0.5 text-[#224bc3]">
                         Turns: {totalTurns}
                       </span>
                     )}
                     {report?.generated_at && (
-                      <span className="rounded-full border border-border bg-card/80 px-2 py-0.5">
+                      <span className="rounded-full border border-border bg-background/85 px-2 py-0.5 text-foreground/80">
                         {new Date(report.generated_at).toLocaleTimeString()}
                       </span>
                     )}
                   </div>
                 )}
+
+                <div className="rounded-lg border border-[#224bc3]/25 bg-[linear-gradient(120deg,rgba(34,75,195,0.1),rgba(56,172,6,0.08))] p-2.5">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-[#224bc3]">
+                    Quick Feedback
+                  </p>
+                  <p className="mt-1 text-[10px] leading-4 text-muted-foreground">
+                    Share your demo experience. We use this only to improve product quality.
+                  </p>
+
+                  <form
+                    className="mt-2 space-y-2"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      void submitFeedback();
+                    }}
+                  >
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      <input
+                        type="text"
+                        value={feedbackName}
+                        onChange={(event) => setFeedbackName(event.target.value)}
+                        maxLength={120}
+                        placeholder="Name"
+                        className="h-8 rounded-md border border-border bg-background px-2 text-[11px] text-foreground outline-none transition placeholder:text-muted-foreground focus:border-[#224bc3]/45 focus:ring-2 focus:ring-[#224bc3]/20"
+                      />
+                      <input
+                        type="email"
+                        value={feedbackEmail}
+                        onChange={(event) => setFeedbackEmail(event.target.value)}
+                        maxLength={160}
+                        placeholder="Email"
+                        className="h-8 rounded-md border border-border bg-background px-2 text-[11px] text-foreground outline-none transition placeholder:text-muted-foreground focus:border-[#224bc3]/45 focus:ring-2 focus:ring-[#224bc3]/20"
+                      />
+                    </div>
+
+                    <textarea
+                      value={feedbackText}
+                      onChange={(event) => setFeedbackText(event.target.value)}
+                      maxLength={1000}
+                      placeholder="Your feedback"
+                      className="min-h-[62px] w-full resize-none rounded-md border border-border bg-background px-2 py-1.5 text-[11px] text-foreground outline-none transition placeholder:text-muted-foreground focus:border-[#224bc3]/45 focus:ring-2 focus:ring-[#224bc3]/20"
+                    />
+
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[10px] text-muted-foreground">Name, email, and feedback are required.</p>
+                      <button
+                        type="submit"
+                        disabled={feedbackSubmitting}
+                        className="inline-flex h-7 items-center rounded-full bg-[linear-gradient(95deg,#38ac06,#224bc3)] px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {feedbackSubmitting ? "Saving..." : "Send"}
+                      </button>
+                    </div>
+                  </form>
+
+                  {feedbackMessage && (
+                    <p
+                      className={`mt-2 text-[10px] ${
+                        feedbackMessageType === "success" ? "text-[#2f8f07]" : "text-destructive"
+                      }`}
+                    >
+                      {feedbackMessage}
+                    </p>
+                  )}
+                </div>
               </div>
             </motion.div>
           )}
