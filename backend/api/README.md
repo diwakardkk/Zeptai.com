@@ -31,7 +31,7 @@ API base: /api/v1/...
 5. Deploy.
 
 After deploy, use this in website env:
-`NEXT_PUBLIC_NURSE_API_BASE=https://<your-api-project>.vercel.app/api/v1`
+`NEXT_PUBLIC_NURSE_API_BASE=https://mybot-6idh.onrender.com`
 
 Health check URL:
 `https://<your-api-project>.vercel.app/api/v1/health`

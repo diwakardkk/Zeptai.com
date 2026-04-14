@@ -18,6 +18,9 @@ cp .env.example .env.local
 ```
 
 Required variables:
+- `NEXT_PUBLIC_NURSE_API_BASE` (Render backend base, example: `https://YOUR-RENDER-API/api/v1`)
+- `ELEVENLABS_API_KEY` (server-side key for voice output in demo)
+- `ELEVENLABS_VOICE_ID` (voice id for demo TTS)
 - `RAZORPAY_KEY_ID`
 - `RAZORPAY_KEY_SECRET`
 - `RAZORPAY_WEBHOOK_SECRET`
