@@ -95,17 +95,20 @@ const REPORT_RESPONSE_TIMEOUT_MS = 60 * 1000;
 function getApiCandidates() {
   const candidates: string[] = [];
 
-  if (ENV_API_BASE?.trim()) {
-    candidates.push(ENV_API_BASE.trim());
-  }
-
-  if (!ENV_API_BASE && typeof window !== "undefined") {
+  if (typeof window !== "undefined") {
     const host = window.location.hostname;
     const isLocalHost = host === "localhost" || host === "127.0.0.1";
 
     if (isLocalHost) {
       candidates.push("http://127.0.0.1:8000/api/v1", "http://127.0.0.1:8001/api/v1");
+    } else {
+      // Prefer same-origin proxy in production to avoid CORS/network flakiness.
+      candidates.push('/api/nurse-proxy');
     }
+  }
+
+  if (ENV_API_BASE?.trim()) {
+    candidates.push(ENV_API_BASE.trim());
   }
 
   return Array.from(new Set(candidates)).map((base) => base.replace(/\/$/, ""));
@@ -115,23 +118,21 @@ async function resolveApiBase() {
   const candidates = getApiCandidates();
 
   if (!candidates.length) {
-    throw new Error(
-      "API base is not configured. Set NEXT_PUBLIC_NURSE_API_BASE in frontend/.env.local (example: https://YOUR-RENDER-API/api/v1).",
-    );
+    throw new Error("Conversation service is not configured. Please try again later.");
   }
 
   for (const base of candidates) {
     try {
       const health = await fetch(`${base}/health`, { method: "GET" });
       if (health.ok) return base;
-    } catch {
-      // Try next.
+    } catch (e) {
+      // Try next candidate on transient errors.
+      // eslint-disable-next-line no-console
+      console.debug('health check failed for', base, e);
     }
   }
 
-  throw new Error(
-    "Unable to connect to conversation API. Verify NEXT_PUBLIC_NURSE_API_BASE points to your live mybot Render endpoint.",
-  );
+  throw new Error("Conversation service is temporarily unavailable. Please try again later.");
 }
 
 async function parseJsonOrThrow(r: Response) {
@@ -268,9 +269,7 @@ export default function VoiceInteractionPanel() {
         return await fetch(url, { ...init, signal: controller.signal });
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") {
-          throw new Error(
-            "No response received for a while. Conversation was paused for privacy and safety.",
-          );
+          throw new Error("Request timed out. Please try again.");
         }
         throw error;
       } finally {
@@ -552,7 +551,8 @@ export default function VoiceInteractionPanel() {
         stopListening(false);
         setState("ready");
         setConnectionLabel("Session paused");
-        setError(err instanceof Error ? err.message : "Conversation paused. No response received.");
+        console.error(err);
+        setError("Service temporarily unavailable. Please try again.");
       }
     },
     [ensureConversation, fetchWithTimeout, listenForPatient, speakAssistant, stopListening],
@@ -608,7 +608,8 @@ export default function VoiceInteractionPanel() {
     } catch (err: unknown) {
       setState("idle");
       setConnectionLabel("Connection error");
-      setError(err instanceof Error ? err.message : "Unable to start conversation.");
+      console.error(err);
+      setError("Service temporarily unavailable. Please try again.");
     }
   }, [clearTimers, ensureConversation, isRunning, listenForPatient, speakAssistant, stopListening, stopSpeaking]);
 
@@ -646,7 +647,8 @@ export default function VoiceInteractionPanel() {
       );
     } catch (err: unknown) {
       setState("ready");
-      setError(err instanceof Error ? err.message : "Unable to generate report.");
+      console.error(err);
+      setError("Unable to generate report right now. Please try again later.");
     }
   }, [clearTimers, ensureConversation, fetchWithTimeout, stopListening, stopSpeaking]);
 
@@ -869,7 +871,7 @@ export default function VoiceInteractionPanel() {
                   Structured Clinical Summary
                 </p>
                 <p className="mt-1 text-[10px] leading-4 text-foreground/90">
-                  Demo only. This preview is not medical advice. For production onboarding,{" "}
+                  Demo only. This preview is not medical advice. For detailed demo including patient vitals, history and production onboarding,{" "}
                   <Link href="/contact" className="font-semibold text-[#224bc3] underline underline-offset-2">
                     contact our team
                   </Link>

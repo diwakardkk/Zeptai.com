@@ -56,7 +56,7 @@ declare global {
 const ENV_API_BASE = process.env.NEXT_PUBLIC_NURSE_API_BASE;
 
 function getApiCandidates() {
-  const candidates = [ENV_API_BASE].filter((v): v is string => Boolean(v));
+  const candidates = [] as string[];
 
   if (typeof window !== "undefined") {
     const host = window.location.hostname;
@@ -64,12 +64,17 @@ function getApiCandidates() {
 
     if (isLocalHost) {
       candidates.push("http://127.0.0.1:8000/api/v1", "http://127.0.0.1:8001/api/v1");
+    } else {
+      // Prefer same-origin server proxy for stability in production.
+      candidates.push('/api/nurse-proxy');
     }
 
     if (host === "zeptai.com" || host.endsWith(".zeptai.com")) {
       candidates.push("https://api.zeptai.com/api/v1");
     }
   }
+
+  if (ENV_API_BASE) candidates.push(ENV_API_BASE);
 
   return Array.from(new Set(candidates)).map((base) => base.replace(/\/$/, ""));
 }
@@ -84,13 +89,13 @@ async function resolveApiBase() {
         return base;
       }
     } catch {
-      // Try next candidate.
+      // Try next candidate on transient failure.
+      // eslint-disable-next-line no-console
+      console.debug('health check failed for', base);
     }
   }
 
-  throw new Error(
-    "Unable to connect to API. Start backend: cd backend/api && uvicorn app.main:app --host 0.0.0.0 --port 8000",
-  );
+  throw new Error("Conversation service is temporarily unavailable. Please try again later.");
 }
 
 async function parseJsonOrThrow(r: Response) {
@@ -206,7 +211,8 @@ export default function NurseChat() {
 
         setMessages((m) => [...m, { from: "bot", text: combined || "I could not generate a response." }]);
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : "Failed to send message");
+          console.error(err);
+          setError("Service temporarily unavailable. Please try again.");
       } finally {
         setLoading(false);
       }
