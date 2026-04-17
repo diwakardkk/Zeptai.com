@@ -87,6 +87,14 @@ function recognitionLanguage(language: CompanionLanguage) {
   return "en-IN";
 }
 
+function mapCompanionStartupError(error: unknown) {
+  const message = error instanceof Error ? error.message : "Unable to start the companion right now.";
+  if (message === "Not Found") {
+    return "The companion service is not available on the current backend deployment yet. Please deploy the latest backend and try again.";
+  }
+  return message;
+}
+
 export function useCompanionDoctor(initialMode: CompanionMode) {
   const [mode, setMode] = useState<CompanionMode>(initialMode);
   const [status, setStatus] = useState<CompanionStatus>("idle");
@@ -284,6 +292,10 @@ export function useCompanionDoctor(initialMode: CompanionMode) {
       setSessionId(response.session_id);
       sessionIdRef.current = response.session_id;
       return response.session_id;
+    } catch (startupError) {
+      setError(mapCompanionStartupError(startupError));
+      setStatus("idle");
+      return null;
     } finally {
       setIsInitializing(false);
     }
