@@ -10,6 +10,13 @@ import {
 
 const CLIENT_COOKIE = "companion_client_id";
 
+function normalizePathSegments(path: string[]) {
+  if (path[0] === "companion") {
+    return path.slice(1);
+  }
+  return path;
+}
+
 function withClientCookie(response: NextResponse, clientId: string, shouldSetCookie: boolean) {
   response.headers.set("Cache-Control", "no-store");
   if (shouldSetCookie) {
@@ -27,7 +34,7 @@ function withClientCookie(response: NextResponse, clientId: string, shouldSetCoo
 }
 
 export async function POST(request: NextRequest, { params }: { params: { path?: string[] } }) {
-  const path = params?.path || [];
+  const path = normalizePathSegments(params?.path || []);
   const clientId = request.cookies.get(CLIENT_COOKIE)?.value || crypto.randomUUID();
   const shouldSetCookie = !request.cookies.get(CLIENT_COOKIE)?.value;
 
