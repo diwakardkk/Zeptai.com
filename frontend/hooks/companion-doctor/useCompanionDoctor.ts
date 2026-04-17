@@ -90,7 +90,10 @@ function recognitionLanguage(language: CompanionLanguage) {
 function mapCompanionStartupError(error: unknown) {
   const message = error instanceof Error ? error.message : "Unable to start the companion right now.";
   if (message === "Not Found") {
-    return "The companion service is not available on the current backend deployment yet. Please deploy the latest backend and try again.";
+    return "The companion service route is not available on the current deployment yet. Please redeploy the latest site build and try again.";
+  }
+  if (message === "Failed to fetch" || message === "Load failed") {
+    return "The companion service could not be reached from the live site. Check that the latest Netlify deployment is live and that server environment variables are configured.";
   }
   return message;
 }
