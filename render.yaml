@@ -1,0 +1,62 @@
+services:
+  - type: web
+    name: zeptai-backend-api
+    runtime: python
+    rootDir: backend/api
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    disk:
+      name: zeptai-backend-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.11
+      - key: DATABASE_URL
+        value: sqlite:////var/data/nurse_bot.db
+      - key: VECTOR_STORE_PATH
+        value: /var/data/vectorstore
+      - key: AUDIO_STORE_PATH
+        value: /var/data/audio
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_CHAT_MODEL
+        value: gpt-4o
+      - key: OPENAI_EMBEDDING_MODEL
+        value: text-embedding-3-small
+      - key: OPENAI_TTS_MODEL
+        value: tts-1
+      - key: OPENAI_TTS_VOICE
+        value: alloy
+      - key: OPENAI_STT_MODEL
+        value: whisper-1
+      - key: STT_BACKEND
+        value: openai
+      - key: TTS_BACKEND
+        value: openai
+      - key: SOURCE_JSON_PATH
+        value: ./data/source_json/hospital_knowledge.json
+      - key: SEED_QUESTIONS_PATH
+        value: ./data/seed_questions.json
+      - key: COMPANION_ENABLED
+        value: "true"
+      - key: COMPANION_SESSION_TTL_SECONDS
+        value: "900"
+      - key: COMPANION_MAX_TURNS
+        value: "10"
+      - key: COMPANION_MAX_INPUT_CHARS
+        value: "1500"
+      - key: COMPANION_RAG_TOP_K
+        value: "3"
+      - key: COMPANION_DEFAULT_LANGUAGE
+        value: auto
+      - key: COMPANION_TTS_BACKEND
+        value: openai
+      - key: COMPANION_TTS_VOICE
+        value: alloy
+      - key: COMPANION_ENABLE_LLM_POLISH
+        value: "false"
+      - key: COMPANION_CHAT_TEMPERATURE
+        value: "0.55"
