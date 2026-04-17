@@ -1,0 +1,26 @@
+{
+  "headache": {
+    "keywords": ["headache", "sir dard", "migraine"],
+    "focus": "Ask about duration, severity, sudden vs gradual onset, sleep, hydration, screen exposure, nausea, and light sensitivity."
+  },
+  "stress": {
+    "keywords": ["stress", "tension", "panic", "anxiety"],
+    "focus": "Ask about workload, sleep, appetite, racing thoughts, body tension, and support system."
+  },
+  "fever": {
+    "keywords": ["fever", "bukhar", "temperature"],
+    "focus": "Ask about duration, measured temperature, body ache, cough, breathing issues, and hydration."
+  },
+  "sadness": {
+    "keywords": ["sad", "low", "frustrated", "udasi"],
+    "focus": "Ask about duration, sleep, appetite, support system, and safety without sounding interrogative."
+  },
+  "fatigue": {
+    "keywords": ["tired", "fatigue", "thakan", "weak"],
+    "focus": "Ask about sleep, hydration, appetite, recent stress, duration, and whether it affects daily tasks."
+  },
+  "breathing": {
+    "keywords": ["breathing", "saans", "breathless"],
+    "focus": "Check urgency first, then ask about severity, exertion, chest symptoms, fever, and escalation needs."
+  }
+}

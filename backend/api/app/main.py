@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse
 
 from app.core.config import settings
 from app.core.logging import setup_logging, get_logger
-from app.api.routes import chat, stt, tts, sessions, admin, report
+from app.api.routes import chat, stt, tts, sessions, admin, report, companion_chat, companion_voice
 from app.rag.ingest_json import load_knowledge_json
 from app.rag.chunker import chunk_documents
 from app.rag.vectorstore import build_vectorstore, load_vectorstore
@@ -69,6 +69,8 @@ app.include_router(tts.router,      prefix=settings.api_v1_str)
 app.include_router(sessions.router, prefix=settings.api_v1_str)
 app.include_router(admin.router,    prefix=settings.api_v1_str)
 app.include_router(report.router,   prefix=settings.api_v1_str)
+app.include_router(companion_chat.router, prefix=settings.api_v1_str)
+app.include_router(companion_voice.router, prefix=settings.api_v1_str)
 
 
 @app.get("/health")

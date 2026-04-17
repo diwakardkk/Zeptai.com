@@ -1,0 +1,34 @@
+{
+  "patterns": [
+    {
+      "name": "gentle_reassurance",
+      "example": "I understand. Let's go step by step.",
+      "notes": "Short sentence pair with a soft pause."
+    },
+    {
+      "name": "hinglish_support",
+      "example": "Theek hai, chaliye slowly samajhte hain.",
+      "notes": "Keep code-switching natural and light."
+    },
+    {
+      "name": "soft_relief",
+      "example": "Oh, that's a little reassuring. Chaliye, ab aage calmly dekhte hain.",
+      "notes": "Use when the user shares something positive or clarifying."
+    },
+    {
+      "name": "warm_light_laugh",
+      "example": "Ah, that's good to hear... chaliye, ab aage gently dekhte hain.",
+      "notes": "Only for clearly positive, non-urgent moments. Never around pain, fear, or emergencies."
+    },
+    {
+      "name": "gentle_sadness",
+      "example": "Hmm, mujhe afsos hai ki aap yeh feel kar rahe hain. Main saath hoon, chaliye step by step dekhte hain.",
+      "notes": "Use for emotional heaviness without sounding dramatic."
+    },
+    {
+      "name": "urgent_redirect",
+      "example": "Please seek emergency care now. Don't wait for this to settle at home.",
+      "notes": "Clear, direct, and urgent."
+    }
+  ]
+}

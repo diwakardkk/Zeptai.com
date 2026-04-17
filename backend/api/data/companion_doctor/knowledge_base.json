@@ -1,0 +1,76 @@
+{
+  "documents": [
+    {
+      "id": "wellness_triage_general",
+      "title": "General Wellness Triage",
+      "category": "triage",
+      "lang": "en",
+      "source": "internal_companion_guidance",
+      "content": "For non-emergency wellness conversations, gather only a small amount of context at a time: symptom duration, severity, recent sleep, hydration, stress, appetite, and whether the issue is getting worse. Stay gentle. Avoid diagnosis claims."
+    },
+    {
+      "id": "sleep_stress_support",
+      "title": "Sleep and Stress Basics",
+      "category": "self_care",
+      "lang": "en",
+      "source": "internal_companion_guidance",
+      "content": "For stress, anxiety, and fatigue, supportive guidance can include hydration, brief rest, reducing screen strain, light meals, gentle breathing, and follow-up with a clinician when symptoms persist, worsen, or affect daily functioning."
+    },
+    {
+      "id": "headache_guidance",
+      "title": "Headache Follow-up",
+      "category": "symptom_support",
+      "lang": "en",
+      "source": "internal_companion_guidance",
+      "content": "For headache support, ask about sudden versus gradual onset, duration, hydration, sleep, screen exposure, fever, nausea, and light sensitivity. Urgent escalation is needed if there are stroke-like signs, confusion, fainting, or severe sudden pain."
+    },
+    {
+      "id": "fever_guidance",
+      "title": "Fever Support",
+      "category": "symptom_support",
+      "lang": "en",
+      "source": "internal_companion_guidance",
+      "content": "For fever guidance, ask about measured temperature, duration, body ache, cough, breathing issues, weakness, and hydration. Encourage urgent evaluation when there is breathing distress, dehydration, confusion, or severe weakness."
+    },
+    {
+      "id": "emotional_support_en",
+      "title": "Emotional Support Language",
+      "category": "mental_health_support",
+      "lang": "en",
+      "source": "internal_companion_guidance",
+      "content": "When a user sounds overwhelmed, reflect briefly first. Phrases such as 'That sounds exhausting' or 'Let's go step by step' can help. Ask about sleep, appetite, duration, support system, and immediate safety."
+    },
+    {
+      "id": "bilingual_reassurance_hi",
+      "title": "Hindi Reassurance Phrases",
+      "category": "bilingual_support",
+      "lang": "hi",
+      "source": "internal_companion_guidance",
+      "content": "Hindi ya Hinglish mein calm support dene ke liye chhote, natural phrases use karein: 'Main samajh raha hoon', 'Chaliye step by step dekhte hain', 'Aap araam se batayiye'. Bahut zyada formal ya robotic language se bachiye."
+    },
+    {
+      "id": "bilingual_symptom_support_hi",
+      "title": "Hindi Symptom Support",
+      "category": "bilingual_support",
+      "lang": "hi",
+      "source": "internal_companion_guidance",
+      "content": "Sir dard, bukhar, thakan, stress ya neend ki dikkat mein ek saath bahut saare sawal na poochhein. Pehle duration aur severity samjhein, phir sleep, hydration, stress, ya breathing issue par focused follow-up karein."
+    },
+    {
+      "id": "red_flags_global",
+      "title": "Emergency Red Flags",
+      "category": "emergency",
+      "lang": "en",
+      "source": "internal_companion_guidance",
+      "content": "Emergency red flags include chest pain with pressure or tightness, stroke warning signs, breathing distress, seizure, uncontrolled bleeding, severe pregnancy-related pain or bleeding, unconsciousness, and suicidal intent. These require immediate emergency care and should end casual conversation mode."
+    },
+    {
+      "id": "follow_up_scope",
+      "title": "Focused Follow-up Guidance",
+      "category": "conversation",
+      "lang": "en",
+      "source": "internal_companion_guidance",
+      "content": "Ask one or two follow-up questions per turn. Prioritize the user's main concern. Keep continuity with prior answers. Avoid repeating profile questions after the opening unless still missing and clearly useful."
+    }
+  ]
+}

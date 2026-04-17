@@ -89,6 +89,17 @@ class DBIntakeSummary(Base):
     saved_at         = Column(DateTime, default=datetime.utcnow)
 
 
+class DBCompanionUsage(Base):
+    __tablename__ = "companion_usage"
+    client_id_hash    = Column(String, primary_key=True)
+    turns_used        = Column(Integer, default=0)
+    credit_balance    = Column(Integer, default=0)
+    demo_locked       = Column(Boolean, default=False)
+    first_seen_at     = Column(DateTime, default=datetime.utcnow)
+    last_seen_at      = Column(DateTime, default=datetime.utcnow)
+    locked_at         = Column(DateTime, nullable=True)
+
+
 def init_db():
     Base.metadata.create_all(bind=engine, checkfirst=True)
 

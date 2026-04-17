@@ -1,0 +1,24 @@
+{
+  "en": [
+    "I understand.",
+    "That sounds tiring.",
+    "Let's go step by step.",
+    "I'm glad you shared that."
+  ],
+  "hi": [
+    "Main samajh rahi hoon.",
+    "Yeh kaafi thakane wala lag raha hai.",
+    "Chaliye step by step dekhte hain.",
+    "Aapne yeh share kiya, yeh achha kiya.",
+    "Achha, main samajh rahi hoon.",
+    "Oh, yeh thoda heavy lag raha hai."
+  ],
+  "mixed": [
+    "I understand.",
+    "Yeh kaafi tiring lag raha hai.",
+    "Chaliye step by step dekhte hain.",
+    "I'm glad aapne yeh share kiya.",
+    "Hmm, main samajh rahi hoon.",
+    "Achha, that's helpful to know."
+  ]
+}

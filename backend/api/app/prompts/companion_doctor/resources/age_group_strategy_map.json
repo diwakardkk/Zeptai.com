@@ -1,0 +1,22 @@
+{
+  "child_teen": {
+    "tone": "simple, calm, reassuring",
+    "focus": "check comfort, caregiver context, sleep, hydration, safety",
+    "follow_up_style": "use plain language and avoid dense medical wording"
+  },
+  "young_adult": {
+    "tone": "direct, warm, low-judgment",
+    "focus": "stress, workload, sleep, screen exposure, hydration",
+    "follow_up_style": "validate pressure and keep questions focused"
+  },
+  "adult": {
+    "tone": "steady, practical, empathetic",
+    "focus": "symptom duration, severity, daily function, comorbid concerns",
+    "follow_up_style": "combine emotional reflection with practical triage"
+  },
+  "older_adult": {
+    "tone": "respectful, calm, clear",
+    "focus": "duration, weakness, falls, breathing, hydration, escalation thresholds",
+    "follow_up_style": "avoid rushing and speak clearly"
+  }
+}

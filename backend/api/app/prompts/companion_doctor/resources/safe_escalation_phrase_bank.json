@@ -1,0 +1,32 @@
+{
+  "generic": {
+    "en": "I'm concerned this could be urgent. Please seek emergency care now or contact your local emergency number immediately.",
+    "hi": "Mujhe chinta hai ki yeh urgent ho sakta hai. Kripya turant emergency care lijiye ya apne local emergency number par abhi call kijiye.",
+    "mixed": "I'm concerned this may be urgent. Please turant emergency care lijiye ya local emergency number par abhi call kijiye."
+  },
+  "self_harm": {
+    "en": "Your safety matters right now. Please contact emergency services immediately and reach out to a trusted person who can stay with you right now.",
+    "hi": "Aapki safety is waqt sabse zaroori hai. Kripya turant emergency services se sampark kijiye aur kisi trusted vyakti ko abhi apne paas bulaiye.",
+    "mixed": "Your safety matters right now. Please emergency help lijiye immediately, and kisi trusted person ko abhi apne paas rakhiye."
+  },
+  "chest_pain": {
+    "en": "Severe chest pain can be an emergency. Please get urgent in-person medical care now or call emergency services immediately.",
+    "hi": "Severe chest pain emergency ho sakta hai. Kripya abhi turant hospital jaiye ya emergency services ko call kijiye.",
+    "mixed": "Severe chest pain emergency ho sakta hai. Please abhi urgent in-person care lijiye ya emergency services ko call kijiye."
+  },
+  "stroke": {
+    "en": "Possible stroke signs need emergency care now. Please call emergency services immediately and do not wait.",
+    "hi": "Stroke ke signs emergency care maangte hain. Kripya abhi emergency services ko call kijiye aur bilkul wait mat kijiye.",
+    "mixed": "Possible stroke signs need emergency care now. Please abhi emergency services ko call kijiye, wait mat kijiye."
+  },
+  "breathing_distress": {
+    "en": "Trouble breathing can be urgent. Please seek emergency medical help now.",
+    "hi": "Saans lene mein dikkat urgent ho sakti hai. Kripya abhi emergency medical help lijiye.",
+    "mixed": "Breathing trouble urgent ho sakta hai. Please abhi emergency medical help lijiye."
+  },
+  "pregnancy_acute_risk": {
+    "en": "Because this may be an urgent pregnancy-related problem, please seek emergency care now.",
+    "hi": "Yeh pregnancy se juda urgent risk ho sakta hai. Kripya abhi emergency care lijiye.",
+    "mixed": "This may be an urgent pregnancy-related issue. Please abhi emergency care lijiye."
+  }
+}
