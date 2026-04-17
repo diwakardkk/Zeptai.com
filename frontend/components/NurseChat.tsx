@@ -46,12 +46,10 @@ type SpeechRecognitionCtor = new () => SpeechRecognitionInstance;
 
 type AssistantState = "idle" | "bot_speaking" | "listening" | "processing" | "report_ready";
 
-declare global {
-  interface Window {
-    SpeechRecognition?: SpeechRecognitionCtor;
-    webkitSpeechRecognition?: SpeechRecognitionCtor;
-  }
-}
+type BrowserSpeechWindow = Window & {
+  SpeechRecognition?: SpeechRecognitionCtor;
+  webkitSpeechRecognition?: SpeechRecognitionCtor;
+};
 
 const ENV_API_BASE = process.env.NEXT_PUBLIC_NURSE_API_BASE;
 
@@ -77,6 +75,10 @@ function getApiCandidates() {
   if (ENV_API_BASE) candidates.push(ENV_API_BASE);
 
   return Array.from(new Set(candidates)).map((base) => base.replace(/\/$/, ""));
+}
+
+function getBrowserSpeechWindow() {
+  return window as BrowserSpeechWindow;
 }
 
 async function resolveApiBase() {
@@ -140,7 +142,8 @@ function mergeBotText(responseText: string, nextQuestionText: string) {
 }
 
 function getRecognitionCtor() {
-  return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
+  const speechWindow = getBrowserSpeechWindow();
+  return speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition ?? null;
 }
 
 export default function NurseChat() {

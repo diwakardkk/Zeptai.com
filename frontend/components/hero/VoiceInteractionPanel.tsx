@@ -36,12 +36,10 @@ type SpeechRecognitionInstance = {
 
 type SpeechRecognitionCtor = new () => SpeechRecognitionInstance;
 
-declare global {
-  interface Window {
-    SpeechRecognition?: SpeechRecognitionCtor;
-    webkitSpeechRecognition?: SpeechRecognitionCtor;
-  }
-}
+type BrowserSpeechWindow = Window & {
+  SpeechRecognition?: SpeechRecognitionCtor;
+  webkitSpeechRecognition?: SpeechRecognitionCtor;
+};
 
 const STATE_META: Record<
   VoiceState,
@@ -91,6 +89,10 @@ const MAX_CONVERSATION_MS = 5 * 60 * 1000;
 const LISTENING_IDLE_TIMEOUT_MS = 90 * 1000;
 const API_RESPONSE_TIMEOUT_MS = 45 * 1000;
 const REPORT_RESPONSE_TIMEOUT_MS = 60 * 1000;
+
+function getBrowserSpeechWindow() {
+  return window as BrowserSpeechWindow;
+}
 
 function getApiCandidates() {
   const candidates: string[] = [];
@@ -159,7 +161,8 @@ async function parseJsonOrThrow(r: Response) {
 }
 
 function getRecognitionCtor() {
-  return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
+  const speechWindow = getBrowserSpeechWindow();
+  return speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition ?? null;
 }
 
 function stripQuestionLabels(text: string) {

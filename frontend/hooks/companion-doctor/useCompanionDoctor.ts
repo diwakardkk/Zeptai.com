@@ -37,13 +37,11 @@ type SpeechRecognitionEventLike = {
   }>;
 };
 
-declare global {
-  interface Window {
-    SpeechRecognition?: SpeechRecognitionCtor;
-    webkitSpeechRecognition?: SpeechRecognitionCtor;
-    webkitAudioContext?: typeof AudioContext;
-  }
-}
+type BrowserVoiceWindow = Window & {
+  SpeechRecognition?: SpeechRecognitionCtor;
+  webkitSpeechRecognition?: SpeechRecognitionCtor;
+  webkitAudioContext?: typeof AudioContext;
+};
 
 const AUDIO_THRESHOLD = 0.035;
 const SILENCE_WINDOW_MS = 520;
@@ -68,9 +66,14 @@ function createConversationItem(role: "assistant" | "user", text: string, langua
   };
 }
 
+function getBrowserVoiceWindow() {
+  return window as BrowserVoiceWindow;
+}
+
 function getSpeechRecognitionCtor() {
   if (typeof window === "undefined") return null;
-  return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
+  const browserWindow = getBrowserVoiceWindow();
+  return browserWindow.SpeechRecognition ?? browserWindow.webkitSpeechRecognition ?? null;
 }
 
 function getRecordingMimeType() {
@@ -574,7 +577,8 @@ export function useCompanionDoctor(initialMode: CompanionMode) {
 
       analyser.getByteTimeDomainData(buffer);
       let sum = 0;
-      for (const value of buffer) {
+      for (let index = 0; index < buffer.length; index += 1) {
+        const value = buffer[index];
         const normalized = (value - 128) / 128;
         sum += normalized * normalized;
       }
@@ -623,7 +627,8 @@ export function useCompanionDoctor(initialMode: CompanionMode) {
       });
       mediaStreamRef.current = stream;
 
-      const AudioContextCtor = window.AudioContext ?? window.webkitAudioContext;
+      const browserWindow = getBrowserVoiceWindow();
+      const AudioContextCtor = window.AudioContext ?? browserWindow.webkitAudioContext;
       const audioContext = new AudioContextCtor();
       const source = audioContext.createMediaStreamSource(stream);
       const analyser = audioContext.createAnalyser();
