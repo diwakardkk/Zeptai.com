@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, AudioLines, FileText } from "lucide-react";
+import { ArrowRight, AudioLines, FileText, Mic } from "lucide-react";
 
 type VoiceState = "idle" | "listening" | "processing" | "speaking" | "ready" | "reporting";
 
@@ -492,6 +492,19 @@ export default function VoiceInteractionPanel() {
     };
   }, [sessionEndsAt]);
 
+  // Pre-warm API connection on mount — wakes up the Render backend and caches
+  // the resolved base URL so the first "Start Conversation" click is instant.
+  // Errors are swallowed here and surfaced to the user on click.
+  useEffect(() => {
+    resolveApiBase()
+      .then((base) => {
+        setApiBase(base);
+        setConnectionLabel("Ready");
+      })
+      .catch(() => { /* surface on click */ });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const ensureConversation = useCallback(async () => {
     if (apiBase && conversationId) return { base: apiBase, cid: conversationId, greeting: "" };
 
@@ -747,112 +760,83 @@ export default function VoiceInteractionPanel() {
           </span>
         </div>
 
-        <div className="mt-4 flex flex-col items-center">
-          <div className="relative h-40 w-full max-w-[340px]">
-            <motion.div
-              className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full"
-              animate={{
-                scale:
-                  state === "listening"
-                    ? [1, 1.08, 1]
-                    : state === "speaking"
-                    ? [1, 1.05, 1]
-                    : state === "processing"
-                    ? [1, 1.03, 1]
-                    : [1, 1.02, 1],
-                boxShadow: [
-                  `0 0 0 0 ${meta.accent}20`,
-                  `0 0 30px 2px ${meta.accent}55`,
-                  `0 0 0 0 ${meta.accent}20`,
-                ],
-              }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-              style={{ background: `radial-gradient(circle at 35% 30%, #ffffff, ${meta.accent}22)` }}
-            />
+        <div className="mt-5 flex flex-col items-center gap-4">
+          {/* Waveform visualiser — only rendered while session is active */}
+          <AnimatePresence>
+            {isRunning && (
+              <motion.div
+                key="waveform"
+                initial={{ opacity: 0, scaleY: 0.4 }}
+                animate={{ opacity: 1, scaleY: 1 }}
+                exit={{ opacity: 0, scaleY: 0.4 }}
+                transition={{ duration: 0.25 }}
+                className="flex h-12 w-full max-w-[300px] items-end justify-center gap-1"
+              >
+                {BARS.map((bar) => {
+                  const midpoint = Math.abs(10 - bar);
+                  const peak = waveConfig.base + (waveConfig.variance - midpoint);
+                  const resting = Math.max(8, waveConfig.base - midpoint / 2);
+                  return (
+                    <motion.span
+                      key={bar}
+                      className="w-1.5 rounded-full"
+                      style={{ backgroundColor: meta.accent }}
+                      animate={{ height: [resting, peak, resting], opacity: [0.35, 1, 0.35] }}
+                      transition={{
+                        duration: waveConfig.duration + (bar % 4) * 0.07,
+                        repeat: Infinity,
+                        ease: waveConfig.ease,
+                        delay: (bar % 5) * 0.04,
+                      }}
+                    />
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-            <motion.div
-              className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border"
-              animate={{ rotate: state === "processing" || state === "reporting" ? 360 : 0 }}
-              transition={{
-                duration: state === "processing" || state === "reporting" ? 4.8 : 0.4,
-                repeat: state === "processing" || state === "reporting" ? Infinity : 0,
-                ease: "linear",
-              }}
-            />
-
-            <motion.div
-              className="absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border"
-              animate={{
-                scale:
-                  state === "listening" || state === "speaking"
-                    ? [1, 1.08, 1]
-                    : [1, 1.03, 1],
-                opacity: [0.35, 0.85, 0.35],
-              }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-            />
-
-            <div className="absolute inset-x-2 bottom-2 flex h-16 items-end justify-center gap-1.5">
-              {BARS.map((bar) => {
-                const midpoint = Math.abs(10 - bar);
-                const peak = waveConfig.base + (waveConfig.variance - midpoint);
-                const resting = Math.max(8, waveConfig.base - midpoint / 2);
-                return (
-                  <motion.span
-                    key={bar}
-                    className="w-1.5 rounded-full"
-                    style={{ backgroundColor: meta.accent }}
-                    animate={{ height: [resting, peak, resting], opacity: [0.35, 1, 0.35] }}
-                    transition={{
-                      duration: waveConfig.duration + (bar % 4) * 0.07,
-                      repeat: Infinity,
-                      ease: waveConfig.ease,
-                      delay: (bar % 5) * 0.04,
-                    }}
-                  />
-                );
-              })}
-            </div>
-          </div>
-
-          <p className="mt-2 text-xs font-semibold uppercase tracking-[0.13em]" style={{ color: meta.accent }}>
-            {meta.label}
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">{meta.helper}</p>
-          {timeLeftLabel && !showReport && (
-            <p className="mt-1 text-xs font-medium text-muted-foreground">
-              Time left: {timeLeftLabel}
+          {/* Status badge */}
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-xs font-semibold uppercase tracking-[0.13em]" style={{ color: meta.accent }}>
+              {isRunning ? meta.badge : connectionLabel}
             </p>
-          )}
-
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-            <button
-              type="button"
-              onClick={startConversation}
-              disabled={isRunning}
-              className="group inline-flex items-center gap-2 rounded-full bg-[linear-gradient(95deg,#38ac06,#224bc3)] px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-white shadow-[0_14px_34px_-20px_rgba(34,75,195,0.8)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-18px_rgba(34,75,195,0.9)] disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isRunning ? meta.badge : "Start Conversation"}
-              <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
-            </button>
-
-            <AnimatePresence>
-              {(Boolean(conversationId) || showReport || state === "reporting") && (
-                <motion.button
-                  type="button"
-                  onClick={generateReport}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.2 }}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-[#224bc3]/30 bg-[#224bc3]/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-[#224bc3] transition hover:-translate-y-0.5 hover:bg-[#224bc3]/15"
-                >
-                  <FileText className="h-3.5 w-3.5" />
-                  Generate Report
-                </motion.button>
-              )}
-            </AnimatePresence>
+            {timeLeftLabel && !showReport && (
+              <p className="text-xs font-medium text-muted-foreground">
+                Session time left: {timeLeftLabel}
+              </p>
+            )}
           </div>
+
+          {/* Primary CTA — large, clearly visible */}
+          <button
+            type="button"
+            onClick={startConversation}
+            disabled={isRunning}
+            className="group inline-flex w-full max-w-[280px] items-center justify-center gap-2.5 rounded-2xl bg-[linear-gradient(95deg,#38ac06,#224bc3)] px-6 py-4 text-sm font-bold text-white shadow-[0_12px_32px_-14px_rgba(34,75,195,0.85)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-12px_rgba(34,75,195,0.95)] disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-60"
+          >
+            <Mic className="h-4 w-4 shrink-0" />
+            <span>{isRunning ? meta.badge : "Start Conversation"}</span>
+            {!isRunning && (
+              <ArrowRight className="h-4 w-4 shrink-0 transition group-hover:translate-x-0.5" />
+            )}
+          </button>
+
+          <AnimatePresence>
+            {(Boolean(conversationId) || showReport || state === "reporting") && (
+              <motion.button
+                type="button"
+                onClick={generateReport}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#224bc3]/30 bg-[#224bc3]/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-[#224bc3] transition hover:-translate-y-0.5 hover:bg-[#224bc3]/15"
+              >
+                <FileText className="h-3.5 w-3.5" />
+                Generate Report
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
 
         {error && (
