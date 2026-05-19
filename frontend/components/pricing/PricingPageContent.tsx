@@ -92,7 +92,7 @@ export default function PricingPageContent() {
     };
   }, [activeClinicTier.doctors, activeClinicTier.reports, customizePlan]);
 
-  const handlePayNow = async (planId: "clinic" | "enterprise_api") => {
+  const handlePayNow = async (planId: "clinic" | "clinic_basic" | "clinic_pro" | "enterprise_api") => {
     setPaymentError("");
     setPaymentLoading(true);
     try {
@@ -126,27 +126,32 @@ export default function PricingPageContent() {
           razorpay_order_id: string;
           razorpay_signature: string;
         }) => {
-          const verifyRes = await fetch("/api/payments/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              planId,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            }),
-          });
-          const verifyData = (await verifyRes.json()) as {
-            ok?: boolean;
-            redirectUrl?: string;
-            error?: string;
-          };
-          if (!verifyRes.ok || !verifyData.redirectUrl) {
-            setPaymentError(verifyData.error ?? "Payment verification failed. Contact support.");
+          try {
+            const verifyRes = await fetch("/api/payments/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                planId,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            const verifyData = (await verifyRes.json()) as {
+              ok?: boolean;
+              redirectUrl?: string;
+              error?: string;
+            };
+            if (!verifyRes.ok || !verifyData.redirectUrl) {
+              setPaymentError(verifyData.error ?? "Payment verification failed. Contact support.");
+              setPaymentLoading(false);
+              return;
+            }
+            window.location.href = verifyData.redirectUrl;
+          } catch {
+            setPaymentError("Network error during payment verification. Contact support.");
             setPaymentLoading(false);
-            return;
           }
-          window.location.href = verifyData.redirectUrl;
         },
         modal: {
           ondismiss: () => setPaymentLoading(false),
@@ -301,7 +306,7 @@ export default function PricingPageContent() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => void handlePayNow("clinic")}
+                  onClick={() => void handlePayNow(activeTierId === "basic" ? "clinic_basic" : "clinic_pro")}
                   disabled={paymentLoading}
                   className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-[#38ac06] to-[#224bc3] px-5 text-sm font-semibold text-white shadow-[0_14px_30px_-20px_rgba(34,75,195,0.85)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_35px_-18px_rgba(34,75,195,0.85)] disabled:cursor-not-allowed disabled:opacity-60"
                 >
@@ -431,7 +436,11 @@ export default function PricingPageContent() {
         defaultReports={modalDefaults.reports}
         onClose={() => setCustomizePlan(null)}
         onPayNow={({ planName }) => {
-          const planId = planName.toLowerCase().includes("enterprise") ? "enterprise_api" : "clinic";
+          const planId = planName.toLowerCase().includes("enterprise")
+            ? "enterprise_api"
+            : activeTierId === "basic"
+              ? "clinic_basic"
+              : "clinic_pro";
           void handlePayNow(planId);
           setCustomizePlan(null);
         }}

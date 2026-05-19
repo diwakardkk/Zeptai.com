@@ -1,5 +1,5 @@
 export type PricingPlan = {
-  id: "clinic" | "enterprise_api";
+  id: "clinic" | "clinic_basic" | "clinic_pro" | "enterprise_api";
   name: string;
   shortLabel: string;
   audience: string;
@@ -15,6 +15,52 @@ export type PricingPlan = {
 };
 
 export const pricingPlans: PricingPlan[] = [
+  // ── Clinic tiers (match the pricing page UI cards) ────────────────────────
+  {
+    id: "clinic_basic",
+    name: "Clinic Plan — Basic",
+    shortLabel: "For individual clinics",
+    audience: "Single clinics and small care teams",
+    description:
+      "Basic clinic plan: 200 report credits at ₹30/report for a single doctor.",
+    launchPricePerReportInr: 30,
+    standardPricePerReportInr: 30,
+    reportCredits: 200,
+    ctaLabel: "Pay for Clinic Basic",
+    highlight: "200 reports for 1 doctor",
+    deliveryLabel: "Web intake + doctor-ready report view",
+    supportLabel: "Email onboarding support",
+    features: [
+      "200 report credits for patient intake and summary generation",
+      "Voice-led patient intake on the web",
+      "Structured doctor-ready report for each completed case",
+      "Built for direct clinic use without custom integration",
+      "Ideal for consultation prep, screening, and repeat intake flow",
+    ],
+  },
+  {
+    id: "clinic_pro",
+    name: "Clinic Plan — Pro",
+    shortLabel: "For growing clinics",
+    audience: "Growing clinics with multiple doctors",
+    description:
+      "Pro clinic plan: 500 report credits at ₹20/report for up to 2 doctors.",
+    launchPricePerReportInr: 20,
+    standardPricePerReportInr: 20,
+    reportCredits: 500,
+    ctaLabel: "Pay for Clinic Pro",
+    highlight: "500 reports for 2 doctors",
+    deliveryLabel: "Web intake + doctor-ready report view",
+    supportLabel: "Email onboarding support",
+    features: [
+      "500 report credits for patient intake and summary generation",
+      "Voice-led patient intake on the web",
+      "Structured doctor-ready report for each completed case",
+      "Built for direct clinic use without custom integration",
+      "Ideal for high-volume clinics and multi-doctor setups",
+    ],
+  },
+  // ── Legacy single clinic plan (kept for backwards compatibility) ──────────
   {
     id: "clinic",
     name: "Clinic Plan",

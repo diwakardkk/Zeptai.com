@@ -12,9 +12,11 @@
 // - media-src / worker-src blob: required for MediaRecorder audio in companion doctor.
 const cspHeader = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  // checkout.razorpay.com hosts the checkout.js script loaded by the pricing page.
+  "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://images.unsplash.com https://raw.githubusercontent.com",
+  // cdn.razorpay.com serves payment method logos inside the checkout modal.
+  "img-src 'self' data: blob: https://images.unsplash.com https://raw.githubusercontent.com https://cdn.razorpay.com",
   "font-src 'self'",
   [
     "connect-src 'self'",
@@ -22,7 +24,12 @@ const cspHeader = [
     "https://*.firebaseio.com",
     "https://*.firebaseapp.com",
     "https://identitytoolkit.googleapis.com",
+    // Razorpay: order creation, payment capture, and checkout telemetry.
+    "https://api.razorpay.com",
+    "https://lumberjack.razorpay.com",
   ].join(" "),
+  // Razorpay hosted checkout renders inside an iframe served from these origins.
+  "frame-src https://api.razorpay.com https://checkout.razorpay.com",
   "media-src 'self' blob:",
   "worker-src 'self' blob:",
   "object-src 'none'",
