@@ -1,0 +1,9 @@
+export const SILENCE_THRESHOLD = 10; // RMS volume level 0–255 below which is considered silence
+export const SILENCE_TIMEOUT_MS = 1200; // ms of silence before finalising turn
+export const HUMAN_RESPONSE_DELAY_MS = 600; // ms to wait after silence before sending to backend
+export const MAX_VISIBLE_TURNS = 6; // number of conversation turns shown in panel
+export const MAX_TURNS_BEFORE_SUMMARY = 8; // auto-fetch summary after this many turns
+export const MAX_CONVERSATION_MS = 5 * 60 * 1000; // 5-minute hard session cap
+export const API_RESPONSE_TIMEOUT_MS = 45_000;
+export const REPORT_RESPONSE_TIMEOUT_MS = 60_000;
+export const LISTENING_IDLE_TIMEOUT_MS = 90_000;
