@@ -1,10 +1,14 @@
 /** @type {import('next').NextConfig} */
 
+const isDev = process.env.NODE_ENV === "development";
+
 // Content-Security-Policy for Next.js 14 with Firebase client SDK.
 //
 // Notes:
 // - 'unsafe-inline' in script-src: required because Next.js inlines __NEXT_DATA__
 //   as a <script> tag. Prefer nonce-based CSP in a future hardening pass.
+// - 'unsafe-eval' in script-src: required in development for webpack Fast Refresh.
+//   Omitted in production.
 // - 'unsafe-inline' in style-src: required for Tailwind CSS and Framer Motion
 //   inline styles injected at runtime.
 // - connect-src includes Firebase/Google APIs used by the client SDK.
@@ -13,7 +17,8 @@
 const cspHeader = [
   "default-src 'self'",
   // checkout.razorpay.com hosts the checkout.js script loaded by the pricing page.
-  "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com",
+  // 'unsafe-eval' is added in development only for webpack Fast Refresh.
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://checkout.razorpay.com`,
   "style-src 'self' 'unsafe-inline'",
   // cdn.razorpay.com serves payment method logos inside the checkout modal.
   "img-src 'self' data: blob: https://images.unsplash.com https://raw.githubusercontent.com https://cdn.razorpay.com",
@@ -27,6 +32,12 @@ const cspHeader = [
     // Razorpay: order creation, payment capture, and checkout telemetry.
     "https://api.razorpay.com",
     "https://lumberjack.razorpay.com",
+    // Backend API on Render (production and staging).
+    "https://*.onrender.com",
+    // ElevenLabs TTS API.
+    "https://api.elevenlabs.io",
+    // Local backend dev server (allowed in development only).
+    ...(isDev ? ["http://127.0.0.1:8000", "http://127.0.0.1:8001", "http://localhost:8000", "http://localhost:8001"] : []),
   ].join(" "),
   // Razorpay hosted checkout renders inside an iframe served from these origins.
   "frame-src https://api.razorpay.com https://checkout.razorpay.com",
@@ -44,7 +55,9 @@ const securityHeaders = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=()",
+    // microphone=(self) allows the page itself to use the mic (voice intake feature).
+    // camera and geolocation remain fully blocked.
+    value: "camera=(), microphone=(self), geolocation=()",
   },
   {
     key: "Strict-Transport-Security",
