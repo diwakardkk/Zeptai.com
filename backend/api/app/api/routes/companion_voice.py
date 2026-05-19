@@ -48,7 +48,7 @@ async def companion_stt(
         raise HTTPException(status_code=400, detail="Audio file is too small or empty")
 
     raw_transcript = await transcribe_audio(audio_bytes, filename=audio.filename or "companion.webm")
-    refined_text, detected_language = await refine_transcript(raw_transcript, language_preference)
+    refined_text, detected_language, _confidence = await refine_transcript(raw_transcript, language_preference)
     safety = assess_safety(refined_text, detected_language)
     return CompanionSTTResponse(
         session_id=session_id,

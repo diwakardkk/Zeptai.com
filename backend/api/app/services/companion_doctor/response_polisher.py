@@ -20,6 +20,8 @@ HINDI_FEMININE_NORMALIZATIONS = (
     (r"\b[Mm]ain koshish kar raha hoon\b", "Main koshish kar rahi hoon"),
     (r"\b[Mm]ain madad kar paunga\b", "Main madad kar paungi"),
     (r"\b[Mm]ain baat kar paunga\b", "Main baat kar paungi"),
+    (r"\b[Mm]ain note kar raha hoon\b", "Main note kar rahi hoon"),
+    (r"\b[Mm]ain soch raha tha\b", "Main soch rahi thi"),
 )
 
 
@@ -41,10 +43,21 @@ def normalize_assistant_voice(text: str, language: str) -> str:
     return normalized
 
 
-async def polish_response(text: str, language: str, emergency_flag: bool = False) -> str:
-    fallback = prepare_tts_text(normalize_assistant_voice(text, language))
+async def polish_response(
+    text: str,
+    language: str,
+    emergency_flag: bool = False,
+) -> tuple[str, str]:
+    """
+    Returns (polished_text, emotion).
+    emotion is one of: listening, calm, concerned, reassuring, urgent
+    Falls back to (cleaned_text, "calm") on any error.
+    """
+    fallback_text = prepare_tts_text(normalize_assistant_voice(text, language))
+    fallback_emotion = "urgent" if emergency_flag else "calm"
+
     if emergency_flag or not companion_settings.enable_llm_polish:
-        return fallback
+        return fallback_text, fallback_emotion
 
     prompt = load_prompt("response_polishing.md")
     client = get_client()
@@ -53,15 +66,23 @@ async def polish_response(text: str, language: str, emergency_flag: bool = False
             model=companion_settings.chat_model,
             response_format={"type": "json_object"},
             temperature=0.2,
-            max_tokens=220,
+            max_tokens=250,
             messages=[
                 {"role": "system", "content": prompt},
                 {"role": "user", "content": f"Language: {language}\nDraft: {text}"},
             ],
         )
         payload = json.loads(response.choices[0].message.content or "{}")
-        polished_text = str(payload.get("polished_text") or fallback).strip()
-        return prepare_tts_text(normalize_assistant_voice(polished_text, language))
+        polished_text = str(payload.get("polished_text") or fallback_text).strip()
+        emotion = str(payload.get("emotion") or fallback_emotion).strip()
+        # Validate emotion is an expected value
+        valid_emotions = {"listening", "calm", "concerned", "reassuring", "urgent"}
+        if emotion not in valid_emotions:
+            emotion = fallback_emotion
+        return (
+            prepare_tts_text(normalize_assistant_voice(polished_text, language)),
+            emotion,
+        )
     except Exception as exc:
         logger.warning(f"Companion response polishing fallback used: {exc}")
-        return fallback
+        return fallback_text, fallback_emotion

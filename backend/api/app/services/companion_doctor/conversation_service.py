@@ -8,6 +8,7 @@ from app.models.companion_doctor import (
     CompanionSessionState,
     CompanionTurn,
     CompanionTurnRole,
+    IntakeSlots,
 )
 from app.schemas.companion_doctor import (
     CompanionEndResponse,
@@ -47,18 +48,18 @@ UPGRADE_URL = "/pricing"
 def _opening_message(language: str) -> str:
     if language == "hi":
         return (
-            "Namaste, main ZeptAI ki supportive health companion hoon. "
-            "Main licensed doctor nahi hoon, aur yeh emergency service bhi nahi hai. "
-            "Shuru karne se pehle, kya aap apna naam, age, aur gender bata sakte hain?"
+            "Namaste, main ZeptAI ki health intake nurse hoon. "
+            "Main licensed doctor nahi hoon, aur yeh emergency service nahi hai. "
+            "Shuru karne se pehle, kya aap apna naam, age, aur gender bata sakti/sakte hain?"
         )
     if language == "mixed":
         return (
-            "Hi, main ZeptAI ki supportive AI health companion hoon. "
+            "Hi, main ZeptAI ki health intake nurse hoon. "
             "Main real doctor ka replacement nahi hoon, aur emergencies ke liye nahi hoon. "
             "Before we begin, may I know your name, age, and gender?"
         )
     return (
-        "Hi, I'm ZeptAI's supportive AI health companion. "
+        "Hi, I'm ZeptAI's health intake nurse assistant. "
         "I'm not a licensed doctor and this is not for emergencies. "
         "Before we begin, may I know your name, age, and gender?"
     )
@@ -150,10 +151,86 @@ def _locked_message_response(language: str, refined_user_text: str) -> Companion
 
 
 def _compact_history(session: CompanionSession, omit_latest_user: bool = False) -> list[dict[str, str]]:
-    recent_turns = session.turns[-8:]
+    # Keep only the last 4 turns to stay compact and avoid re-asking answered questions
+    recent_turns = session.turns[-4:]
     if omit_latest_user and recent_turns and recent_turns[-1].role == CompanionTurnRole.user:
         recent_turns = recent_turns[:-1]
     return [{"role": turn.role.value, "content": turn.text} for turn in recent_turns]
+
+
+def _update_intake_slots_from_message(session: CompanionSession, user_text: str, language: str) -> None:
+    """
+    Simple heuristic slot extraction from the patient's message.
+    Updates session.intake_slots with any signals found.
+    Does not override already-filled slots.
+    """
+    import re
+    lowered = user_text.lower()
+
+    # chief_complaint: any symptom mention
+    symptom_keywords = (
+        "pain", "dard", "fever", "bukhar", "cough", "khansi", "headache",
+        "sar dard", "stomach", "pet", "chest", "seena", "breathing", "saans",
+        "nausea", "ulti", "dizzy", "chakkar", "weakness", "kamzori",
+        "rash", "swelling", "sujan", "bleeding", "diarrhea", "constipation",
+    )
+    if not session.intake_slots.chief_complaint:
+        for kw in symptom_keywords:
+            if kw in lowered:
+                # Extract a short excerpt around the keyword as chief_complaint placeholder
+                session.intake_slots.chief_complaint = user_text.strip()[:80]
+                break
+
+    # duration: time expressions
+    duration_patterns = [
+        r"\b(\d+)\s*(day|din|ghante|hour|week|hafte|month|mahine)s?\b",
+        r"\b(kal|yesterday|aaj|today|subah|morning|raat|night)\s*(se|since|from)?\b",
+        r"\b(kuch|kafi)\s*(din|ghante|samay|time)\s*(se|pehle)?\b",
+        r"\bsince\s+\w+",
+    ]
+    if not session.intake_slots.duration:
+        for pattern in duration_patterns:
+            m = re.search(pattern, lowered)
+            if m:
+                session.intake_slots.duration = m.group(0).strip()
+                break
+
+    # severity: number scale or descriptive
+    severity_patterns = [
+        r"\b([1-9]|10)\s*(out of|\/)\s*10\b",
+        r"\b(bahut|very|zyada|kam|thoda|mild|moderate|severe|intense|halka)\b",
+    ]
+    if not session.intake_slots.severity:
+        for pattern in severity_patterns:
+            m = re.search(pattern, lowered)
+            if m:
+                session.intake_slots.severity = m.group(0).strip()
+                break
+
+    # medications: med mentions
+    med_keywords = ("medicine", "tablet", "dawa|dawai", "paracetamol", "ibuprofen", "aspirin", "antibiotic", "injection", "syrup")
+    if not session.intake_slots.medications:
+        for kw in med_keywords:
+            if re.search(kw, lowered):
+                session.intake_slots.medications.append(user_text.strip()[:80])
+                break
+
+    # allergies: allergy mention
+    if not session.intake_slots.allergies:
+        if re.search(r"\b(allergy|allergic|allergy|khujli se|reaction)\b", lowered):
+            session.intake_slots.allergies.append(user_text.strip()[:80])
+
+    # medical_history: past illness mention
+    history_keywords = (
+        "diabetes", "bp", "blood pressure", "thyroid", "heart", "asthma",
+        "surgery", "operation", "pehle bhi", "chronic", "purani bimari",
+        "high bp", "low bp",
+    )
+    if not session.intake_slots.medical_history:
+        for kw in history_keywords:
+            if kw in lowered:
+                session.intake_slots.medical_history.append(user_text.strip()[:80])
+                break
 
 
 def _build_system_prompt(session: CompanionSession, user_text: str, reply_language: str, support_context: str) -> str:
@@ -178,6 +255,11 @@ def _build_system_prompt(session: CompanionSession, user_text: str, reply_langua
         session.profile.gender,
     )
     age_strategy = age_map.get(age_band, {})
+
+    # Slot tracking context
+    collected_slots = session.intake_slots.filled_summary()
+    last_asked_slot = session.last_asked_slot or "none"
+
     return "\n\n".join(
         [
             system_base.format(reply_language=language_display(reply_language)),
@@ -187,8 +269,10 @@ def _build_system_prompt(session: CompanionSession, user_text: str, reply_langua
                 age_band=age_band,
                 demographic_context=demographic_context,
                 age_strategy=json.dumps(age_strategy, ensure_ascii=False),
-                symptom_hints="; ".join(symptom_hints) if symptom_hints else "Ask only one or two focused follow-up questions.",
+                symptom_hints="; ".join(symptom_hints) if symptom_hints else "Ask one focused follow-up question.",
                 retrieved_context=support_context or "No retrieval context available.",
+                collected_slots=collected_slots,
+                last_asked_slot=last_asked_slot,
             ),
             emergency_escalation,
         ]
@@ -231,7 +315,10 @@ async def process_message(request: CompanionMessageRequest, client_id: str) -> C
         raise ValueError("Companion session not found or expired.")
 
     user_text = request.message.strip()[: companion_settings.max_input_chars]
-    reply_language = choose_reply_language(user_text, request.language_preference, session.detected_language)
+    reply_language = choose_reply_language(user_text, request.language_preference, session.session_language)
+    # Lock session language on first meaningful turn (>= 3 words)
+    if session.session_language in ("auto", "") and len(user_text.split()) >= 3:
+        session.session_language = reply_language
     session.detected_language = reply_language
 
     usage = get_or_create_usage(client_id)
@@ -265,11 +352,15 @@ async def process_message(request: CompanionMessageRequest, client_id: str) -> C
         return CompanionMessageResponse(
             session_id=session.session_id,
             detected_language=reply_language,
+            session_language=session.session_language,
             refined_user_text=user_text,
             assistant_text=assistant_text,
             tts_text=prepare_tts_text(assistant_text),
             safety_flags=safety.flags,
             emergency_flag=True,
+            emotion="urgent",
+            asked_slot=None,
+            safety_level="urgent",
             should_end_session=True,
             remaining_free_turns=remaining_turns(session),
             state=session.state.value,
@@ -293,7 +384,13 @@ async def process_message(request: CompanionMessageRequest, client_id: str) -> C
         assistant_text = f"{assistant_text}\n\n{_missing_profile_line(extraction.missing_fields, reply_language)}"
         session.profile_follow_up_used += 1
 
-    assistant_text = await polish_response(assistant_text, reply_language)
+    # Update intake slot tracker from user message (simple keyword extraction)
+    _update_intake_slots_from_message(session, user_text, reply_language)
+    # Update last_asked_slot to next missing slot so prompts stay current
+    next_slot = session.intake_slots.next_missing_slot()
+    session.last_asked_slot = next_slot
+
+    assistant_text, emotion = await polish_response(assistant_text, reply_language)
     should_end_session = False
     turns_left = remaining_turns(session)
     access_locked = False
@@ -314,11 +411,15 @@ async def process_message(request: CompanionMessageRequest, client_id: str) -> C
     return CompanionMessageResponse(
         session_id=session.session_id,
         detected_language=reply_language,
+        session_language=session.session_language,
         refined_user_text=user_text,
         assistant_text=assistant_text,
         tts_text=prepare_tts_text(assistant_text),
         safety_flags=safety.flags,
         emergency_flag=False,
+        emotion=emotion,
+        asked_slot=session.last_asked_slot,
+        safety_level="normal",
         should_end_session=should_end_session,
         remaining_free_turns=remaining_turns(session),
         state=CompanionSessionState.ended.value if should_end_session else session.state.value,

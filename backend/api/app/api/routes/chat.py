@@ -10,7 +10,7 @@ from app.models.session import PatientSession
 from app.services import conversation_service, summary_service
 from app.db import session_repo
 from app.api.deps import get_active_session
-from app.core.prompts import GREETING_MESSAGE
+from app.core.prompts import GREETING_MESSAGE, get_greeting
 from app.core.logging import get_logger
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -25,9 +25,7 @@ async def start_session(req: StartSessionRequest):
         language=req.language,
         voice_mode=req.voice_mode,
     )
-    greeting = GREETING_MESSAGE
-    if req.patient_name:
-        greeting = f"Hello {req.patient_name}! " + GREETING_MESSAGE.replace("Hello! ", "")
+    greeting = get_greeting(language=req.language or "en", patient_name=req.patient_name)
     logger.info(f"Session started: {session.conversation_id}")
     return StartSessionResponse(
         conversation_id=session.conversation_id,

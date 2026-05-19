@@ -27,30 +27,49 @@ def _should_use_llm_refinement(cleaned: str) -> bool:
     return True
 
 
-async def refine_transcript(raw_transcript: str, language_preference: str = "auto") -> tuple[str, str]:
+async def refine_transcript(
+    raw_transcript: str,
+    language_preference: str = "auto",
+    session_language: str = "auto",
+) -> tuple[str, str, str]:
+    """
+    Returns (refined_text, detected_language, confidence).
+    confidence is one of: "low", "medium", "high"
+    """
     cleaned = raw_transcript.strip()
     detected_language = detect_language(cleaned, language_preference)
     if not cleaned:
-        return "", detected_language
+        return "", detected_language, "low"
 
     fast_refined = _fast_refine_transcript(cleaned)
     if not _should_use_llm_refinement(fast_refined):
-        return fast_refined, detected_language
+        # Determine simple confidence for fast path
+        words = fast_refined.split()
+        if len(words) < 3:
+            confidence = "low"
+        elif len(words) < 8:
+            confidence = "medium"
+        else:
+            confidence = "high"
+        return fast_refined, detected_language, confidence
 
     client = get_client()
     prompt = load_prompt("stt_refinement.md")
+    # Pass session_language as a hint for ambiguous cases
+    lang_hint = session_language if session_language not in ("auto", "") else language_preference
     try:
         response = await client.chat.completions.create(
             model=companion_settings.chat_model,
             response_format={"type": "json_object"},
             temperature=0.1,
-            max_tokens=220,
+            max_tokens=280,
             messages=[
                 {"role": "system", "content": prompt},
                 {
                     "role": "user",
                     "content": (
                         f"Language preference: {language_preference}\n"
+                        f"Session language hint: {lang_hint}\n"
                         f"Raw transcript: {cleaned}"
                     ),
                 },
@@ -59,7 +78,10 @@ async def refine_transcript(raw_transcript: str, language_preference: str = "aut
         payload = json.loads(response.choices[0].message.content or "{}")
         refined_text = str(payload.get("refined_text") or fast_refined).strip()
         detected_language = str(payload.get("detected_language") or detected_language).strip() or detected_language
-        return refined_text, detected_language
+        confidence = str(payload.get("confidence") or "medium").strip()
+        if confidence not in {"low", "medium", "high"}:
+            confidence = "medium"
+        return refined_text, detected_language, confidence
     except Exception as exc:
         logger.warning(f"Companion STT refinement fallback used: {exc}")
-        return fast_refined, detected_language
+        return fast_refined, detected_language, "medium"

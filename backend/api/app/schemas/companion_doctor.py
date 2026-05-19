@@ -33,11 +33,15 @@ class CompanionMessageRequest(BaseModel):
 class CompanionMessageResponse(BaseModel):
     session_id: str
     detected_language: str
+    session_language: Optional[str] = None      # locked language for the whole session
     refined_user_text: str
     assistant_text: str
     tts_text: str
     safety_flags: list[str] = Field(default_factory=list)
     emergency_flag: bool = False
+    emotion: Optional[str] = None               # listening | calm | concerned | reassuring | urgent
+    asked_slot: Optional[str] = None            # which intake slot was targeted this turn
+    safety_level: Optional[str] = None          # normal | caution | urgent
     should_end_session: bool = False
     remaining_free_turns: int
     state: str
