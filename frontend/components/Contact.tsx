@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, CheckCircle, Send } from "lucide-react";
 
@@ -15,17 +15,6 @@ export default function Contact({ variant = "section" }: ContactProps) {
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(isPage);
-
-  // Auto-open form when navigated to via #contact hash (e.g. from Navbar button)
-  useEffect(() => {
-    if (isPage) return;
-    const openIfHash = () => {
-      if (window.location.hash === "#contact") setIsFormOpen(true);
-    };
-    openIfHash();
-    window.addEventListener("hashchange", openIfHash);
-    return () => window.removeEventListener("hashchange", openIfHash);
-  }, [isPage]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
