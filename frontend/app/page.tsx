@@ -49,7 +49,6 @@ export default async function Home() {
       <HowItWorks />
       <Features />
       <Research />
-      <SecurityPrivacy />
       <AppDownload />
       <section className="relative overflow-hidden border-y border-border bg-background py-14 md:py-16">
         <div className="pointer-events-none absolute inset-0">
@@ -157,6 +156,7 @@ export default async function Home() {
           </div>
         </div>
       </section>
+      <SecurityPrivacy />
       <Team />
       <Contact />
       <script
