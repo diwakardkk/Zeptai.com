@@ -243,19 +243,38 @@ export default function NurseChat() {
     transcriptRef.current = "";
     shouldAutoSendRef.current = true;
 
-    // Await mic permission before starting SpeechRecognition.
-    // If denied, abort early so SpeechRecognition never fires a not-allowed error.
-    if (typeof navigator !== "undefined" && navigator.mediaDevices?.getUserMedia) {
+    // Check mic permission state before starting SpeechRecognition.
+    // Only call getUserMedia when state is 'prompt' (first time) — never on subsequent turns.
+    if (typeof navigator !== "undefined") {
+      let permState: PermissionState | null = null;
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach((t) => t.stop());
+        const status = await navigator.permissions.query({ name: "microphone" as PermissionName });
+        permState = status.state;
       } catch {
+        // Permissions API not supported — fall through to getUserMedia.
+      }
+
+      if (permState === "denied") {
         shouldAutoSendRef.current = false;
         setError(
           "Microphone access was denied. Please allow microphone access in your browser settings and try again.",
         );
         setIsListening(false);
         return;
+      }
+
+      if (permState !== "granted" && navigator.mediaDevices?.getUserMedia) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          stream.getTracks().forEach((t) => t.stop());
+        } catch {
+          shouldAutoSendRef.current = false;
+          setError(
+            "Microphone access was denied. Please allow microphone access in your browser settings and try again.",
+          );
+          setIsListening(false);
+          return;
+        }
       }
     }
 
