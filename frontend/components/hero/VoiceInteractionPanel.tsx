@@ -396,6 +396,23 @@ export default function VoiceInteractionPanel() {
     setState("listening");
     setError(null);
 
+    // Request mic permission explicitly so the browser shows the allow/deny prompt.
+    // We immediately stop the stream — SpeechRecognition manages its own capture.
+    if (typeof navigator !== "undefined" && navigator.mediaDevices?.getUserMedia) {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+          stream.getTracks().forEach((t) => t.stop());
+        })
+        .catch(() => {
+          stopListening(false);
+          setState("ready");
+          setError(
+            "Microphone access was denied. Please allow microphone access in your browser settings and try again.",
+          );
+        });
+    }
+
     const armListeningIdleTimer = () => {
       clearListeningIdleTimer();
       listeningIdleTimerRef.current = window.setTimeout(() => {
@@ -434,7 +451,18 @@ export default function VoiceInteractionPanel() {
 
     recognition.onerror = (event: any) => {
       const reason = event?.error ? String(event.error) : "unknown_error";
-      setError(`Voice capture failed (${reason}). Please try again.`);
+      let message: string;
+      if (reason === "not-allowed" || reason === "permission-denied") {
+        message =
+          "Microphone access was denied. Please allow microphone access in your browser settings and try again.";
+      } else if (reason === "no-speech") {
+        message = "No speech detected. Please try again.";
+      } else if (reason === "network") {
+        message = "Network error during voice capture. Please check your connection and try again.";
+      } else {
+        message = `Voice capture failed (${reason}). Please try again.`;
+      }
+      setError(message);
       stopListening(false);
       setState("ready");
     };

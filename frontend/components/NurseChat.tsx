@@ -243,6 +243,24 @@ export default function NurseChat() {
     transcriptRef.current = "";
     shouldAutoSendRef.current = true;
 
+    // Request mic permission explicitly so the browser shows the allow/deny prompt.
+    // We immediately stop the stream — SpeechRecognition manages its own capture.
+    if (typeof navigator !== "undefined" && navigator.mediaDevices?.getUserMedia) {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+          stream.getTracks().forEach((t) => t.stop());
+        })
+        .catch(() => {
+          shouldAutoSendRef.current = false;
+          setError(
+            "Microphone access was denied. Please allow microphone access in your browser settings and try again.",
+          );
+          setIsListening(false);
+          return;
+        });
+    }
+
     const recognition = new Ctor();
     recognition.continuous = false;
     recognition.interimResults = true;
@@ -267,8 +285,19 @@ export default function NurseChat() {
 
     recognition.onerror = (event: any) => {
       const reason = event?.error ? String(event.error) : "unknown_error";
+      let message: string;
+      if (reason === "not-allowed" || reason === "permission-denied") {
+        message =
+          "Microphone access was denied. Please allow microphone access in your browser settings and try again.";
+      } else if (reason === "no-speech") {
+        message = "No speech detected. Please try again.";
+      } else if (reason === "network") {
+        message = "Network error during voice capture. Please check your connection and try again.";
+      } else {
+        message = `Voice input error: ${reason}`;
+      }
       shouldAutoSendRef.current = false;
-      setError(`Voice input error: ${reason}`);
+      setError(message);
       setIsListening(false);
     };
 
