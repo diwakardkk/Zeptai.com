@@ -28,7 +28,14 @@ export async function POST(req: Request) {
       .update(`${orderId}|${paymentId}`)
       .digest("hex");
 
-    if (expectedSignature !== signature) {
+    // timingSafeEqual prevents timing-based signature oracle attacks.
+    const expectedBuf = Buffer.from(expectedSignature, "hex");
+    const receivedBuf = Buffer.from(signature, "hex");
+    const signatureValid =
+      expectedBuf.length === receivedBuf.length &&
+      crypto.timingSafeEqual(expectedBuf, receivedBuf);
+
+    if (!signatureValid) {
       return NextResponse.json({ error: "Payment signature mismatch." }, { status: 400 });
     }
 

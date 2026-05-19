@@ -3,6 +3,12 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
+/**
+ * Legacy webhook endpoint kept for backwards compatibility.
+ * The full-featured webhook handler (Firestore storage, idempotency, event
+ * processing) lives at /api/razorpay/webhook.
+ * Point your Razorpay dashboard webhook URL to /api/razorpay/webhook.
+ */
 export async function POST(req: Request) {
   try {
     const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -10,18 +16,23 @@ export async function POST(req: Request) {
     const payload = await req.text();
 
     if (!webhookSecret) {
-      return NextResponse.json(
-        { error: "Set RAZORPAY_WEBHOOK_SECRET to enable webhook verification." },
-        { status: 500 },
-      );
+      console.error("Razorpay webhook: secret not configured");
+      return NextResponse.json({ error: "Webhook is not configured." }, { status: 500 });
     }
 
-    const expectedSignature = crypto
+    const expectedSig = crypto
       .createHmac("sha256", webhookSecret)
       .update(payload)
       .digest("hex");
 
-    if (expectedSignature !== signature) {
+    // timingSafeEqual prevents timing-based signature oracle attacks.
+    const expectedBuf = Buffer.from(expectedSig, "hex");
+    const receivedBuf = Buffer.from(signature, "hex");
+    const isValid =
+      expectedBuf.length === receivedBuf.length &&
+      crypto.timingSafeEqual(expectedBuf, receivedBuf);
+
+    if (!isValid) {
       return NextResponse.json({ error: "Invalid webhook signature." }, { status: 400 });
     }
 

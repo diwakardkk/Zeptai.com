@@ -17,10 +17,7 @@ export async function POST(req: Request) {
 
     if (!keyId || !keySecret) {
       return NextResponse.json(
-        {
-          error:
-            "Razorpay is not configured yet. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in your environment.",
-        },
+        { error: "Payment service is not configured. Please contact support." },
         { status: 500 },
       );
     }
