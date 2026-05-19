@@ -13,7 +13,7 @@ import {
   Stethoscope,
   TestTube2,
 } from "lucide-react";
-import CustomizePlanModal, { calculateCustomPricing } from "@/components/pricing/CustomizePlanModal";
+import CustomizePlanModal from "@/components/pricing/CustomizePlanModal";
 
 function formatInr(amount: number) {
   return new Intl.NumberFormat("en-IN", {
@@ -21,6 +21,27 @@ function formatInr(amount: number) {
     currency: "INR",
     maximumFractionDigits: 0,
   }).format(amount);
+}
+
+// ── Razorpay checkout helpers ─────────────────────────────────────────────────
+declare global {
+  interface Window {
+    Razorpay: new (options: Record<string, unknown>) => { open(): void };
+  }
+}
+
+function loadRazorpayScript(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (typeof window !== "undefined" && typeof window.Razorpay !== "undefined") {
+      resolve();
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Failed to load payment checkout"));
+    document.body.appendChild(script);
+  });
 }
 
 const clinicTiers = [
@@ -47,7 +68,8 @@ type CustomizablePlan = "clinic" | "enterprise";
 export default function PricingPageContent() {
   const [activeTierId, setActiveTierId] = useState<(typeof clinicTiers)[number]["id"]>("pro");
   const [customizePlan, setCustomizePlan] = useState<CustomizablePlan | null>(null);
-  const [paymentNotice, setPaymentNotice] = useState("");
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
 
   const activeClinicTier = useMemo(
     () => clinicTiers.find((tier) => tier.id === activeTierId) ?? clinicTiers[1],
@@ -70,19 +92,71 @@ export default function PricingPageContent() {
     };
   }, [activeClinicTier.doctors, activeClinicTier.reports, customizePlan]);
 
-  const openPayPlaceholder = ({
-    planName,
-    doctors,
-    reports,
-  }: {
-    planName: string;
-    doctors: number;
-    reports: number;
-  }) => {
-    const estimate = calculateCustomPricing(reports);
-    setPaymentNotice(
-      `${planName}: ${reports} reports for ${doctors} doctor${doctors > 1 ? "s" : ""} estimated at ${estimate.estimatedCostText}. Online payment is currently unavailable because Razorpay is not integrated yet. Please use the Contact page to request onboarding and manual payment support.`,
-    );
+  const handlePayNow = async (planId: "clinic" | "enterprise_api") => {
+    setPaymentError("");
+    setPaymentLoading(true);
+    try {
+      const res = await fetch("/api/payments/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId }),
+      });
+      const data = (await res.json()) as {
+        keyId?: string;
+        order?: { id: string; amount: number; currency: string };
+        plan?: { id: string; name: string; reportCredits: number };
+        error?: string;
+      };
+      if (!res.ok || !data.keyId || !data.order) {
+        throw new Error(data.error ?? "Failed to create payment order.");
+      }
+
+      await loadRazorpayScript();
+
+      const rzp = new window.Razorpay({
+        key: data.keyId,
+        amount: data.order.amount,
+        currency: data.order.currency,
+        order_id: data.order.id,
+        name: "ZeptAI",
+        description: `${data.plan?.name ?? "Credits"} — ${data.plan?.reportCredits ?? ""} reports`,
+        theme: { color: "#224bc3" },
+        handler: async (response: {
+          razorpay_payment_id: string;
+          razorpay_order_id: string;
+          razorpay_signature: string;
+        }) => {
+          const verifyRes = await fetch("/api/payments/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              planId,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+          const verifyData = (await verifyRes.json()) as {
+            ok?: boolean;
+            redirectUrl?: string;
+            error?: string;
+          };
+          if (!verifyRes.ok || !verifyData.redirectUrl) {
+            setPaymentError(verifyData.error ?? "Payment verification failed. Contact support.");
+            setPaymentLoading(false);
+            return;
+          }
+          window.location.href = verifyData.redirectUrl;
+        },
+        modal: {
+          ondismiss: () => setPaymentLoading(false),
+        },
+      });
+      rzp.open();
+    } catch (err) {
+      setPaymentError(err instanceof Error ? err.message : "Payment could not be started.");
+      setPaymentLoading(false);
+    }
   };
 
   return (
@@ -227,16 +301,11 @@ export default function PricingPageContent() {
                 </button>
                 <button
                   type="button"
-                  onClick={() =>
-                    openPayPlaceholder({
-                      planName: "Clinic Plan",
-                      doctors: activeClinicTier.doctors,
-                      reports: activeClinicTier.reports,
-                    })
-                  }
-                  className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-[#38ac06] to-[#224bc3] px-5 text-sm font-semibold text-white shadow-[0_14px_30px_-20px_rgba(34,75,195,0.85)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_35px_-18px_rgba(34,75,195,0.85)]"
+                  onClick={() => void handlePayNow("clinic")}
+                  disabled={paymentLoading}
+                  className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-[#38ac06] to-[#224bc3] px-5 text-sm font-semibold text-white shadow-[0_14px_30px_-20px_rgba(34,75,195,0.85)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_35px_-18px_rgba(34,75,195,0.85)] disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Pay Now
+                  {paymentLoading ? "Opening…" : "Pay Now"}
                 </button>
               </div>
             </section>
@@ -285,32 +354,32 @@ export default function PricingPageContent() {
                 </button>
                 <button
                   type="button"
-                  onClick={() =>
-                    openPayPlaceholder({
-                      planName: "Enterprise API Plan",
-                      doctors: 5,
-                      reports: 1000,
-                    })
-                  }
-                  className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-[#38ac06] to-[#224bc3] px-5 text-sm font-semibold text-white shadow-[0_14px_30px_-20px_rgba(34,75,195,0.85)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_35px_-18px_rgba(34,75,195,0.85)]"
+                  onClick={() => void handlePayNow("enterprise_api")}
+                  disabled={paymentLoading}
+                  className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-[#38ac06] to-[#224bc3] px-5 text-sm font-semibold text-white shadow-[0_14px_30px_-20px_rgba(34,75,195,0.85)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_35px_-18px_rgba(34,75,195,0.85)] disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Pay Now
+                  {paymentLoading ? "Opening…" : "Pay Now"}
                 </button>
               </div>
             </section>
           </div>
 
-          {paymentNotice && (
+          {paymentError && (
+            <div className="mt-6 rounded-2xl border border-red-400/30 bg-red-500/10 px-5 py-4 text-sm text-red-600 dark:text-red-400">
+              {paymentError}
+            </div>
+          )}
+          {paymentLoading && (
             <div className="mt-6 rounded-2xl border border-[#224bc3]/25 bg-[#224bc3]/10 px-5 py-4 text-sm text-foreground/85">
-              {paymentNotice}
+              Opening payment checkout…
             </div>
           )}
 
           <section className="mt-10 rounded-[2rem] border border-border bg-card/85 p-8 shadow-[0_24px_50px_-40px_rgba(0,0,0,0.5)]">
             <h2 className="text-2xl font-bold tracking-tight text-foreground">Payment Readiness</h2>
             <p className="mt-2 text-sm leading-7 text-muted-foreground">
-              Payment actions are wired as UI placeholders, ready for backend integration with
-              Razorpay checkout.
+              Secure Razorpay hosted checkout is active. Server-side orders are created and
+              payment signatures are verified before activation.
             </p>
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
               <div className="rounded-2xl border border-border bg-card/90 p-5">
@@ -361,8 +430,9 @@ export default function PricingPageContent() {
         defaultDoctors={modalDefaults.doctors}
         defaultReports={modalDefaults.reports}
         onClose={() => setCustomizePlan(null)}
-        onPayNow={({ planName, doctors, reports }) => {
-          openPayPlaceholder({ planName, doctors, reports });
+        onPayNow={({ planName }) => {
+          const planId = planName.toLowerCase().includes("enterprise") ? "enterprise_api" : "clinic";
+          void handlePayNow(planId);
           setCustomizePlan(null);
         }}
       />
