@@ -382,7 +382,7 @@ export default function VoiceInteractionPanel() {
     }
   }, [speakWithBrowser, speakWithElevenLabs]);
 
-  const listenForPatient = useCallback(() => {
+  const listenForPatient = useCallback(async () => {
     const Ctor = getRecognitionCtor();
     if (!Ctor) {
       setState("ready");
@@ -396,21 +396,20 @@ export default function VoiceInteractionPanel() {
     setState("listening");
     setError(null);
 
-    // Request mic permission explicitly so the browser shows the allow/deny prompt.
-    // We immediately stop the stream — SpeechRecognition manages its own capture.
+    // Await mic permission before starting SpeechRecognition.
+    // If denied, abort early so SpeechRecognition never fires a not-allowed error.
     if (typeof navigator !== "undefined" && navigator.mediaDevices?.getUserMedia) {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then((stream) => {
-          stream.getTracks().forEach((t) => t.stop());
-        })
-        .catch(() => {
-          stopListening(false);
-          setState("ready");
-          setError(
-            "Microphone access was denied. Please allow microphone access in your browser settings and try again.",
-          );
-        });
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach((t) => t.stop());
+      } catch {
+        stopListening(false);
+        setState("ready");
+        setError(
+          "Microphone access was denied. Please allow microphone access in your browser settings and try again.",
+        );
+        return;
+      }
     }
 
     const armListeningIdleTimer = () => {

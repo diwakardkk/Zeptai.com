@@ -223,7 +223,7 @@ export default function NurseChat() {
     [apiBase, conversationId, input, isListening, loading, reportLoading, stopListening],
   );
 
-  const startListening = useCallback(() => {
+  const startListening = useCallback(async () => {
     if (reportOnly) {
       setError("Voice input is disabled in report view.");
       return;
@@ -243,22 +243,20 @@ export default function NurseChat() {
     transcriptRef.current = "";
     shouldAutoSendRef.current = true;
 
-    // Request mic permission explicitly so the browser shows the allow/deny prompt.
-    // We immediately stop the stream — SpeechRecognition manages its own capture.
+    // Await mic permission before starting SpeechRecognition.
+    // If denied, abort early so SpeechRecognition never fires a not-allowed error.
     if (typeof navigator !== "undefined" && navigator.mediaDevices?.getUserMedia) {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then((stream) => {
-          stream.getTracks().forEach((t) => t.stop());
-        })
-        .catch(() => {
-          shouldAutoSendRef.current = false;
-          setError(
-            "Microphone access was denied. Please allow microphone access in your browser settings and try again.",
-          );
-          setIsListening(false);
-          return;
-        });
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach((t) => t.stop());
+      } catch {
+        shouldAutoSendRef.current = false;
+        setError(
+          "Microphone access was denied. Please allow microphone access in your browser settings and try again.",
+        );
+        setIsListening(false);
+        return;
+      }
     }
 
     const recognition = new Ctor();
