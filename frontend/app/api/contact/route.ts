@@ -6,7 +6,8 @@ import {
   getAdminDb,
   isMissingAdminCredentialError,
 } from "@/app/api/_firestoreAdmin";
-import { db } from "@/app/api/_firestore";
+import { getClientDb } from "@/app/api/_firestore";
+import { getClientIp, isRateLimited } from "@/app/api/_rateLimit";
 import { ContactInquiryType, ContactSubmissionInput } from "@/types/contact";
 import {
   isValidEmail,
@@ -19,7 +20,17 @@ import {
 
 export const runtime = "nodejs";
 
-type ContactBody = Partial<ContactSubmissionInput>;
+// Maximum allowed request body size in bytes (~10 KB is generous for a contact form).
+const MAX_BODY_BYTES = 10_240;
+
+// The honeypot field is hidden from real users via CSS.
+// Bots that blindly fill all fields will populate it, allowing silent rejection.
+const HONEYPOT_FIELD = "companyWebsite";
+
+type ContactBody = Partial<ContactSubmissionInput> & {
+  // Honeypot — must be absent or empty in legitimate submissions.
+  [HONEYPOT_FIELD]?: string;
+};
 const ALLOWED_INQUIRY_TYPES = new Set<ContactInquiryType>(["contact", "demo_request"]);
 
 function toPublicFirestoreError(error: unknown): string {
@@ -28,15 +39,15 @@ function toPublicFirestoreError(error: unknown): string {
   }
 
   if (error.message.includes("Firebase Admin credentials missing")) {
-    return "Database admin credentials are missing. Set FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in Netlify.";
+    return "Server database configuration is incomplete. Please contact support.";
   }
 
   if (error.message.includes("Invalid FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON")) {
-    return "Firebase Admin JSON is invalid. Fix FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in Netlify.";
+    return "Server database configuration is invalid. Please contact support.";
   }
 
   if (error.message.includes("Firebase client config missing")) {
-    return "Firebase environment variables are missing in Netlify.";
+    return "Server configuration is incomplete. Please contact support.";
   }
 
   return "Failed to store contact request. Please try again.";
@@ -52,8 +63,41 @@ function escapeHtml(input: string) {
 }
 
 export async function POST(req: Request) {
+  // Assign a short request ID for server-side log correlation.
+  // Do NOT include this in public API responses.
+  const reqId = crypto.randomUUID().slice(0, 8);
+
   try {
+    // --- Body size guard ---
+    // Reject oversized payloads before parsing JSON to prevent abuse.
+    const contentLength = req.headers.get("content-length");
+    if (contentLength && parseInt(contentLength, 10) > MAX_BODY_BYTES) {
+      return NextResponse.json({ error: "Request body is too large." }, { status: 413 });
+    }
+
+    // --- IP-based rate limiting ---
+    // NOTE: In serverless (AWS Lambda) this is per-instance only.
+    // For cross-instance protection, use AWS WAF rate-based rules (recommended).
+    const clientIp = getClientIp(req);
+    if (isRateLimited(clientIp)) {
+      // Log at info level — this is an expected event, not an error.
+      // Do NOT log the IP address itself to avoid storing PII in logs.
+      console.warn(`[contact][${reqId}] Rate limit exceeded`);
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a moment before trying again." },
+        { status: 429 },
+      );
+    }
+
     const body = (await req.json()) as ContactBody;
+
+    // --- Honeypot check ---
+    // If the hidden field is populated, silently reject as likely bot traffic.
+    // Return 200 to avoid tipping off automated scanners.
+    if (body[HONEYPOT_FIELD]) {
+      console.warn(`[contact][${reqId}] Honeypot triggered — silent reject`);
+      return NextResponse.json({ ok: true });
+    }
 
     const name = normalizeText(body.name);
     const email = normalizeEmail(body.email);
@@ -126,7 +170,7 @@ export async function POST(req: Request) {
         throw adminError;
       }
 
-      await addDoc(collection(db, "contact_submissions"), {
+      await addDoc(collection(getClientDb(), "contact_submissions"), {
         name,
         email,
         mobile,
@@ -138,6 +182,10 @@ export async function POST(req: Request) {
         createdAt: Timestamp.now(),
       });
     }
+
+    // Log a high-level success event.
+    // Do NOT log name, email, mobile, or message body — these are patient/user PII.
+    console.log(`[contact][${reqId}] Submission stored — inquiryType=${inquiryType} sourcePage=${sourcePage}`);
 
     const smtpHost = process.env.SMTP_HOST ?? "smtp.gmail.com";
     const smtpPort = Number(process.env.SMTP_PORT ?? "465");
@@ -152,13 +200,11 @@ export async function POST(req: Request) {
       smtpPass?.includes("your_gmail_app_password") ||
       receiverEmail?.includes("your_gmail");
 
-    let emailWarning: string | null = null;
+    let emailFailed = false;
 
     try {
       if (!smtpUser || !smtpPass || !receiverEmail || hasPlaceholderValues) {
-        throw new Error(
-          "Email service is not configured. Set SMTP_USER, SMTP_PASS, and CONTACT_RECEIVER_EMAIL.",
-        );
+        throw new Error("SMTP credentials not configured");
       }
 
       const transporter = nodemailer.createTransport({
@@ -203,23 +249,29 @@ export async function POST(req: Request) {
           <p>Regards,<br/>ZeptAI Team</p>
         `,
       });
+
+      console.log(`[contact][${reqId}] Email notifications sent`);
     } catch (emailError) {
-      console.error("Contact API email warning:", emailError);
-      emailWarning =
-        emailError instanceof Error
-          ? emailError.message
-          : "Contact request saved, but email notification failed.";
+      // Log full error server-side for diagnostics.
+      // Do NOT forward error.message to the client — it may contain env var names or SMTP details.
+      console.error(`[contact][${reqId}] Email notification failed:`, emailError);
+      emailFailed = true;
     }
 
     return NextResponse.json({
       ok: true,
-      ...(emailWarning ? { warning: emailWarning } : {}),
+      // Use a generic warning — never expose internal error details to the client.
+      ...(emailFailed
+        ? { warning: "Your message has been recorded. Email confirmation may be delayed." }
+        : {}),
     });
   } catch (error) {
-    console.error("Contact API error:", error);
+    // Log full error server-side. Do NOT include stack trace or env details in the response.
+    console.error(`[contact][${reqId}] Unhandled error:`, error);
     return NextResponse.json(
       { error: toPublicFirestoreError(error) },
       { status: 500 },
     );
   }
 }
+

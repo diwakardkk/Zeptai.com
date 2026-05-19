@@ -3,7 +3,7 @@ import {
   getAdminDb,
   isMissingAdminCredentialError,
 } from "@/app/api/_firestoreAdmin";
-import { db } from "@/app/api/_firestore";
+import { getClientDb } from "@/app/api/_firestore";
 
 export async function getCommentCounts(): Promise<Record<string, number>> {
   try {
@@ -26,7 +26,7 @@ export async function getCommentCounts(): Promise<Record<string, number>> {
       }
 
       const snapshot = await getDocs(
-        query(collection(db, "blog_comments"), where("status", "==", "visible")),
+        query(collection(getClientDb(), "blog_comments"), where("status", "==", "visible")),
       );
       docs = snapshot.docs.map((doc) => ({
         id: doc.id,

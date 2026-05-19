@@ -29,15 +29,15 @@ function toPublicFirestoreError(error: unknown): string {
   }
 
   if (error.message.includes("Firebase Admin credentials missing")) {
-    return "Database admin credentials are missing. Set FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in Netlify.";
+    return "Server database configuration is incomplete. Please contact support.";
   }
 
   if (error.message.includes("Invalid FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON")) {
-    return "Firebase Admin JSON is invalid. Fix FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in Netlify.";
+    return "Server database configuration is invalid. Please contact support.";
   }
 
   if (error.message.includes("Firebase client config missing")) {
-    return "Firebase environment variables are missing in Netlify.";
+    return "Server configuration is incomplete. Please contact support.";
   }
 
   return "Failed to store feedback. Please try again.";
@@ -97,8 +97,8 @@ export async function POST(req: Request) {
         throw adminError;
       }
 
-      const { db } = await import("@/app/api/_firestore");
-      await addDoc(collection(db, "demo_feedback_submissions"), {
+      const { getClientDb: getFallbackDb } = await import("@/app/api/_firestore");
+      await addDoc(collection(getFallbackDb(), "demo_feedback_submissions"), {
         name,
         email,
         feedback,

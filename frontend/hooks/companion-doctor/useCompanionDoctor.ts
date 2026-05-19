@@ -93,7 +93,7 @@ function mapCompanionStartupError(error: unknown) {
     return "The companion service route is not available on the current deployment yet. Please redeploy the latest site build and try again.";
   }
   if (message === "Failed to fetch" || message === "Load failed") {
-    return "The companion service could not be reached from the live site. Check that the latest Netlify deployment is live and that server environment variables are configured.";
+    return "The companion service could not be reached. Please try again in a moment. If the issue persists, contact support.";
   }
   return message;
 }

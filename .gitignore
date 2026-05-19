@@ -42,6 +42,16 @@ next-env.d.ts
 .env.*
 MyNurseAPI/.env
 
+# Firebase service account key files — never commit private keys
+*service-account*.json
+*serviceaccount*.json
+firebase-adminsdk*.json
+credentials.json
+
+# AWS credential files
+.aws/
+aws-exports.js
+
 dev-server.out.log
 dev-server.err.log
 *.log

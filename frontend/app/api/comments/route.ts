@@ -5,7 +5,7 @@ import {
   getAdminDb,
   isMissingAdminCredentialError,
 } from "@/app/api/_firestoreAdmin";
-import { db } from "@/app/api/_firestore";
+import { getClientDb } from "@/app/api/_firestore";
 import { BlogCommentInput } from "@/types/comment";
 import {
   isValidEmail,
@@ -24,15 +24,15 @@ function toPublicFirestoreError(error: unknown): string {
   }
 
   if (error.message.includes("Firebase Admin credentials missing")) {
-    return "Database admin credentials are missing. Set FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in Netlify.";
+    return "Server database configuration is incomplete. Please contact support.";
   }
 
   if (error.message.includes("Invalid FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON")) {
-    return "Firebase Admin JSON is invalid. Fix FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in Netlify.";
+    return "Server database configuration is invalid. Please contact support.";
   }
 
   if (error.message.includes("Firebase client config missing")) {
-    return "Firebase environment variables are missing in Netlify.";
+    return "Server configuration is incomplete. Please contact support.";
   }
 
   return "Failed to store comment. Please check Firebase setup.";
@@ -87,7 +87,7 @@ export async function POST(req: Request) {
         throw adminError;
       }
 
-      const docRef = await addDoc(collection(db, "blog_comments"), {
+      const docRef = await addDoc(collection(getClientDb(), "blog_comments"), {
         postSlug,
         name,
         email,
@@ -146,7 +146,7 @@ export async function GET(req: Request) {
         throw adminError;
       }
 
-      const commentsRef = collection(db, "blog_comments");
+      const commentsRef = collection(getClientDb(), "blog_comments");
       const q = query(
         commentsRef,
         where("postSlug", "==", postSlug),

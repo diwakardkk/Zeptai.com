@@ -19,12 +19,18 @@ export function middleware(request: NextRequest) {
   }
 
   const response = NextResponse.next();
+
+  // Prevent search-engine indexing of non-canonical preview/staging hostnames.
   const isNetlifyPreviewHost =
     hostname.endsWith(".netlify.app") && hostname !== canonicalUrl.hostname;
+  // AWS Amplify branch deployments use *.amplifyapp.com subdomains.
+  const isAmplifyPreviewHost =
+    hostname.endsWith(".amplifyapp.com") && hostname !== canonicalUrl.hostname;
+  const isPreviewHost = isNetlifyPreviewHost || isAmplifyPreviewHost;
 
   response.headers.set(
     "X-Robots-Tag",
-    isNetlifyPreviewHost
+    isPreviewHost
       ? "noindex, nofollow, noarchive"
       : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
   );
