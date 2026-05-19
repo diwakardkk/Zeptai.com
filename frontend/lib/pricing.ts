@@ -1,5 +1,5 @@
 export type PricingPlan = {
-  id: "clinic" | "clinic_basic" | "clinic_pro" | "enterprise_api";
+  id: "clinic" | "clinic_basic" | "clinic_pro" | "enterprise_api" | "razorpay_test_10";
   name: string;
   shortLabel: string;
   audience: string;
@@ -107,7 +107,29 @@ export const pricingPlans: PricingPlan[] = [
   },
 ];
 
+// ── Temporary ₹10 test plan — never shown in public UI ───────────────────────
+// Enabled only when ENABLE_TEST_PAYMENT=true in the server environment.
+// Use this plan solely to verify Razorpay order creation, checkout,
+// signature verification, webhook delivery, and Firestore event storage.
+// Remove or keep gated behind the env flag after testing is complete.
+export const TEST_PAYMENT_PLAN: PricingPlan = {
+  id: "razorpay_test_10",
+  name: "Temporary Test Payment",
+  shortLabel: "Test only — not a real product",
+  audience: "Internal payment flow testing",
+  description: "₹10 test order for verifying the full Razorpay integration end-to-end.",
+  launchPricePerReportInr: 10,
+  standardPricePerReportInr: 10,
+  reportCredits: 0,
+  ctaLabel: "Pay ₹10 Test",
+  highlight: "Test only",
+  deliveryLabel: "Test only",
+  supportLabel: "Internal use",
+  features: [],
+};
+
 export function getPlanById(planId: string) {
+  if (planId === "razorpay_test_10") return TEST_PAYMENT_PLAN;
   return pricingPlans.find((plan) => plan.id === planId);
 }
 

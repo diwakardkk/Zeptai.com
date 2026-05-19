@@ -4,6 +4,10 @@ import { getPlanById } from "@/lib/pricing";
 
 export const runtime = "nodejs";
 
+// ── Test payment guard ─────────────────────────────────────────────────────
+// The razorpay_test_10 plan is only verifiable when ENABLE_TEST_PAYMENT=true.
+const TEST_PLAN_ID = "razorpay_test_10";
+
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as {
@@ -13,7 +17,14 @@ export async function POST(req: Request) {
       razorpay_signature?: string;
     };
 
-    const plan = getPlanById(String(body.planId ?? ""));
+    const rawPlanId = String(body.planId ?? "").trim();
+
+    // Block test plan verification unless the env flag is set.
+    if (rawPlanId === TEST_PLAN_ID && process.env.ENABLE_TEST_PAYMENT !== "true") {
+      return NextResponse.json({ error: "Missing payment verification data." }, { status: 400 });
+    }
+
+    const plan = getPlanById(rawPlanId);
     const orderId = String(body.razorpay_order_id ?? "").trim();
     const paymentId = String(body.razorpay_payment_id ?? "").trim();
     const signature = String(body.razorpay_signature ?? "").trim();
