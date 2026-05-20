@@ -897,7 +897,7 @@ export default function VoiceInteractionPanel() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="mt-4 max-h-[320px] overflow-y-auto rounded-xl border border-[#224bc3]/20 bg-[linear-gradient(180deg,rgba(34,75,195,0.06),rgba(56,172,6,0.05))] p-3"
+              className="mt-4 max-h-[680px] overflow-y-auto rounded-xl border border-[#224bc3]/20 bg-[linear-gradient(180deg,rgba(34,75,195,0.06),rgba(56,172,6,0.05))] p-3"
             >
               <div className="rounded-lg border border-[#224bc3]/25 bg-[linear-gradient(115deg,rgba(34,75,195,0.2),rgba(56,172,6,0.16))] p-2.5 shadow-[0_8px_26px_-20px_rgba(34,75,195,0.55)]">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#224bc3]">
@@ -927,6 +927,146 @@ export default function VoiceInteractionPanel() {
                     transition={{ duration: 0.35, delay: idx * 0.1, ease: "easeOut" }}
                   />
                 ))}
+              </div>
+
+              {/* ── Demo Vitals Dashboard ── */}
+              <div className="mt-3 overflow-hidden rounded-xl border border-white/10">
+                {/* Header */}
+                <div className="flex items-center gap-2 border-b border-white/[0.06] bg-[#0d1117] px-3 py-1.5">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#38ac06]" />
+                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/80">
+                    Patient Vitals
+                  </p>
+                  <span className="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[8px] font-semibold uppercase tracking-[0.08em] text-white/40">
+                    Demo Data
+                  </span>
+                </div>
+
+                {/* 2×2 chart grid */}
+                <div className="grid grid-cols-2 gap-px bg-white/[0.05]">
+
+                  {/* ① Blood Pressure — horizontal bars */}
+                  <div className="bg-[#0d1117] p-2.5">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-white/55">Blood Pressure</p>
+                    <p className="mt-0.5 text-[8px] font-semibold text-[#22c55e]">120/93 mmHg — Elevated</p>
+                    <div className="mt-2 space-y-[5px]">
+                      {[
+                        { label: "Systolic",  value: 120, max: 200, color: "#22c55e" },
+                        { label: "Diastolic", value: 93,  max: 200, color: "#ef4444" },
+                        { label: "Norm Sys",  value: 120, max: 200, color: "#3b82f6" },
+                        { label: "Norm Dia",  value: 80,  max: 200, color: "#3b82f6" },
+                      ].map(({ label, value, max, color }) => (
+                        <div key={label} className="flex items-center gap-1">
+                          <span className="w-[40px] shrink-0 text-right text-[7px] text-white/35">{label}</span>
+                          <div className="h-[6px] flex-1 overflow-hidden rounded-full bg-white/[0.07]">
+                            <motion.div
+                              className="h-full rounded-full"
+                              style={{ backgroundColor: color }}
+                              initial={{ width: "0%" }}
+                              animate={{ width: `${(value / max) * 100}%` }}
+                              transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+                            />
+                          </div>
+                          <span className="w-6 shrink-0 text-right text-[7px] font-bold text-white/65">{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* ② Blood Sugar — semicircle gauge */}
+                  <div className="flex flex-col items-center bg-[#0d1117] p-2.5">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-white/55">Blood Sugar</p>
+                    <p className="mt-0.5 text-[8px] font-semibold text-[#22c55e]">Normal</p>
+                    <div className="relative mt-1">
+                      <svg viewBox="0 0 120 72" className="w-[84px]">
+                        <path d="M 16,66 A 50,50 0 0,1 104,66" fill="none" stroke="#ffffff0d" strokeWidth="11" strokeLinecap="round" />
+                        <motion.path
+                          d="M 16,66 A 50,50 0 0,1 104,66"
+                          fill="none"
+                          stroke="#22c55e"
+                          strokeWidth="11"
+                          strokeLinecap="round"
+                          initial={{ pathLength: 0, opacity: 0 }}
+                          animate={{ pathLength: 75 / 200, opacity: 1 }}
+                          transition={{ duration: 1.1, ease: "easeOut", delay: 0.4 }}
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-end pb-2">
+                        <span className="text-sm font-bold leading-none text-white">75</span>
+                        <span className="mt-px text-[7px] text-white/40">mg/dL</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ③ BMI — semicircle gauge */}
+                  <div className="flex flex-col items-center bg-[#0d1117] p-2.5">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-white/55">Body Mass Index</p>
+                    <p className="mt-0.5 text-[8px] font-semibold text-[#f97316]">Overweight</p>
+                    <div className="relative mt-1">
+                      <svg viewBox="0 0 120 72" className="w-[84px]">
+                        <path d="M 16,66 A 50,50 0 0,1 104,66" fill="none" stroke="#ffffff0d" strokeWidth="11" strokeLinecap="round" />
+                        <motion.path
+                          d="M 16,66 A 50,50 0 0,1 104,66"
+                          fill="none"
+                          stroke="#f97316"
+                          strokeWidth="11"
+                          strokeLinecap="round"
+                          initial={{ pathLength: 0, opacity: 0 }}
+                          animate={{ pathLength: 26.9 / 40, opacity: 1 }}
+                          transition={{ duration: 1.1, ease: "easeOut", delay: 0.5 }}
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-end pb-2">
+                        <span className="text-sm font-bold leading-none text-white">26.9</span>
+                        <span className="mt-px text-[7px] text-white/40">kg/m²</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ④ Temp & Pulse — vertical bar chart */}
+                  <div className="bg-[#0d1117] p-2.5">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-white/55">Temp &amp; Pulse</p>
+                    <div className="mt-2 flex items-end gap-1" style={{ height: "52px" }}>
+                      {[
+                        { label: "Temp °C",    value: 37,   max: 80, color: "#22c55e" },
+                        { label: "Pulse bpm",  value: 70,   max: 80, color: "#22c55e" },
+                        { label: "Norm Temp",  value: 36.6, max: 80, color: "#3b82f6" },
+                        { label: "Norm Pulse", value: 72,   max: 80, color: "#3b82f6" },
+                      ].map(({ label, value, max, color }) => (
+                        <motion.div
+                          key={label}
+                          className="flex-1 rounded-t-[2px]"
+                          style={{ backgroundColor: color }}
+                          initial={{ height: 0 }}
+                          animate={{ height: Math.round((value / max) * 52) }}
+                          transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
+                        />
+                      ))}
+                    </div>
+                    <div className="mt-1 flex gap-1">
+                      {["Temp °C", "Pulse bpm", "Norm Temp", "Norm Pulse"].map((l) => (
+                        <span key={l} className="flex-1 text-center text-[6px] leading-tight text-white/35">{l}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Stats strip — weight, height, temp, pulse */}
+                <div className="grid grid-cols-4 divide-x divide-white/[0.06] border-t border-white/[0.06] bg-[#0a0e16]">
+                  {[
+                    { label: "Weight", value: "76 kg",  color: "text-white/80",   sub: "" },
+                    { label: "Height", value: "168 cm", color: "text-white/80",   sub: "" },
+                    { label: "Temp",   value: "37 °C",  color: "text-[#22c55e]", sub: "Normal" },
+                    { label: "Pulse",  value: "70 bpm", color: "text-[#22c55e]", sub: "Normal" },
+                  ].map(({ label, value, color, sub }) => (
+                    <div key={label} className="px-1.5 py-1.5 text-center">
+                      <p className={`text-[9px] font-bold ${color}`}>{value}</p>
+                      <p className="text-[7px] text-white/30">{label}</p>
+                      {sub && <p className="text-[6px] text-[#22c55e]/70">{sub}</p>}
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="mt-3 space-y-2">
