@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, AudioLines, FileText, Mic } from "lucide-react";
+import { ArrowRight, AudioLines, ChevronDown, FileText, Mic } from "lucide-react";
 
 type VoiceState = "idle" | "listening" | "processing" | "speaking" | "ready" | "reporting";
 
@@ -193,7 +193,7 @@ function formatTimeLeft(ms: number) {
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
-export default function VoiceInteractionPanel() {
+export default function VoiceInteractionPanel({ highlight = false }: { highlight?: boolean }) {
   const [state, setState] = useState<VoiceState>("idle");
   const [showReport, setShowReport] = useState(false);
   const [report, setReport] = useState<ReportPayload | null>(null);
@@ -788,6 +788,7 @@ export default function VoiceInteractionPanel() {
 
   return (
     <motion.div
+      id="voice-panel"
       className="relative overflow-hidden rounded-3xl border border-border bg-card/88 p-3 shadow-[0_26px_54px_-38px_rgba(0,0,0,0.6)] backdrop-blur-sm sm:p-4"
       whileHover={{ y: -2 }}
       transition={{ duration: 0.2 }}
@@ -854,18 +855,89 @@ export default function VoiceInteractionPanel() {
           </div>
 
           {/* Primary CTA — large, clearly visible */}
-          <button
-            type="button"
-            onClick={startConversation}
-            disabled={isRunning}
-            className="group inline-flex w-full max-w-[280px] items-center justify-center gap-2.5 rounded-2xl bg-[linear-gradient(95deg,#38ac06,#224bc3)] px-6 py-4 text-sm font-bold text-white shadow-[0_12px_32px_-14px_rgba(34,75,195,0.85)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-12px_rgba(34,75,195,0.95)] disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-60"
-          >
-            <Mic className="h-4 w-4 shrink-0" />
-            <span>{isRunning ? meta.badge : "Start Conversation"}</span>
-            {!isRunning && (
-              <ArrowRight className="h-4 w-4 shrink-0 transition group-hover:translate-x-0.5" />
-            )}
-          </button>
+          <div className="flex w-full max-w-[280px] flex-col items-center gap-1.5">
+
+            {/* Floating "Click here" label — shown when highlight active */}
+            <AnimatePresence>
+              {highlight && !isRunning && (
+                <motion.div
+                  key="click-label"
+                  className="flex flex-col items-center gap-0.5"
+                  initial={{ opacity: 0, y: -6, scale: 0.85 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.85 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <span className="rounded-full bg-[#38ac06] px-3 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white shadow-[0_0_14px_rgba(56,172,6,0.6)]">
+                    Click here to start
+                  </span>
+                  <motion.div
+                    animate={{ y: [0, 4, 0] }}
+                    transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <ChevronDown className="h-3.5 w-3.5 text-[#38ac06]" />
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Button with beacon rings */}
+            <div className="relative w-full">
+              {/* Expanding pulse rings */}
+              <AnimatePresence>
+                {highlight && !isRunning && (
+                  <motion.div
+                    key="beacon-rings"
+                    className="pointer-events-none absolute inset-0 z-10"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {[0, 0.5, 1.0].map((delay) => (
+                      <motion.span
+                        key={delay}
+                        className="absolute inset-0 rounded-2xl border-[2.5px] border-[#38ac06]"
+                        initial={{ scale: 1, opacity: 0.75 }}
+                        animate={{ scale: 1.9, opacity: 0 }}
+                        transition={{ duration: 1.6, repeat: Infinity, delay, ease: "easeOut" }}
+                      />
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <motion.button
+                type="button"
+                onClick={startConversation}
+                disabled={isRunning}
+                whileHover={!isRunning ? { y: -2 } : {}}
+                animate={
+                  highlight && !isRunning
+                    ? {
+                        boxShadow: [
+                          "0 12px 32px -14px rgba(56,172,6,0.5)",
+                          "0 14px 44px -8px rgba(56,172,6,0.95)",
+                          "0 12px 32px -14px rgba(56,172,6,0.5)",
+                        ],
+                        scale: [1, 1.03, 1],
+                      }
+                    : { boxShadow: "0 12px 32px -14px rgba(34,75,195,0.85)", scale: 1 }
+                }
+                transition={{
+                  duration: 0.9,
+                  repeat: highlight && !isRunning ? Infinity : 0,
+                  ease: "easeInOut",
+                }}
+                className="group inline-flex w-full items-center justify-center gap-2.5 rounded-2xl bg-[linear-gradient(95deg,#38ac06,#224bc3)] px-6 py-4 text-sm font-bold text-white disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-60"
+              >
+                <Mic className="h-4 w-4 shrink-0" />
+                <span>{isRunning ? meta.badge : "Start Conversation"}</span>
+                {!isRunning && (
+                  <ArrowRight className="h-4 w-4 shrink-0 transition group-hover:translate-x-0.5" />
+                )}
+              </motion.button>
+            </div>
+          </div>
 
           <AnimatePresence>
             {(Boolean(conversationId) || showReport || state === "reporting") && (

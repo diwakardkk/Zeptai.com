@@ -1,13 +1,20 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowRight, Binary, Building2, Cpu, Globe2, Layers3, Sparkles } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, Binary, Building2, ChevronDown, Cpu, Globe2, Layers3, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 type Mode = "web" | "api" | null;
 
 export default function AppDownload() {
   const [activeMode, setActiveMode] = useState<Mode>(null);
+  const [webHighlight, setWebHighlight] = useState(false);
+
+  function handleTryWebIntake() {
+    setWebHighlight(true);
+    setTimeout(() => setWebHighlight(false), 5500);
+    window.dispatchEvent(new CustomEvent("zeptai:highlight-intake"));
+  }
 
   return (
     <section id="access" className="relative overflow-hidden bg-background py-14 md:py-20">
@@ -180,13 +187,81 @@ export default function AppDownload() {
           transition={{ duration: 0.4, delay: 0.18 }}
           className="mx-auto mt-8 grid max-w-md gap-3 sm:grid-cols-2"
         >
-          <a
-            href="#demo"
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-[#38ac06]/35 bg-[#38ac06]/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-[#38ac06] transition hover:bg-[#38ac06]/18"
-          >
-            <Globe2 className="h-3.5 w-3.5" />
-            Try Web Intake
-          </a>
+          <div className="relative flex flex-col items-center gap-1">
+            {/* "Click here" label */}
+            <AnimatePresence>
+              {webHighlight && (
+                <motion.div
+                  key="web-click-label"
+                  className="flex flex-col items-center gap-0.5"
+                  initial={{ opacity: 0, y: -6, scale: 0.85 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.85 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <span className="rounded-full bg-[#38ac06] px-3 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white shadow-[0_0_14px_rgba(56,172,6,0.6)]">
+                    Scrolling to demo
+                  </span>
+                  <motion.div
+                    animate={{ y: [0, 4, 0] }}
+                    transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <ChevronDown className="h-3.5 w-3.5 text-[#38ac06]" />
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Button with beacon rings */}
+            <div className="relative">
+              <AnimatePresence>
+                {webHighlight && (
+                  <motion.div
+                    key="web-beacon"
+                    className="pointer-events-none absolute inset-0 z-10"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {[0, 0.5, 1.0].map((delay) => (
+                      <motion.span
+                        key={delay}
+                        className="absolute inset-0 rounded-full border-[2px] border-[#38ac06]"
+                        initial={{ scale: 1, opacity: 0.75 }}
+                        animate={{ scale: 2.0, opacity: 0 }}
+                        transition={{ duration: 1.6, repeat: Infinity, delay, ease: "easeOut" }}
+                      />
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <motion.button
+                type="button"
+                onClick={handleTryWebIntake}
+                animate={
+                  webHighlight
+                    ? {
+                        boxShadow: [
+                          "0 0 0 0px rgba(56,172,6,0.3)",
+                          "0 0 18px 4px rgba(56,172,6,0.7)",
+                          "0 0 0 0px rgba(56,172,6,0.3)",
+                        ],
+                        scale: [1, 1.04, 1],
+                      }
+                    : { boxShadow: "none", scale: 1 }
+                }
+                transition={{
+                  duration: 0.9,
+                  repeat: webHighlight ? Infinity : 0,
+                  ease: "easeInOut",
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#38ac06]/35 bg-[#38ac06]/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-[#38ac06] transition hover:bg-[#38ac06]/18"
+              >
+                <Globe2 className="h-3.5 w-3.5" />
+                Try Web Intake
+              </motion.button>
+            </div>
+          </div>
           <a
             href="#contact"
             className="inline-flex items-center justify-center gap-2 rounded-full border border-[#224bc3]/35 bg-[#224bc3]/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-[#224bc3] transition hover:bg-[#224bc3]/18"

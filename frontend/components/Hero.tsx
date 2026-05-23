@@ -1,11 +1,24 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, PlayCircle } from "lucide-react";
 import Link from "next/link";
 import VoiceInteractionPanel from "@/components/hero/VoiceInteractionPanel";
 
 export default function Hero() {
+  const [highlightPanel, setHighlightPanel] = useState(false);
+
+  const handleTryLiveIntake = useCallback(() => {
+    setHighlightPanel(true);
+    document.getElementById("voice-panel")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => setHighlightPanel(false), 5500);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("zeptai:highlight-intake", handleTryLiveIntake);
+    return () => window.removeEventListener("zeptai:highlight-intake", handleTryLiveIntake);
+  }, [handleTryLiveIntake]);
   return (
     <section id="demo" className="relative overflow-hidden border-b border-border bg-background pt-12 pb-12 lg:pt-14 lg:pb-14">
       <div className="pointer-events-none absolute inset-0 -z-10">
@@ -65,12 +78,13 @@ export default function Hero() {
             >
               Read AI Insights
             </Link>
-            <Link
-              href="#demo"
+            <button
+              type="button"
+              onClick={handleTryLiveIntake}
               className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition hover:border-[#38ac06]/35 hover:text-[#2f8f07]"
             >
               <PlayCircle className="h-4 w-4" /> Try Live Intake
-            </Link>
+            </button>
           </div>
         </motion.div>
 
@@ -80,7 +94,7 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.16 }}
           className="relative mx-auto w-full max-w-2xl lg:max-w-none"
         >
-          <VoiceInteractionPanel />
+          <VoiceInteractionPanel highlight={highlightPanel} />
         </motion.div>
       </div>
     </section>
