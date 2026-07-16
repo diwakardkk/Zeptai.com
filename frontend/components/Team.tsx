@@ -25,22 +25,18 @@ const team = [
     linkedin: "https://www.linkedin.com/in/prabhav-kumar-287ab21b1/",
     accent: "blue",
   },
-  {
-    name: "Shivam Kumar",
-    tag: "Co-Founder",
-    role: "CFO",
-    line: "Finance & operations",
-    image: "https://raw.githubusercontent.com/diwakardkk/Zeptai.com/main/uploads/Untitled%20design.png",
-    email: "shivam@zeptai.com",
-    linkedin: "https://www.linkedin.com/in/shivam-kumar-50237ab0/",
-    accent: "green",
-  },
 ];
 
 const roleTagStyles = {
   blue: "border-[#224bc3]/25 bg-[#224bc3]/10 text-[#224bc3]",
-  green: "border-[#38ac06]/30 bg-[#38ac06]/10 text-[#2f8f07]",
 } as const;
+
+const teamGridClassName =
+  team.length === 1
+    ? "mx-auto max-w-md"
+    : team.length === 2
+      ? "mx-auto max-w-4xl md:grid-cols-2"
+      : "md:grid-cols-2 xl:grid-cols-3";
 
 export default function Team() {
   return (
@@ -51,14 +47,14 @@ export default function Team() {
       </div>
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto mb-6 max-w-3xl text-center">
+        <div className="mx-auto mb-8 max-w-3xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-5xl">Our Team</h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">
             Meet the minds bridging the gap between cutting-edge AI research and clinical practice.
           </p>
         </div>
 
-        <div className="grid gap-3 lg:grid-cols-3">
+        <div className={`grid grid-cols-1 gap-5 ${teamGridClassName}`}>
           {team.map((member, idx) => {
             const tagStyle = roleTagStyles[member.accent as keyof typeof roleTagStyles] ?? roleTagStyles.blue;
             return (
@@ -69,7 +65,7 @@ export default function Team() {
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.06, duration: 0.45 }}
                 whileHover={{ y: -3 }}
-                className="group relative overflow-hidden rounded-3xl border border-border bg-card/85 p-5 shadow-[0_24px_52px_-42px_rgba(0,0,0,0.6)] backdrop-blur-sm md:p-6"
+                className="group relative mx-auto flex h-full w-full max-w-[28rem] flex-col overflow-hidden rounded-3xl border border-border bg-card/85 p-6 shadow-[0_24px_52px_-42px_rgba(0,0,0,0.6)] backdrop-blur-sm md:p-7"
               >
                 <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[#224bc3]/12 blur-2xl transition-opacity group-hover:opacity-90" />
                 <div className="pointer-events-none absolute -left-8 bottom-0 h-24 w-24 rounded-full bg-[#38ac06]/12 blur-2xl transition-opacity group-hover:opacity-90" />
