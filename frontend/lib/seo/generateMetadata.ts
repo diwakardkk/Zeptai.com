@@ -63,15 +63,15 @@ export function buildPageMetadata({
 
 export function generateBlogListingMetadata(): Metadata {
   return buildPageMetadata({
-    title: "Healthcare AI Blog",
+    title: "ZeptAI Journal",
     description:
-      "Read ZeptAI articles on healthcare AI, patient intake AI, voice AI healthcare workflows, and clinical summaries AI for care teams.",
+      "Read ZeptAI articles on applied AI, healthcare systems, responsible deployment, and emerging quantum research directions.",
     path: "/blog",
     keywords: [
+      "AI journal",
       "healthcare AI blog",
-      "patient intake AI blog",
-      "voice AI healthcare insights",
-      "clinical summaries AI blog",
+      "responsible AI blog",
+      "quantum computing research blog",
     ],
   });
 }

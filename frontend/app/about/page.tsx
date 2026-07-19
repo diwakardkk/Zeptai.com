@@ -5,21 +5,21 @@ import AboutPageContent from "@/components/about/AboutPageContent";
 import { buildPageMetadata } from "@/lib/seo/generateMetadata";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "About Our Healthcare AI Platform",
+  title: "About ZeptAI",
   description:
-    "Learn how ZeptAI builds healthcare AI for voice-based patient intake, structured clinical summaries, and telemedicine-ready screening workflows.",
+    "Learn how ZeptAI positions its work across applied AI, healthcare technology, and ongoing quantum computing research.",
   path: "/about",
   keywords: [
+    "research-led technology company",
     "healthcare AI company",
-    "patient intake AI platform",
-    "voice AI healthcare company",
-    "clinical summary platform",
+    "quantum computing research company",
+    "AI and healthcare innovation",
   ],
 });
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground flex flex-col pt-16 selection:bg-primary/30 selection:text-white">
+    <main className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/30 selection:text-white">
       <Navbar />
       <AboutPageContent />
       <Footer />

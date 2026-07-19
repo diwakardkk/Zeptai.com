@@ -1,101 +1,60 @@
-"use client";
-
-import { useCallback, useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowRight, PlayCircle } from "lucide-react";
 import Link from "next/link";
-import VoiceInteractionPanel from "@/components/hero/VoiceInteractionPanel";
+import { ArrowRight } from "lucide-react";
+import AbstractHeroVisual from "@/components/hero/AbstractHeroVisual";
 
 export default function Hero() {
-  const [highlightPanel, setHighlightPanel] = useState(false);
-
-  const handleTryLiveIntake = useCallback(() => {
-    setHighlightPanel(true);
-    document.getElementById("voice-panel")?.scrollIntoView({ behavior: "smooth", block: "center" });
-    setTimeout(() => setHighlightPanel(false), 5500);
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("zeptai:highlight-intake", handleTryLiveIntake);
-    return () => window.removeEventListener("zeptai:highlight-intake", handleTryLiveIntake);
-  }, [handleTryLiveIntake]);
   return (
-    <section id="demo" className="relative overflow-hidden border-b border-border bg-background pt-12 pb-12 lg:pt-14 lg:pb-14">
+    <section id="hero" className="relative overflow-hidden border-b border-border/70 bg-background pt-32 pb-14 md:pt-36 md:pb-18 lg:pb-20">
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <motion.div
-            className="absolute left-[-12%] top-[-14%] h-[340px] w-[340px] rounded-full bg-[#38ac06]/12 blur-[120px]"
-          animate={{ opacity: [0.45, 0.8, 0.45] }}
-          transition={{ duration: 5.4, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-            className="absolute right-[-12%] top-[-8%] h-[430px] w-[430px] rounded-full bg-[#224bc3]/12 blur-[130px]"
-          animate={{ opacity: [0.4, 0.75, 0.4] }}
-          transition={{ duration: 5.8, repeat: Infinity, ease: "easeInOut", delay: 0.25 }}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,250,0.95),rgba(255,255,250,0.72)_40%,transparent_75%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(9,9,9,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(9,9,9,0.045)_1px,transparent_1px)] bg-[size:40px_40px] opacity-[0.2]" />
+        <div className="absolute left-[-8%] top-[-8%] h-[20rem] w-[20rem] rounded-full bg-[#224bc3]/14 blur-[110px]" />
+        <div className="absolute right-[-10%] top-[10%] h-[24rem] w-[24rem] rounded-full bg-[#38ac06]/12 blur-[130px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,75,195,0.10),transparent_36%),radial-gradient(circle_at_78%_18%,rgba(56,172,6,0.12),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.96))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(34,75,195,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(34,75,195,0.055)_1px,transparent_1px)] bg-[size:36px_36px] opacity-[0.22]" />
       </div>
 
-      <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-7 px-4 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:gap-10 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55 }}
-          className="text-center lg:text-left"
-        >
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/25 bg-card/90 px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[#224bc3]">
-            <motion.span
-              className="h-2 w-2 rounded-full bg-[#38ac06]"
-              animate={{ scale: [1, 1.18, 1], opacity: [0.55, 1, 0.55] }}
-              transition={{ duration: 2.1, repeat: Infinity, ease: "easeInOut" }}
-            />
-            Healthcare AI Research and Enterprise AI Platform
+      <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10 lg:px-8">
+        <div className="text-center lg:text-left">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/20 bg-white/78 px-4 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-[#224bc3] shadow-[0_18px_40px_-30px_rgba(34,75,195,0.5)] backdrop-blur-sm">
+            Research-driven AI &amp; Quantum
           </span>
 
-          <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-[3.45rem] lg:leading-[1.02]">
-            Reducing Doctor Stress with<br className="hidden sm:block" />
-            <span className="bg-gradient-to-r from-[#38ac06] to-[#224bc3] bg-clip-text text-transparent">
-              Intelligent Patient Intake
+          <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-[3.25rem] lg:leading-[1.12]">
+            Research-Driven AI and
+            <br className="hidden sm:block" />
+            <span className="bg-gradient-to-r from-[#224bc3] via-[#224bc3] to-[#38ac06] bg-clip-text text-transparent">
+              Quantum Technologies for Real-World Impact
             </span>
           </h1>
 
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-muted-foreground md:text-lg lg:mx-0">
-            ZeptAI uses voice-based healthcare AI to capture patient symptoms, history,
-            medications and converts them into clear, structured summaries that save
-            doctors time and improve communication before consultation.
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-muted-foreground md:text-lg lg:mx-0">
+            ZeptAI is a research-focused technology company developing responsible artificial intelligence for healthcare and advancing applied research in quantum computing. We connect scientific methods, software engineering and real-world needs to create trustworthy digital systems.
           </p>
 
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
             <Link
-              href="#contact"
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-[linear-gradient(95deg,#38ac06,#224bc3)] px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_34px_-18px_rgba(34,75,195,0.75)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_42px_-18px_rgba(34,75,195,0.88)]"
+              href="/research"
+              className="group inline-flex items-center justify-center gap-2 rounded-full bg-[linear-gradient(95deg,#224bc3,#38ac06)] px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_36px_-20px_rgba(34,75,195,0.72)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_44px_-18px_rgba(34,75,195,0.82)]"
             >
-              Request Demo <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              Explore Research <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
             </Link>
             <Link
-              href="/blog"
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition hover:border-[#224bc3]/35 hover:text-[#224bc3]"
+              href="/projects"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-[#224bc3]/18 bg-white/75 px-5 py-3 text-sm font-semibold text-foreground shadow-[0_16px_34px_-28px_rgba(20,32,72,0.48)] backdrop-blur-sm transition hover:border-[#224bc3]/35 hover:text-[#224bc3]"
             >
-              Read AI Insights
+              View Projects
             </Link>
-            <button
-              type="button"
-              onClick={handleTryLiveIntake}
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition hover:border-[#38ac06]/35 hover:text-[#2f8f07]"
-            >
-              <PlayCircle className="h-4 w-4" /> Try Live Intake
-            </button>
           </div>
-        </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.16 }}
-          className="relative mx-auto w-full max-w-2xl lg:max-w-none"
-        >
-          <VoiceInteractionPanel highlight={highlightPanel} />
-        </motion.div>
+          <p className="mt-6 text-sm font-medium text-muted-foreground">
+            <Link href="/blog" className="text-[#224bc3] underline decoration-[#224bc3]/30 underline-offset-4 transition hover:text-[#1b3a9d]">
+              Read Our Blog
+            </Link>
+          </p>
+        </div>
+
+        <div className="relative mx-auto w-full max-w-2xl lg:max-w-none">
+          <AbstractHeroVisual />
+        </div>
       </div>
     </section>
   );

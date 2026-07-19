@@ -3,16 +3,17 @@ export const siteConfig = {
   url: "https://zeptai.com",
   redirectHosts: ["zeptafocusai.netlify.app"],
   description:
-    "ZeptAI uses voice-based healthcare AI to capture patient symptoms, history, medications and converts them into clear, structured summaries that save doctors time and improve communication before consultation.",
-  defaultTitle: "Reducing Doctor Stress with Intelligent Patient Intake",
+    "ZeptAI is a research-led technology company building practical AI systems for healthcare while developing credible research capability in quantum computing.",
+  defaultTitle: "Research-Led AI, Healthcare, and Quantum Technology",
   ogImage:
     "https://raw.githubusercontent.com/prabhav1800-tech/zeptai_contents/main/uploads/logo.png",
   keywords: [
     "healthcare AI",
+    "applied AI research",
+    "quantum computing research",
     "patient intake AI",
-    "clinical summaries AI",
-    "voice AI healthcare",
-    "conversational AI healthcare",
+    "clinical AI systems",
+    "conversational healthcare technology",
   ],
 } as const;
 

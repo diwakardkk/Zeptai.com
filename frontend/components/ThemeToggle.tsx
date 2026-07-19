@@ -6,12 +6,12 @@ import { Moon, Sun } from "lucide-react";
 type Theme = "light" | "dark";
 
 function resolveInitialTheme(): Theme {
-  if (typeof window === "undefined") return "dark";
+  if (typeof window === "undefined") return "light";
 
   const stored = window.localStorage.getItem("theme");
   if (stored === "light" || stored === "dark") return stored;
 
-  return "dark";
+  return "light";
 }
 
 function applyTheme(theme: Theme) {

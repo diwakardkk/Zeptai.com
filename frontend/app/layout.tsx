@@ -70,7 +70,7 @@ export default function RootLayout({
           (function () {
             try {
               var stored = localStorage.getItem("theme");
-              var theme = stored || "dark";
+              var theme = stored || "light";
               var root = document.documentElement;
               if (theme === "dark") root.classList.add("dark");
               else root.classList.remove("dark");

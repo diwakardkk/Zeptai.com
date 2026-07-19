@@ -4,14 +4,14 @@
 
 @layer base {
   :root {
-    --background: 48 100% 98%;
-    --foreground: 222 27% 12%;
+    --background: 210 43% 98%;
+    --foreground: 222 31% 14%;
 
-    --card: 50 100% 99%;
-    --card-foreground: 222 26% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 30% 15%;
 
-    --popover: 50 100% 99%;
-    --popover-foreground: 222 26% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 30% 15%;
 
     --primary: 224.7 70.3% 44.9%;
     --primary-foreground: 0 0% 100%;
@@ -19,7 +19,7 @@
     --secondary: 101.9 93.3% 34.9%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 22% 94%;
+    --muted: 210 28% 94%;
     --muted-foreground: 222 13% 34%;
 
     --accent: 101.9 93.3% 34.9%;
@@ -28,8 +28,8 @@
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 82%;
-    --input: 220 20% 95%;
+    --border: 214 24% 84%;
+    --input: 212 28% 95%;
     --ring: 224.7 70.3% 44.9%;
 
     --radius: 0.75rem;
@@ -79,6 +79,7 @@
 
   body {
     background-color: hsl(var(--background));
+    background-image: radial-gradient(circle at top left, rgba(34, 75, 195, 0.08), transparent 30%), radial-gradient(circle at top right, rgba(56, 172, 6, 0.08), transparent 24%);
     color: hsl(var(--foreground));
     line-height: 1.55;
     text-rendering: optimizeLegibility;

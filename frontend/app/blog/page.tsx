@@ -27,10 +27,10 @@ export default async function BlogPage() {
       </div>
       <Navbar />
       <BlogHero
-        title="ZeptAI Research & Insights"
-        headline="Healthcare AI for Patient Intake and Intelligent Workflows"
-        description="Research-backed insights on voice-based patient intake, AI-driven healthcare workflows, and structured summaries designed to improve how modern care systems operate."
-        tags={["Voice AI Healthcare", "Patient Intake AI", "AI Workflows"]}
+        title="ZeptAI Journal"
+        headline="Educational and technical writing across AI, healthcare, and emerging quantum research"
+        description="ZeptAI publishes articles on applied AI systems, healthcare workflow design, responsible deployment, and the broader research questions shaping the company&apos;s direction. Current coverage is strongest in healthcare AI while adjacent research themes continue to expand."
+        tags={["Applied AI", "Healthcare Systems", "Emerging Quantum"]}
       />
 
       <section className="relative mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
@@ -46,10 +46,10 @@ export default async function BlogPage() {
         <div className="mb-10 flex flex-col gap-4 rounded-[30px] border border-border bg-card/85 px-6 py-6 shadow-[0_24px_70px_rgba(9,9,9,0.06)] backdrop-blur-xl md:flex-row md:items-end md:justify-between md:px-8">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#224bc3]">
-              Latest from ZeptAI Publication
+              Latest technical notes
             </p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-              Premium articles on healthcare AI systems, deployment, and clinical workflows
+              Writing on AI systems, healthcare workflows, and research translation
             </h2>
           </div>
           <div className="flex items-center gap-3 text-sm font-medium text-muted-foreground">
