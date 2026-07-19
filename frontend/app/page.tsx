@@ -111,7 +111,7 @@ export default function Home() {
               return (
                 <article
                   key={card.title}
-                  className="group relative rounded-[28px] border border-white/70 bg-white/80 dark:bg-card/70 p-6 shadow-[0_24px_56px_-42px_rgba(20,32,72,0.3)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-[#224bc3]/20 hover:shadow-[0_30px_60px_-38px_rgba(20,32,72,0.45)] flex flex-col justify-between"
+                  className="group relative rounded-[28px] border border-white/70 bg-white/80 p-6 shadow-[0_24px_56px_-42px_rgba(20,32,72,0.3)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-[#224bc3]/20 hover:shadow-[0_30px_60px_-38px_rgba(20,32,72,0.45)] flex flex-col justify-between"
                 >
                   <div>
                     <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(34,75,195,0.08),rgba(56,172,6,0.12))] text-[#224bc3] group-hover:scale-105 transition-transform duration-300">
@@ -158,7 +158,7 @@ export default function Home() {
             {workSteps.map((step, idx) => (
               <div
                 key={step.step}
-                className="relative rounded-[28px] border border-white/60 bg-white/70 dark:bg-card/60 p-6 shadow-[0_20px_48px_-40px_rgba(20,32,72,0.22)] backdrop-blur-sm hover:border-[#38ac06]/20 transition duration-300"
+                className="relative rounded-[28px] border border-white/60 bg-white/70 p-6 shadow-[0_20px_48px_-40px_rgba(20,32,72,0.22)] backdrop-blur-sm hover:border-[#38ac06]/20 transition duration-300"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-3xl font-extrabold tracking-tight bg-gradient-to-br from-[#224bc3] to-[#38ac06] bg-clip-text text-transparent">

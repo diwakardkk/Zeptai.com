@@ -20,7 +20,7 @@ export default function ConversationalHealthAIContent({ initialMode }: Conversat
     "Clinics and hospitals",
     "Telehealth platforms",
     "Health camps and screening programmes",
-    "Medical researchers",
+    "Medical arresechers",
     "Digital-health companies",
     "Educational and controlled demonstration environments",
   ];
@@ -45,21 +45,27 @@ export default function ConversationalHealthAIContent({ initialMode }: Conversat
   return (
     <main className="min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-white">
       {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-border/70 pt-28 pb-14 md:pt-32 md:pb-16">
+      <section className="relative overflow-hidden border-b border-border/70 pt-32 pb-14 md:pt-36 md:pb-18 lg:pb-20">
         <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute left-[-10%] top-10 h-80 w-80 rounded-full bg-[#224bc3]/8 blur-[130px]" />
-          <div className="absolute right-[-10%] top-2 h-96 w-96 rounded-full bg-[#38ac06]/8 blur-[150px]" />
+          <div className="absolute left-[-8%] top-[-8%] h-[20rem] w-[20rem] rounded-full bg-[#224bc3]/14 blur-[110px]" />
+          <div className="absolute right-[-10%] top-[10%] h-[24rem] w-[24rem] rounded-full bg-[#38ac06]/12 blur-[130px]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,75,195,0.10),transparent_36%),radial-gradient(circle_at_78%_18%,rgba(56,172,6,0.12),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.96))]" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(34,75,195,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(34,75,195,0.055)_1px,transparent_1px)] bg-[size:36px_36px] opacity-[0.22]" />
         </div>
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-6 lg:grid-cols-[1.02fr_0.98fr] lg:items-stretch">
-            <article className="rounded-[2.2rem] border border-white/70 bg-white/80 dark:bg-card/70 p-7 shadow-[0_24px_56px_-42px_rgba(20,32,72,0.3)] backdrop-blur-sm sm:p-9 flex flex-col justify-between">
+            <article className="rounded-[2.2rem] border border-white/70 bg-white/80 p-7 shadow-[0_24px_56px_-42px_rgba(20,32,72,0.3)] backdrop-blur-sm sm:p-9 flex flex-col justify-between">
               <div>
-                <span className="inline-flex rounded-full border border-[#38ac06]/20 bg-[#38ac06]/10 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-[#2f8f07]">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[#38ac06]/20 bg-white/78 px-4 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-[#2f8f07] shadow-[0_18px_40px_-30px_rgba(56,172,6,0.5)] backdrop-blur-sm">
                   Pilot-ready Product
                 </span>
-                <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl lg:text-5xl lg:leading-[1.06]">
-                  ZeptAI Health Conversation Assistant
+                <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl lg:text-[3.25rem] lg:leading-[1.12]">
+                  ZeptAI Health
+                  <br className="hidden sm:block" />
+                  <span className="bg-gradient-to-r from-[#224bc3] via-[#224bc3] to-[#38ac06] bg-clip-text text-transparent">
+                    Conversation Assistant
+                  </span>
                 </h1>
                 <p className="mt-5 text-sm leading-7 text-muted-foreground">
                   A voice- and text-enabled conversational system that helps collect patient-provided information, organize symptoms and history, and generate a structured summary for review. The system is designed to support communication and documentation; it does not replace qualified medical professionals or provide autonomous diagnosis.
@@ -91,7 +97,7 @@ export default function ConversationalHealthAIContent({ initialMode }: Conversat
             </article>
 
             {/* Video Overview Placeholder */}
-            <article className="relative rounded-[2.2rem] border border-white/70 bg-[linear-gradient(135deg,rgba(255,255,255,0.88),rgba(242,247,255,0.96))] dark:bg-card/60 p-7 shadow-[0_24px_56px_-42px_rgba(20,32,72,0.3)] backdrop-blur-sm flex flex-col justify-between overflow-hidden">
+            <article className="relative rounded-[2.2rem] border border-white/70 bg-[linear-gradient(135deg,rgba(255,255,255,0.88),rgba(242,247,255,0.96))] p-7 shadow-[0_24px_56px_-42px_rgba(20,32,72,0.3)] backdrop-blur-sm flex flex-col justify-between overflow-hidden">
               <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10 rounded-[2.2rem]">
                 <div className="flex flex-col items-center text-white p-4 text-center">
                   <div className="h-16 w-16 rounded-full bg-[#224bc3]/90 hover:bg-[#224bc3] hover:scale-105 transition duration-300 flex items-center justify-center shadow-lg cursor-pointer mb-4">
@@ -166,11 +172,11 @@ export default function ConversationalHealthAIContent({ initialMode }: Conversat
       <section className="relative overflow-hidden py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-2 items-start">
-            
+
             {/* What the system does / does not do */}
             <article className="space-y-5">
               <h3 className="text-xl font-bold text-foreground">Operational Boundaries</h3>
-              
+
               <div className="grid gap-4 sm:grid-cols-2">
                 {/* Does */}
                 <div className="rounded-3xl border border-[#38ac06]/20 bg-[#38ac06]/[0.02] p-5">
@@ -187,7 +193,7 @@ export default function ConversationalHealthAIContent({ initialMode }: Conversat
 
                 {/* Does Not */}
                 <div className="rounded-3xl border border-red-300/20 bg-red-500/[0.02] p-5">
-                  <h4 className="font-bold text-red-700 dark:text-red-400 flex items-center gap-2 text-sm mb-3">
+                  <h4 className="font-bold text-red-700 flex items-center gap-2 text-sm mb-3">
                     <AlertTriangle className="h-4 w-4" /> What it does not do
                   </h4>
                   <ul className="space-y-2.5 text-xs text-muted-foreground">

@@ -12,31 +12,17 @@ type BlogHeroProps = {
 
 export default function BlogHero({ title, headline, description, tags }: BlogHeroProps) {
   return (
-    <section className="relative overflow-hidden pt-28">
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <motion.div
-          className="absolute -left-28 top-10 h-80 w-80 rounded-full bg-[#38ac06]/14 blur-[110px]"
-          animate={{ x: [0, 24, 0], y: [0, -14, 0] }}
-          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute -right-20 top-2 h-[26rem] w-[26rem] rounded-full bg-[#224bc3]/14 blur-[120px]"
-          animate={{ x: [0, -26, 0], y: [0, 12, 0] }}
-          transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.028)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.028)_1px,transparent_1px)] bg-[size:64px_64px] opacity-30 [mask-image:radial-gradient(circle_at_center,black,transparent_78%)]" />
-      </div>
-
+    <section className="relative overflow-hidden pt-32 pb-6 md:pt-36 md:pb-8 lg:pb-10">
       <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl rounded-[34px] border border-border bg-card/80 px-6 py-10 shadow-[0_30px_90px_rgba(9,9,9,0.08)] backdrop-blur-xl md:px-10 md:py-12">
+        <div className="mx-auto max-w-5xl rounded-[34px] border border-border bg-card/85 px-6 py-10 shadow-[0_24px_70px_rgba(9,9,9,0.06)] backdrop-blur-xl md:px-10 md:py-12">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/25 bg-[#224bc3]/8 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#224bc3]">
-              <Sparkles className="h-3.5 w-3.5" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/20 bg-white/78 px-4 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-[#224bc3] shadow-[0_18px_40px_-30px_rgba(34,75,195,0.5)] backdrop-blur-sm">
+              <Sparkles className="h-3.5 w-3.5 text-[#38ac06]" />
               {title}
             </span>
           </motion.div>
@@ -48,8 +34,18 @@ export default function BlogHero({ title, headline, description, tags }: BlogHer
             viewport={{ once: true }}
             transition={{ duration: 0.65, delay: 0.08, ease: "easeOut" }}
           >
-            <h1 className="text-4xl font-bold leading-tight tracking-[-0.045em] text-foreground md:text-6xl">
-              {headline}
+            <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-[3.25rem] lg:leading-[1.12]">
+              {headline.includes("across") ? (
+                <>
+                  {headline.split("across")[0]}
+                  <br className="hidden sm:block" />
+                  <span className="bg-gradient-to-r from-[#224bc3] via-[#224bc3] to-[#38ac06] bg-clip-text text-transparent">
+                    across {headline.split("across")[1]}
+                  </span>
+                </>
+              ) : (
+                headline
+              )}
             </h1>
           </motion.div>
 

@@ -59,7 +59,7 @@ export default function ProjectsOverviewContent() {
       case "green":
         return "border-[#38ac06]/20 bg-[#38ac06]/10 text-[#2f8f07]";
       case "amber":
-        return "border-amber-300/40 bg-amber-500/10 text-amber-700 dark:text-amber-400";
+        return "border-amber-300/40 bg-amber-500/10 text-amber-700";
       case "blue":
       default:
         return "border-[#224bc3]/20 bg-[#224bc3]/10 text-[#224bc3]";
@@ -67,22 +67,28 @@ export default function ProjectsOverviewContent() {
   };
 
   return (
-    <section className="relative overflow-hidden pb-20 pt-28 md:pb-24 md:pt-32">
+    <section className="relative overflow-hidden border-b border-border/70 bg-background pt-32 pb-14 md:pt-36 md:pb-18 lg:pb-20">
       {/* Ambient background decoration */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-[-10%] top-12 h-80 w-80 rounded-full bg-[#224bc3]/8 blur-[130px]" />
-        <div className="absolute right-[-10%] top-0 h-96 w-96 rounded-full bg-[#38ac06]/8 blur-[150px]" />
+        <div className="absolute left-[-8%] top-[-8%] h-[20rem] w-[20rem] rounded-full bg-[#224bc3]/14 blur-[110px]" />
+        <div className="absolute right-[-10%] top-[10%] h-[24rem] w-[24rem] rounded-full bg-[#38ac06]/12 blur-[130px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,75,195,0.10),transparent_36%),radial-gradient(circle_at_78%_18%,rgba(56,172,6,0.12),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.96))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(34,75,195,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(34,75,195,0.055)_1px,transparent_1px)] bg-[size:36px_36px] opacity-[0.22]" />
       </div>
 
       <div className="mx-auto flex max-w-7xl flex-col gap-12 px-4 sm:px-6 lg:gap-16 lg:px-8">
         
         {/* Projects Hero */}
         <section className="max-w-4xl mx-auto text-center">
-          <span className="inline-flex rounded-full border border-[#224bc3]/20 bg-[#224bc3]/[0.06] px-4 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-[#224bc3]">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/20 bg-white/78 px-4 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-[#224bc3] shadow-[0_18px_40px_-30px_rgba(34,75,195,0.5)] backdrop-blur-sm">
             Applied Engineering
           </span>
-          <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl lg:leading-[1.08]">
-            Projects Built From Research
+          <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-[3.25rem] lg:leading-[1.12]">
+            Applied Engineering &amp;
+            <br className="hidden sm:block" />
+            <span className="bg-gradient-to-r from-[#224bc3] via-[#224bc3] to-[#38ac06] bg-clip-text text-transparent">
+              Projects Built From Research
+            </span>
           </h1>
           <p className="mt-6 text-base leading-8 text-muted-foreground md:text-lg lg:text-xl">
             Our projects translate research into usable systems. Each project is developed with clear objectives, transparent limitations, human oversight and a pathway toward real-world validation.
@@ -90,7 +96,7 @@ export default function ProjectsOverviewContent() {
         </section>
 
         {/* Featured Project - Conversational Healthcare Bot */}
-        <section className="rounded-[2.5rem] border border-white/70 bg-white/80 dark:bg-card/75 p-6 shadow-[0_30px_70px_-46px_rgba(20,32,72,0.42)] backdrop-blur-sm md:p-10">
+        <section className="rounded-[2.5rem] border border-white/70 bg-white/80 p-6 shadow-[0_30px_70px_-46px_rgba(20,32,72,0.42)] backdrop-blur-sm md:p-10">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <span className="inline-flex rounded-full border border-[#38ac06]/20 bg-[#38ac06]/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#2f8f07]">
               Featured Project
@@ -112,7 +118,7 @@ export default function ProjectsOverviewContent() {
           <div className="grid gap-8 mt-10 md:grid-cols-2 pt-8 border-t border-border/40">
             {/* Problems Addressed */}
             <article className="rounded-3xl border border-red-300/20 bg-red-500/[0.02] p-6">
-              <div className="flex items-center gap-3 text-red-700 dark:text-red-400 mb-4">
+              <div className="flex items-center gap-3 text-red-700 mb-4">
                 <AlertCircle className="h-5 w-5" />
                 <h3 className="text-lg font-bold">Problems Addressed</h3>
               </div>
@@ -206,7 +212,7 @@ export default function ProjectsOverviewContent() {
             {futureProjects.map((p) => (
               <article
                 key={p.title}
-                className="rounded-[24px] border border-white/70 bg-white/80 dark:bg-card/70 p-5 shadow-[0_16px_40px_-30px_rgba(20,32,72,0.25)] flex flex-col justify-between"
+                className="rounded-[24px] border border-white/70 bg-white/80 p-5 shadow-[0_16px_40px_-30px_rgba(20,32,72,0.25)] flex flex-col justify-between"
               >
                 <div>
                   <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wider ${getLabelTone(p.tone)}`}>

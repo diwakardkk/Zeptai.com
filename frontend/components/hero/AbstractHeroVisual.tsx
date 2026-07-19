@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 
 export default function AbstractHeroVisual() {
   return (
-    <div className="relative w-full h-[320px] sm:h-[400px] md:h-[450px] flex items-center justify-center bg-gradient-to-br from-white/[0.04] to-white/[0.01] dark:from-white/[0.02] dark:to-transparent rounded-[38px] border border-border/40 p-4 shadow-[0_20px_50px_rgba(20,32,72,0.06)] overflow-hidden">
+    <div className="relative w-full h-[320px] sm:h-[400px] md:h-[450px] flex items-center justify-center bg-gradient-to-br from-white/[0.04] to-white/[0.01] rounded-[38px] border border-border/40 p-4 shadow-[0_20px_50px_rgba(20,32,72,0.06)] overflow-hidden">
       {/* Decorative ambient background glows */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-[#224bc3]/[0.06] dark:bg-[#224bc3]/[0.08] blur-[80px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-48 h-48 rounded-full bg-[#38ac06]/[0.05] dark:bg-[#38ac06]/[0.07] blur-[90px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-[#224bc3]/[0.06] blur-[80px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-48 h-48 rounded-full bg-[#38ac06]/[0.05] blur-[90px] pointer-events-none" />
 
       <svg
         viewBox="0 0 520 420"
@@ -99,7 +99,7 @@ export default function AbstractHeroVisual() {
         {/* ================= 2. STRUCTURED HEALTH DATA (Center) ================= */}
         <g id="structured-health-data">
           {/* Data Grid Background */}
-          <rect x="140" y="180" width="160" height="100" rx="16" className="fill-[#224bc3]/[0.02] dark:fill-[#224bc3]/[0.01] stroke-border/40" strokeWidth="1" />
+          <rect x="140" y="180" width="160" height="100" rx="16" className="fill-[#224bc3]/[0.02] stroke-border/40" strokeWidth="1" />
           
           {/* Grid lines */}
           <line x1="140" y1="205" x2="300" y2="205" stroke="currentColor" strokeOpacity="0.06" strokeWidth="1" />

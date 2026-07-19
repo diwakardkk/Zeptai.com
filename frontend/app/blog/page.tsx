@@ -5,7 +5,6 @@ import BlogList from "@/components/blog/BlogList";
 import FeaturedPost from "@/components/blog/FeaturedPost";
 import { getCommentCounts } from "@/lib/blog/getCommentCounts";
 import { getAllPosts } from "@/lib/blog/getAllPosts";
-import { inter } from "@/lib/fonts";
 import { generateBlogListingMetadata } from "@/lib/seo/generateMetadata";
 
 export const metadata = generateBlogListingMetadata();
@@ -16,14 +15,12 @@ export default async function BlogPage() {
   const remaining = posts.filter((post) => post.slug !== featured?.slug);
 
   return (
-    <main className={`${inter.className} relative min-h-screen overflow-hidden bg-background text-foreground`}>
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(circle_at_top_left,rgba(56,172,6,0.16),transparent_34%),radial-gradient(circle_at_top_right,rgba(34,75,195,0.14),transparent_36%),linear-gradient(180deg,rgba(255,255,250,0.96),rgba(255,255,250,0.78),rgba(255,255,250,1))] dark:hidden" />
-        <div className="absolute inset-x-0 top-0 hidden h-[520px] dark:block dark:bg-[radial-gradient(circle_at_top_left,rgba(56,172,6,0.22),transparent_34%),radial-gradient(circle_at_top_right,rgba(34,75,195,0.24),transparent_36%),linear-gradient(180deg,rgba(16,20,34,0.98),rgba(16,20,34,0.9),rgba(16,20,34,1))]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(9,9,9,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(9,9,9,0.03)_1px,transparent_1px)] bg-[size:68px_68px] opacity-35 [mask-image:radial-gradient(circle_at_top,black,transparent_78%)] dark:hidden" />
-        <div className="absolute inset-0 hidden dark:block dark:bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] dark:bg-[size:68px_68px] dark:opacity-25 dark:[mask-image:radial-gradient(circle_at_top,black,transparent_78%)]" />
-        <div className="absolute left-[8%] top-36 h-48 w-48 rounded-full bg-[#38ac06]/10 blur-3xl" />
-        <div className="absolute right-[10%] top-24 h-56 w-56 rounded-full bg-[#224bc3]/10 blur-3xl" />
+    <main className="relative min-h-screen overflow-hidden bg-background text-foreground">
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute left-[-8%] top-[-8%] h-[20rem] w-[20rem] rounded-full bg-[#224bc3]/14 blur-[110px]" />
+        <div className="absolute right-[-10%] top-[10%] h-[24rem] w-[24rem] rounded-full bg-[#38ac06]/12 blur-[130px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,75,195,0.10),transparent_36%),radial-gradient(circle_at_78%_18%,rgba(56,172,6,0.12),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.96))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(34,75,195,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(34,75,195,0.055)_1px,transparent_1px)] bg-[size:36px_36px] opacity-[0.22]" />
       </div>
       <Navbar />
       <BlogHero

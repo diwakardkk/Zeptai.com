@@ -659,7 +659,7 @@ export default function NurseChat() {
             )}
 
             {error && (
-              <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-700 dark:text-red-300">
+              <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-700">
                 Error: {error}
               </div>
             )}

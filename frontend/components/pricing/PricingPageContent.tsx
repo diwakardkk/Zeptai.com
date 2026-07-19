@@ -232,7 +232,7 @@ export default function PricingPageContent() {
               </Link>
             </section>
 
-            <section className="relative rounded-[2rem] border border-[#224bc3]/30 bg-gradient-to-b from-card/95 to-background/95 p-6 shadow-[0_22px_60px_-36px_rgba(34,75,195,0.7)] backdrop-blur transition duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_70px_-34px_rgba(34,75,195,0.65)] dark:to-card/90">
+            <section className="relative rounded-[2rem] border border-[#224bc3]/30 bg-gradient-to-b from-card/95 to-background/95 p-6 shadow-[0_22px_60px_-36px_rgba(34,75,195,0.7)] backdrop-blur transition duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_70px_-34px_rgba(34,75,195,0.65)]">
               <span className="absolute -top-3 right-5 inline-flex items-center gap-1.5 rounded-full border border-[#224bc3]/25 bg-[#224bc3] px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.15em] text-white">
                 <Crown className="h-3.5 w-3.5" />
                 Most Popular
@@ -370,7 +370,7 @@ export default function PricingPageContent() {
           </div>
 
           {paymentError && (
-            <div className="mt-6 rounded-2xl border border-red-400/30 bg-red-500/10 px-5 py-4 text-sm text-red-600 dark:text-red-400">
+            <div className="mt-6 rounded-2xl border border-red-400/30 bg-red-500/10 px-5 py-4 text-sm text-red-600">
               {paymentError}
             </div>
           )}

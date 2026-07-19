@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
-import ThemeToggle from "@/components/ThemeToggle";
 
 const navigationItems = [
   { href: "/", label: "Home" },
@@ -73,18 +72,13 @@ export default function Navbar() {
             })}
           </nav>
 
-          <div className="hidden items-center gap-3 md:flex">
-            <ThemeToggle />
-          </div>
-
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="mr-2 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card/90 text-foreground focus:outline-none"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card/90 text-foreground focus:outline-none"
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
-            <ThemeToggle />
           </div>
         </div>
 
