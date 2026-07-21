@@ -31,12 +31,14 @@ export default function QuantumComputingResearchPage() {
           </Link>
 
           <div className="mt-5 rounded-[2rem] border border-white/75 bg-white/84 p-7 shadow-[0_30px_70px_-46px_rgba(20,32,72,0.48)] backdrop-blur-sm sm:p-9">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#224bc3]/10 text-[#224bc3]">
-              <Orbit className="h-6 w-6" />
+            <div className="flex items-center gap-4">
+              <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#224bc3]/10 text-[#224bc3]">
+                <Orbit className="h-6 w-6" />
+              </div>
+              <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl lg:text-5xl lg:leading-[1.06]">
+                Quantum computing research direction
+              </h1>
             </div>
-            <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl lg:text-5xl lg:leading-[1.06]">
-              Quantum computing research direction
-            </h1>
             <p className="mt-5 max-w-3xl text-base leading-8 text-muted-foreground md:text-lg">
               ZeptAI is building credible research capability in quantum algorithms and hybrid methods. We approach quantum research with mathematical and scientific discipline, focusing on fundamental algorithms and evaluation frameworks rather than premature deployment or advantage claims.
             </p>

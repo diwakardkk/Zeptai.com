@@ -114,11 +114,13 @@ export default function Home() {
                   className="group relative rounded-[28px] border border-white/70 bg-white/80 p-6 shadow-[0_24px_56px_-42px_rgba(20,32,72,0.3)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-[#224bc3]/20 hover:shadow-[0_30px_60px_-38px_rgba(20,32,72,0.45)] flex flex-col justify-between"
                 >
                   <div>
-                    <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(34,75,195,0.08),rgba(56,172,6,0.12))] text-[#224bc3] group-hover:scale-105 transition-transform duration-300">
-                      <Icon className="h-6 w-6" />
+                    <div className="flex items-center gap-4">
+                      <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(34,75,195,0.08),rgba(56,172,6,0.12))] text-[#224bc3] group-hover:scale-105 transition-transform duration-300">
+                        <Icon className="h-6 w-6" />
+                      </div>
+                      <h3 className="text-xl font-bold text-foreground leading-snug">{card.title}</h3>
                     </div>
-                    <h3 className="mt-5 text-xl font-bold text-foreground">{card.title}</h3>
-                    <p className="mt-3 text-sm leading-6 text-muted-foreground">{card.description}</p>
+                    <p className="mt-4 text-sm leading-6 text-muted-foreground">{card.description}</p>
                   </div>
                   <div className="mt-6 pt-4 border-t border-border/40">
                     <Link href={card.href} className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#224bc3] hover:text-[#1b3a9d] transition-colors">

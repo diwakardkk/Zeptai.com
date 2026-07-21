@@ -388,29 +388,35 @@ export default function PricingPageContent() {
             </p>
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
               <div className="rounded-2xl border border-border bg-card/90 p-5">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#224bc3]/10">
-                  <Smartphone className="h-5 w-5 text-[#224bc3]" />
+                <div className="flex items-center gap-3">
+                  <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#224bc3]/10">
+                    <Smartphone className="h-5 w-5 text-[#224bc3]" />
+                  </div>
+                  <h3 className="font-semibold text-foreground">Razorpay</h3>
                 </div>
-                <h3 className="font-semibold text-foreground">Razorpay</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
                   Hosted checkout integration slot is prepared.
                 </p>
               </div>
               <div className="rounded-2xl border border-border bg-card/90 p-5">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#224bc3]/10">
-                  <QrCode className="h-5 w-5 text-[#224bc3]" />
+                <div className="flex items-center gap-3">
+                  <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#224bc3]/10">
+                    <QrCode className="h-5 w-5 text-[#224bc3]" />
+                  </div>
+                  <h3 className="font-semibold text-foreground">UPI</h3>
                 </div>
-                <h3 className="font-semibold text-foreground">UPI</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
                   Ready for UPI intent and QR-based payment flows.
                 </p>
               </div>
               <div className="rounded-2xl border border-border bg-card/90 p-5">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#224bc3]/10">
-                  <CreditCard className="h-5 w-5 text-[#224bc3]" />
+                <div className="flex items-center gap-3">
+                  <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#224bc3]/10">
+                    <CreditCard className="h-5 w-5 text-[#224bc3]" />
+                  </div>
+                  <h3 className="font-semibold text-foreground">Cards</h3>
                 </div>
-                <h3 className="font-semibold text-foreground">Cards</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
                   Supports debit and credit card checkout paths.
                 </p>
               </div>

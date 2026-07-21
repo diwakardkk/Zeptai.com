@@ -14,7 +14,7 @@ type Publication = {
   href: string;
   contribution: string;
   category: "Healthcare AI" | "Machine Learning" | "Explainable AI" | "Quantum" | "Optimization";
-  status: "Published" | "Accepted" | "Preprint" | "Under Review";
+  status: "Published" | "Accepted" | "Preprint" | "Under Review" | "Under Process";
 };
 
 const publicationsData: Publication[] = [
@@ -75,36 +75,36 @@ const publicationsData: Publication[] = [
   },
   {
     title: "Decomposition Strategies for Constrained Quadratic Unconstrained Binary Optimization",
-    authors: "D. Diwakar, P. Santosh",
-    journal: "IEEE Transactions on Evolutionary Computation",
+    authors: "DR. Diwakar, Prabhav, Santosh",
+    journal: "",
     year: "2026",
-    doi: "10.1109/TEVC.2026.012345",
-    href: "https://doi.org/10.1109/TEVC.2026.012345",
+    doi: "",
+    href: "",
     contribution: "Proposes a novel decomposition approach for mapping QUBO instances onto hybrid classical-quantum solvers.",
     category: "Optimization",
-    status: "Accepted",
+    status: "Under Process",
   },
   {
     title: "Evaluating Small Variational Quantum Models Under Noise and Limited Data",
-    authors: "D. Diwakar, P. Santosh",
-    journal: "Quantum Science and Technology",
+    authors: "DR. Diwakar, Prabhav, Santosh",
+    journal: "",
     year: "2026",
-    doi: "10.1088/2058-9565/ab890c",
-    href: "https://doi.org/10.1088/2058-9565/ab890c",
+    doi: "",
+    href: "",
     contribution: "Establishes benchmarking parameters for variational circuits against compact classical baselines.",
     category: "Quantum",
-    status: "Preprint",
+    status: "Under Process",
   },
   {
     title: "Uncertainty Estimation and Calibration in Deep Clinical Intake Models",
-    authors: "D. Diwakar, P. Santosh",
-    journal: "Journal of Biomedical Informatics",
+    authors: "DR. Diwakar, Prabhav, Santosh",
+    journal: "",
     year: "2026",
-    doi: "10.1016/j.jbi.2026.104567",
-    href: "https://doi.org/10.1016/j.jbi.2026.104567",
+    doi: "",
+    href: "",
     contribution: "Introduces temperature scaling for calibrating multi-language disease screening systems.",
     category: "Machine Learning",
-    status: "Under Review",
+    status: "Under Process",
   },
 ];
 
@@ -161,6 +161,8 @@ export default function ResearchPageContent() {
         return "border-blue-300/40 bg-blue-50 text-blue-700";
       case "Under Review":
         return "border-amber-300/40 bg-amber-50 text-amber-700";
+      case "Under Process":
+        return "border-amber-300/40 bg-amber-50 text-amber-700";
       default:
         return "border-slate-300/40 bg-slate-50 text-slate-700";
     }
@@ -214,13 +216,15 @@ export default function ResearchPageContent() {
           {/* Research Area A: AI and Healthcare */}
           <article className="rounded-[2.2rem] border border-white/70 bg-white/80 p-7 shadow-[0_24px_64px_-40px_rgba(20,32,72,0.3)] backdrop-blur-sm sm:p-9 flex flex-col justify-between">
             <div>
-              <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#224bc3]/10 text-[#224bc3]">
-                <BrainCircuit className="h-6 w-6" />
+              <div className="flex items-center gap-4">
+                <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#224bc3]/10 text-[#224bc3]">
+                  <BrainCircuit className="h-6 w-6" />
+                </div>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl leading-snug">
+                  Artificial Intelligence and Healthcare
+                </h2>
               </div>
-              <h2 className="mt-5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                Artificial Intelligence and Healthcare
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-muted-foreground">
+              <p className="mt-5 text-sm leading-7 text-muted-foreground">
                 Our healthcare AI research focuses on improving how clinical and patient information is captured, organized, explained and used. The work emphasizes human oversight, reliability, privacy and clear limitations rather than autonomous diagnosis.
               </p>
               
@@ -251,13 +255,15 @@ export default function ResearchPageContent() {
           {/* Research Area B: Quantum Computing */}
           <article className="rounded-[2.2rem] border border-white/70 bg-white/80 p-7 shadow-[0_24px_64px_-40px_rgba(20,32,72,0.3)] backdrop-blur-sm sm:p-9 flex flex-col justify-between">
             <div>
-              <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#38ac06]/10 text-[#2f8f07]">
-                <Cpu className="h-6 w-6" />
+              <div className="flex items-center gap-4">
+                <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#38ac06]/10 text-[#2f8f07]">
+                  <Cpu className="h-6 w-6" />
+                </div>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl leading-snug">
+                  Quantum Computing
+                </h2>
               </div>
-              <h2 className="mt-5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                Quantum Computing
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-muted-foreground">
+              <p className="mt-5 text-sm leading-7 text-muted-foreground">
                 ZeptAI is developing research capability in quantum computing with emphasis on hybrid quantum-classical methods. The objective is to identify problem structures where quantum algorithms may contribute practical value, while maintaining transparent comparison with strong classical methods.
               </p>
 
@@ -363,7 +369,7 @@ export default function ResearchPageContent() {
           <div className="grid gap-4 md:grid-cols-2">
             {filteredPublications.map((paper) => (
               <article
-                key={paper.doi}
+                key={paper.title}
                 className="rounded-[1.8rem] border border-white/70 bg-white/90 p-5 shadow-[0_20px_48px_-36px_rgba(20,32,72,0.22)] flex flex-col justify-between"
               >
                 <div>
@@ -371,11 +377,15 @@ export default function ResearchPageContent() {
                     <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wider ${getStatusClasses(paper.status)}`}>
                       {paper.status}
                     </span>
-                    <span className="text-[10px] font-semibold text-muted-foreground font-mono">doi:{paper.doi}</span>
+                    {paper.doi && (
+                      <span className="text-[10px] font-semibold text-muted-foreground font-mono">doi:{paper.doi}</span>
+                    )}
                   </div>
                   <h3 className="mt-4 text-lg font-bold tracking-tight text-foreground">{paper.title}</h3>
                   <p className="mt-1 text-xs text-muted-foreground font-medium">{paper.authors}</p>
-                  <p className="mt-2 text-xs font-semibold text-foreground/80">{paper.journal} • {paper.year}</p>
+                  {paper.journal && (
+                    <p className="mt-2 text-xs font-semibold text-foreground/80">{paper.journal} • {paper.year}</p>
+                  )}
                   <p className="mt-3 text-xs leading-5 text-muted-foreground bg-muted/40 p-2.5 rounded-xl border border-border/20">
                     <strong>Contribution:</strong> {paper.contribution}
                   </p>
@@ -385,14 +395,16 @@ export default function ResearchPageContent() {
                   <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
                     {paper.category}
                   </span>
-                  <a
-                    href={paper.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#224bc3] hover:underline"
-                  >
-                    Open reference <ExternalLink className="h-3 w-3" />
-                  </a>
+                  {paper.href && (
+                    <a
+                      href={paper.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#224bc3] hover:underline"
+                    >
+                      Open reference <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
                 </div>
               </article>
             ))}
