@@ -37,7 +37,7 @@ const aboutCards = [
     description:
       "Trustworthy learning, uncertainty estimation, optimization, efficient models and practical decision-support systems.",
     icon: BrainCircuit,
-    href: "/research/publications",
+    href: "/research#publications",
     linkText: "Read AI Publications",
   },
   {

@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, HeartPulse, Languages, MessageSquareText, Mic, ShieldCheck, Play, Users, Cpu, FileText, CheckCircle2, AlertTriangle, Layers, Activity } from "lucide-react";
-import CompanionDoctorExperience from "@/components/companion-doctor/CompanionDoctorExperience";
+import { ArrowLeft, HeartPulse, Languages, MessageSquareText, Mic, ShieldCheck, Play, Users, Cpu, FileText, CheckCircle2, AlertTriangle, Layers, Activity } from "lucide-react";
+import WorkingBotDemoCard from "@/components/projects/WorkingBotDemoCard";
 
 type ConversationalHealthAIContentProps = {
-  initialMode: "voice" | "text";
+  initialMode?: "voice" | "text";
 };
 
 export default function ConversationalHealthAIContent({ initialMode }: ConversationalHealthAIContentProps) {
@@ -82,12 +82,6 @@ export default function ConversationalHealthAIContent({ initialMode }: Conversat
 
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link
-                  href="#demo"
-                  className="inline-flex items-center gap-2 rounded-full bg-[#224bc3] px-6 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:-translate-y-0.5 transition"
-                >
-                  Start Demo Experience <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link
                   href="/projects"
                   className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-xs font-bold uppercase tracking-wider text-foreground hover:bg-muted transition"
                 >
@@ -96,19 +90,8 @@ export default function ConversationalHealthAIContent({ initialMode }: Conversat
               </div>
             </article>
 
-            {/* Video Overview Placeholder */}
-            <article className="relative rounded-[2.2rem] border border-white/70 bg-[linear-gradient(135deg,rgba(255,255,255,0.88),rgba(242,247,255,0.96))] p-7 shadow-[0_24px_56px_-42px_rgba(20,32,72,0.3)] backdrop-blur-sm flex flex-col justify-between overflow-hidden">
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10 rounded-[2.2rem]">
-                <div className="flex flex-col items-center text-white p-4 text-center">
-                  <div className="h-16 w-16 rounded-full bg-[#224bc3]/90 hover:bg-[#224bc3] hover:scale-105 transition duration-300 flex items-center justify-center shadow-lg cursor-pointer mb-4">
-                    <Play className="h-8 w-8 fill-white text-white ml-1" />
-                  </div>
-                  <h3 className="text-lg font-bold">Assistant Overview Video</h3>
-                  <p className="text-xs text-white/80 mt-1 max-w-xs">Watch a 60–90 second overview of the conversational intake and summary workflow.</p>
-                </div>
-              </div>
-              <div className="w-full h-full min-h-[220px]" />
-            </article>
+            {/* Working Bot Demo Access Card */}
+            <WorkingBotDemoCard />
           </div>
         </div>
       </section>
@@ -150,23 +133,6 @@ export default function ConversationalHealthAIContent({ initialMode }: Conversat
         </div>
       </section>
 
-      {/* Interactive Demo Section */}
-      <section id="demo" className="relative border-b border-border/70 py-12 bg-background/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
-          <div className="max-w-3xl mx-auto text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#224bc3]/20 bg-[#224bc3]/[0.06] px-3.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-[#224bc3]">
-              Demo Surface
-            </span>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              Interactive Browser Demo
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Try the assistant live using non-sensitive sample clinical data. Choose between voice or text mode.
-            </p>
-          </div>
-        </div>
-        <CompanionDoctorExperience initialMode={initialMode} />
-      </section>
 
       {/* Scope Panels & Evidence Area */}
       <section className="relative overflow-hidden py-16">

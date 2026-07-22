@@ -293,6 +293,12 @@ export default function ResearchPageContent() {
                 <strong>Credibility Standard:</strong> Our research does not assume that quantum methods are always superior. Each study is designed to determine when quantum, classical or hybrid approaches are most appropriate.
               </p>
             </div>
+
+            <div className="mt-6 pt-5 border-t border-border/40">
+              <Link href="/research/quantum-computing" className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#2f8f07]">
+                Explore Quantum Directions <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
           </article>
         </section>
 

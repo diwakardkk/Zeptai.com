@@ -57,7 +57,7 @@ export const homeFocusAreas: FocusArea[] = [
     title: "AI and Machine Learning Research",
     description:
       "Published work in conversational diagnosis pipelines and interpretable medical imaging provides the evidence base behind current product thinking.",
-    href: "/research/publications",
+    href: "/research#publications",
     status: { label: "Published foundation", tone: "green" },
   },
   {
