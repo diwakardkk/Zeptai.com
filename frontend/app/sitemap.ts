@@ -14,13 +14,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: `${siteConfig.url}/about`,
+      url: `${siteConfig.url}/research`,
       lastModified: currentDate,
       changeFrequency: "monthly",
-      priority: 0.8,
+      priority: 0.9,
     },
     {
-      url: `${siteConfig.url}/pricing`,
+      url: `${siteConfig.url}/research/publications`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${siteConfig.url}/research/quantum-computing`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${siteConfig.url}/projects`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${siteConfig.url}/projects/conversational-health-ai`,
       lastModified: currentDate,
       changeFrequency: "weekly",
       priority: 0.9,
@@ -32,10 +50,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${siteConfig.url}/about`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       url: `${siteConfig.url}/contact`,
       lastModified: currentDate,
       changeFrequency: "monthly",
-      priority: 0.8,
+      priority: 0.7,
+    },
+    {
+      url: `${siteConfig.url}/pricing`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.5,
     },
     {
       url: `${siteConfig.url}/privacy-policy`,
@@ -48,6 +78,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: currentDate,
       changeFrequency: "yearly",
       priority: 0.6,
+    },
+    {
+      url: `${siteConfig.url}/companion-doctor`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.4,
     },
   ];
 

@@ -76,8 +76,10 @@ export default function SecurityPrivacy() {
                     whileHover={{ y: -1 }}
                     className="p-0.5"
                   >
-                    <Icon className={`h-3.5 w-3.5 ${item.accent}`} />
-                    <h3 className="mt-2 text-sm font-semibold leading-5 text-foreground">{item.title}</h3>
+                    <div className="flex items-center gap-2">
+                      <Icon className={`h-3.5 w-3.5 shrink-0 ${item.accent}`} />
+                      <h3 className="text-sm font-semibold leading-5 text-foreground">{item.title}</h3>
+                    </div>
                     <p className="mt-1 text-xs leading-5 text-muted-foreground">{item.description}</p>
                   </motion.article>
                 );

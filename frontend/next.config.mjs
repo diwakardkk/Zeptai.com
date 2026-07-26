@@ -71,7 +71,9 @@ const nextConfig = {
   // Prevents firebase-admin and @google-cloud/firestore from being bundled by
   // Webpack. Both packages use native gRPC binaries that must be loaded from
   // node_modules at runtime — bundling them breaks Lambda cold-start on AWS Amplify.
-  serverExternalPackages: ["firebase-admin", "@google-cloud/firestore"],
+  experimental: {
+    serverComponentsExternalPackages: ["firebase-admin", "@google-cloud/firestore"],
+  },
   images: {
     remotePatterns: [
       {

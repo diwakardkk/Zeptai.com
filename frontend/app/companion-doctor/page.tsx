@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import CompanionDoctorExperience from "@/components/companion-doctor/CompanionDoctorExperience";
+import ConversationalHealthAIContent from "@/components/projects/ConversationalHealthAIContent";
 import { buildPageMetadata } from "@/lib/seo/generateMetadata";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Talk to a Doctor-like AI Companion",
+  title: "Conversational Health AI Demo",
   description:
-    "A calm, bilingual ZeptAI voice companion for supportive wellness conversations in Hindi, English, and Hinglish.",
+    "Legacy access path for ZeptAI's conversational health AI project demo in voice and text modes.",
   path: "/companion-doctor",
   keywords: [
-    "AI health companion",
-    "voice wellness assistant",
-    "bilingual healthcare AI",
-    "Hindi English voice AI",
+    "conversational health AI demo",
+    "voice healthcare AI",
+    "multilingual health assistant",
+    "legacy demo route",
   ],
 });
 
@@ -25,10 +25,10 @@ export default function CompanionDoctorPage({ searchParams }: CompanionDoctorPag
   const initialMode = searchParams?.mode === "text" ? "text" : "voice";
 
   return (
-    <main className="min-h-screen bg-background text-foreground pt-16 selection:bg-primary/30 selection:text-white">
+    <>
       <Navbar />
-      <CompanionDoctorExperience initialMode={initialMode} />
+      <ConversationalHealthAIContent initialMode={initialMode} />
       <Footer />
-    </main>
+    </>
   );
 }

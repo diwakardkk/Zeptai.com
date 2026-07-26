@@ -40,18 +40,18 @@ function toPublicFirestoreError(error: unknown): string {
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as Partial<LeadInput>;
-    const name = normalizeText(body.name);
     const email = normalizeEmail(body.email);
-    const mobile = normalizeText(body.mobile);
+    const name = normalizeText(body.name) || (email ? email.split("@")[0] : "Guest");
+    const mobile = normalizeText(body.mobile) || "N/A";
     const sourcePage = sanitizeSourcePage(body.sourcePage, "/blog");
 
-    if (!name || !email || !mobile || !sourcePage) {
-      return NextResponse.json({ error: "All fields are required." }, { status: 400 });
+    if (!email || !sourcePage) {
+      return NextResponse.json({ error: "Email is required." }, { status: 400 });
     }
     if (!isValidEmail(email)) {
       return NextResponse.json({ error: "Invalid email format." }, { status: 400 });
     }
-    if (!isValidMobile(mobile)) {
+    if (mobile !== "N/A" && !isValidMobile(mobile)) {
       return NextResponse.json({ error: "Invalid mobile number format." }, { status: 400 });
     }
     if (name.length < 2 || name.length > 120) {

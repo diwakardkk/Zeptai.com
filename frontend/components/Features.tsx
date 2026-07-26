@@ -74,12 +74,14 @@ export default function Features() {
                 className="p-0.5"
               >
                 <div>
-                  <div className={`inline-flex h-6 w-6 items-center justify-center ${item.accent}`}>
-                    <Icon className="h-4 w-4" />
+                  <div className="flex items-center gap-3">
+                    <div className={`inline-flex h-6 w-6 shrink-0 items-center justify-center ${item.accent}`}>
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <h3 className="text-base font-semibold leading-6 text-foreground">
+                      {item.title}
+                    </h3>
                   </div>
-                  <h3 className="mt-2 text-base font-semibold leading-6 text-foreground">
-                    {item.title}
-                  </h3>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">
                     {item.description}
                   </p>

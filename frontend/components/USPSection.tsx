@@ -145,15 +145,17 @@ export default function USPSection() {
                       whileHover={{ y: -2 }}
                       className="group relative overflow-hidden rounded-2xl border border-border bg-card/88 p-4 transition-colors hover:border-[#224bc3]/30"
                     >
-                      <div
-                        className={`mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${pillar.tone}`}
-                      >
-                        <Icon className="h-4 w-4" />
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${pillar.tone}`}
+                        >
+                          <Icon className="h-4 w-4" />
+                        </div>
+                        <h3 className="text-[0.95rem] font-semibold leading-5 text-foreground">
+                          {pillar.title}
+                        </h3>
                       </div>
-                      <h3 className="text-[0.95rem] font-semibold leading-5 text-foreground">
-                        {pillar.title}
-                      </h3>
-                      <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                      <p className="mt-3 text-xs leading-5 text-muted-foreground">
                         {pillar.description}
                       </p>
 

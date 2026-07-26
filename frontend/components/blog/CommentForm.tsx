@@ -92,9 +92,9 @@ export default function CommentForm({ postSlug, onSubmitted }: CommentFormProps)
 
   const statusClassName =
     status?.tone === "success"
-      ? "border-[#38ac06]/35 bg-[#38ac06]/12 text-[#15531b] dark:text-[#79d25c]"
+      ? "border-[#38ac06]/35 bg-[#38ac06]/12 text-[#15531b]"
       : status?.tone === "error"
-        ? "border-[#224bc3]/35 bg-[#224bc3]/12 text-[#11214f] dark:text-[#98b7ff]"
+        ? "border-[#224bc3]/35 bg-[#224bc3]/12 text-[#11214f]"
         : "border-border bg-card/85 text-muted-foreground";
 
   return (

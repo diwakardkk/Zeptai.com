@@ -232,7 +232,7 @@ export default function PricingPageContent() {
               </Link>
             </section>
 
-            <section className="relative rounded-[2rem] border border-[#224bc3]/30 bg-gradient-to-b from-card/95 to-background/95 p-6 shadow-[0_22px_60px_-36px_rgba(34,75,195,0.7)] backdrop-blur transition duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_70px_-34px_rgba(34,75,195,0.65)] dark:to-card/90">
+            <section className="relative rounded-[2rem] border border-[#224bc3]/30 bg-gradient-to-b from-card/95 to-background/95 p-6 shadow-[0_22px_60px_-36px_rgba(34,75,195,0.7)] backdrop-blur transition duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_70px_-34px_rgba(34,75,195,0.65)]">
               <span className="absolute -top-3 right-5 inline-flex items-center gap-1.5 rounded-full border border-[#224bc3]/25 bg-[#224bc3] px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.15em] text-white">
                 <Crown className="h-3.5 w-3.5" />
                 Most Popular
@@ -370,7 +370,7 @@ export default function PricingPageContent() {
           </div>
 
           {paymentError && (
-            <div className="mt-6 rounded-2xl border border-red-400/30 bg-red-500/10 px-5 py-4 text-sm text-red-600 dark:text-red-400">
+            <div className="mt-6 rounded-2xl border border-red-400/30 bg-red-500/10 px-5 py-4 text-sm text-red-600">
               {paymentError}
             </div>
           )}
@@ -388,29 +388,35 @@ export default function PricingPageContent() {
             </p>
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
               <div className="rounded-2xl border border-border bg-card/90 p-5">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#224bc3]/10">
-                  <Smartphone className="h-5 w-5 text-[#224bc3]" />
+                <div className="flex items-center gap-3">
+                  <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#224bc3]/10">
+                    <Smartphone className="h-5 w-5 text-[#224bc3]" />
+                  </div>
+                  <h3 className="font-semibold text-foreground">Razorpay</h3>
                 </div>
-                <h3 className="font-semibold text-foreground">Razorpay</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
                   Hosted checkout integration slot is prepared.
                 </p>
               </div>
               <div className="rounded-2xl border border-border bg-card/90 p-5">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#224bc3]/10">
-                  <QrCode className="h-5 w-5 text-[#224bc3]" />
+                <div className="flex items-center gap-3">
+                  <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#224bc3]/10">
+                    <QrCode className="h-5 w-5 text-[#224bc3]" />
+                  </div>
+                  <h3 className="font-semibold text-foreground">UPI</h3>
                 </div>
-                <h3 className="font-semibold text-foreground">UPI</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
                   Ready for UPI intent and QR-based payment flows.
                 </p>
               </div>
               <div className="rounded-2xl border border-border bg-card/90 p-5">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#224bc3]/10">
-                  <CreditCard className="h-5 w-5 text-[#224bc3]" />
+                <div className="flex items-center gap-3">
+                  <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#224bc3]/10">
+                    <CreditCard className="h-5 w-5 text-[#224bc3]" />
+                  </div>
+                  <h3 className="font-semibold text-foreground">Cards</h3>
                 </div>
-                <h3 className="font-semibold text-foreground">Cards</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
                   Supports debit and credit card checkout paths.
                 </p>
               </div>

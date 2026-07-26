@@ -5,15 +5,15 @@ import Footer from "@/components/Footer";
 import { buildPageMetadata } from "@/lib/seo/generateMetadata";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Contact ZeptAI for Healthcare AI",
+  title: "Contact ZeptAI",
   description:
-    "Contact ZeptAI to discuss healthcare AI, patient intake AI, voice-based clinical screening, and doctor-ready clinical summaries for your clinic or digital health platform.",
+    "Contact ZeptAI for research collaboration, healthcare AI product discussions, pilot conversations, or broader technical dialogue.",
   path: "/contact",
   keywords: [
-    "contact healthcare AI company",
-    "patient intake AI demo",
-    "voice AI healthcare demo",
-    "clinical summary software contact",
+    "contact AI research company",
+    "healthcare AI collaboration",
+    "quantum computing research contact",
+    "AI product pilot contact",
   ],
 });
 
@@ -30,11 +30,10 @@ export default function ContactPage() {
         <div className="mx-auto max-w-5xl px-4 pb-10 sm:px-6 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Contact ZeptAI</p>
           <h1 className="mt-3 max-w-4xl text-4xl font-extrabold tracking-tight md:text-5xl">
-            Discuss healthcare AI for patient intake and clinical workflows
+            Research collaboration, product pilots, and technical conversations
           </h1>
           <p className="mt-4 max-w-3xl text-base leading-7 text-muted-foreground md:text-lg">
-            We work with clinics, hospitals, and digital health teams to improve patient intake,
-            automate symptom capture, and generate structured, doctor-ready summaries.
+            Reach out if you want to discuss healthcare AI systems, research collaboration, workflow pilots, or ZeptAI&apos;s broader technical direction.
           </p>
         </div>
       </section>

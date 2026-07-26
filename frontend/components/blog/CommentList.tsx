@@ -87,7 +87,7 @@ export default function CommentList({ postSlug, refreshKey = 0 }: CommentListPro
 
   if (error) {
     return (
-      <div className="rounded-2xl border border-[#224bc3]/25 bg-[#224bc3]/10 px-4 py-3 text-sm font-medium text-[#11214f] dark:text-[#98b7ff]">
+      <div className="rounded-2xl border border-[#224bc3]/25 bg-[#224bc3]/10 px-4 py-3 text-sm font-medium text-[#11214f]">
         {error}
       </div>
     );
@@ -117,7 +117,7 @@ export default function CommentList({ postSlug, refreshKey = 0 }: CommentListPro
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#224bc3]/25 bg-[linear-gradient(145deg,rgba(34,75,195,0.18),rgba(56,172,6,0.16))] text-xs font-semibold tracking-wide text-[#11214f] dark:text-[#c7d7ff]">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#224bc3]/25 bg-[linear-gradient(145deg,rgba(34,75,195,0.18),rgba(56,172,6,0.16))] text-xs font-semibold tracking-wide text-[#11214f]">
                 {getInitials(item.name)}
               </div>
               <div>

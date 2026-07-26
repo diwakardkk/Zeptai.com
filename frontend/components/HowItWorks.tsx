@@ -67,11 +67,15 @@ export default function HowItWorks() {
               className="group relative rounded-2xl border border-border bg-card/90 p-4"
             >
               <div className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-[#38ac06]/16 blur-2xl" />
-              <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[#38ac06]/12 text-[#2f8f07]">
-                <AudioLines className="h-4 w-4" />
+              <div className="flex items-center gap-3">
+                <div className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#38ac06]/12 text-[#2f8f07]">
+                  <AudioLines className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground leading-tight">Guided Conversation</h3>
+                  <p className="mt-0.5 text-xs text-muted-foreground">Voice intake live</p>
+                </div>
               </div>
-              <h3 className="mt-3 text-sm font-semibold text-foreground">Guided Conversation</h3>
-              <p className="mt-1 text-xs text-muted-foreground">Voice intake live</p>
 
               <div className="mt-4 rounded-xl border border-border bg-background/70 p-3">
                 <div className="mb-2 inline-flex rounded-full border border-[#38ac06]/25 bg-[#38ac06]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#2f8f07]">
@@ -112,11 +116,15 @@ export default function HowItWorks() {
                 animate={{ opacity: [0.35, 0.65, 0.35], scale: [1, 1.08, 1] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               />
-              <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[#224bc3]/12 text-[#224bc3]">
-                <Brain className="h-4 w-4" />
+              <div className="flex items-center gap-3">
+                <div className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#224bc3]/12 text-[#224bc3]">
+                  <Brain className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground leading-tight">AI Screening Engine</h3>
+                  <p className="mt-0.5 text-xs text-muted-foreground">Clinical context builder</p>
+                </div>
               </div>
-              <h3 className="mt-3 text-sm font-semibold text-foreground">AI Screening Engine</h3>
-              <p className="mt-1 text-xs text-muted-foreground">Clinical context builder</p>
 
               <div className="relative mt-4 rounded-xl border border-border bg-card/92 p-3">
                 <motion.div
@@ -154,11 +162,15 @@ export default function HowItWorks() {
               className="group relative rounded-2xl border border-border bg-card/90 p-4"
             >
               <div className="pointer-events-none absolute -left-6 -top-6 h-20 w-20 rounded-full bg-[#224bc3]/14 blur-2xl" />
-              <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[#224bc3]/12 text-[#224bc3]">
-                <FileText className="h-4 w-4" />
+              <div className="flex items-center gap-3">
+                <div className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#224bc3]/12 text-[#224bc3]">
+                  <FileText className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground leading-tight">Doctor-Ready Output</h3>
+                  <p className="mt-0.5 text-xs text-muted-foreground">Structured handoff report</p>
+                </div>
               </div>
-              <h3 className="mt-3 text-sm font-semibold text-foreground">Doctor-Ready Output</h3>
-              <p className="mt-1 text-xs text-muted-foreground">Structured handoff report</p>
 
               <div className="relative mt-4 overflow-hidden rounded-xl border border-border bg-background/72 p-3">
                 <motion.div
