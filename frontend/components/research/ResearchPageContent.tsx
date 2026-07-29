@@ -345,9 +345,6 @@ export default function ResearchPageContent() {
               <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
                 Published Research &amp; References
               </h2>
-              <p className="mt-2 text-xs text-muted-foreground">
-                We never place manuscripts under review inside the published category. We do not display journal impact factors as the main evidence of quality.
-              </p>
             </div>
             <Link href="/research/publications" className="inline-flex items-center gap-2 text-sm font-semibold text-[#224bc3]">
               Full Index <ArrowRight className="h-4 w-4" />

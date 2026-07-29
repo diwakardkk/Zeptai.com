@@ -25,15 +25,17 @@ export default function BlogCard({ commentCount = 0, post }: BlogCardProps) {
 
       <div className="overflow-hidden rounded-[26px] p-2">
         <div className="overflow-hidden rounded-[24px]">
-          <Image
-            src={post.coverImage}
-            alt={post.title}
-            title={post.title}
-            width={1200}
-            height={720}
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-            className="h-56 w-full object-cover transition duration-500 group-hover:scale-[1.03]"
-          />
+          <Link href={`/blog/${post.slug}`}>
+            <Image
+              src={post.coverImage}
+              alt={post.title}
+              title={post.title}
+              width={1200}
+              height={720}
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+              className="h-56 w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+            />
+          </Link>
         </div>
       </div>
 

@@ -19,15 +19,17 @@ export default function RelatedPosts({ posts }: RelatedPostsProps) {
     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
       {posts.map((entry) => (
         <article key={entry.slug} className="overflow-hidden rounded-2xl border border-border bg-card/70">
-          <Image
-            src={entry.coverImage}
-            alt={entry.title}
-            title={entry.title}
-            width={1200}
-            height={720}
-            sizes="(max-width: 768px) 100vw, 33vw"
-            className="h-44 w-full object-cover"
-          />
+          <Link href={`/blog/${entry.slug}`} className="block overflow-hidden">
+            <Image
+              src={entry.coverImage}
+              alt={entry.title}
+              title={entry.title}
+              width={1200}
+              height={720}
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="h-44 w-full object-cover transition duration-300 hover:opacity-90"
+            />
+          </Link>
           <div className="p-4">
             <p className="text-xs text-muted-foreground">{formatDate(entry.date)}</p>
             <h3 className="mt-2 font-bold leading-snug">{entry.title}</h3>

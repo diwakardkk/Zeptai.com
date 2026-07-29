@@ -69,15 +69,17 @@ export default function FeaturedPost({ commentCount, post }: FeaturedPostProps) 
         </div>
 
         <div className="order-1 p-2 lg:order-2">
-          <Image
-            src={post.coverImage}
-            alt={post.title}
-            title={post.title}
-            width={1600}
-            height={1000}
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="h-72 w-full rounded-[28px] object-cover lg:h-full"
-          />
+          <Link href={`/blog/${post.slug}`} className="block h-full overflow-hidden rounded-[28px]">
+            <Image
+              src={post.coverImage}
+              alt={post.title}
+              title={post.title}
+              width={1600}
+              height={1000}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="h-72 w-full rounded-[28px] object-cover transition duration-500 hover:scale-[1.02] lg:h-full"
+            />
+          </Link>
         </div>
       </div>
     </article>
