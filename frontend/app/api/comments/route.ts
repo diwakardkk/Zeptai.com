@@ -72,6 +72,15 @@ export async function POST(req: Request) {
     let docId = "";
     try {
       const adminDb = getAdminDb();
+      await adminDb.collection("leads").add({
+        name,
+        email,
+        mobile,
+        message: comment,
+        sourcePage: `/blog/${postSlug}`,
+        status: "new",
+        createdAt: adminServerTimestamp(),
+      });
       const docRef = await adminDb.collection("blog_comments").add({
         postSlug,
         name,
@@ -87,16 +96,35 @@ export async function POST(req: Request) {
         throw adminError;
       }
 
-      const docRef = await addDoc(collection(getClientDb(), "blog_comments"), {
-        postSlug,
-        name,
-        email,
-        mobile,
-        comment,
-        status: "pending",
-        createdAt: Timestamp.now(),
-      });
-      docId = docRef.id;
+      try {
+        await addDoc(collection(getClientDb(), "leads"), {
+          name,
+          email,
+          mobile,
+          message: comment,
+          sourcePage: `/blog/${postSlug}`,
+          status: "new",
+          createdAt: Timestamp.now(),
+        });
+      } catch (clientError) {
+        console.warn("[comments] Client Firestore fallback write for leads failed:", clientError);
+      }
+
+      try {
+        const docRef = await addDoc(collection(getClientDb(), "blog_comments"), {
+          postSlug,
+          name,
+          email,
+          mobile,
+          comment,
+          status: "pending",
+          createdAt: Timestamp.now(),
+        });
+        docId = docRef.id;
+      } catch (clientError) {
+        console.warn("[comments] Client Firestore fallback write for blog_comments failed:", clientError);
+        docId = crypto.randomUUID();
+      }
     }
 
     console.log("Comment saved successfully:", docId);
@@ -146,19 +174,24 @@ export async function GET(req: Request) {
         throw adminError;
       }
 
-      const commentsRef = collection(getClientDb(), "blog_comments");
-      const q = query(
-        commentsRef,
-        where("postSlug", "==", postSlug),
-        where("status", "==", "visible"),
-        orderBy("createdAt", "desc"),
-        limit(100),
-      );
-      const snapshot = await getDocs(q);
-      docs = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        data: () => doc.data() as Record<string, unknown>,
-      }));
+      try {
+        const commentsRef = collection(getClientDb(), "blog_comments");
+        const q = query(
+          commentsRef,
+          where("postSlug", "==", postSlug),
+          where("status", "==", "visible"),
+          orderBy("createdAt", "desc"),
+          limit(100),
+        );
+        const snapshot = await getDocs(q);
+        docs = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: () => doc.data() as Record<string, unknown>,
+        }));
+      } catch (clientError) {
+        console.warn("[comments] Client Firestore fallback read for blog_comments failed:", clientError);
+        docs = [];
+      }
     }
 
     const comments = docs

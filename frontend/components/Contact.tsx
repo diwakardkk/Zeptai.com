@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Send } from "lucide-react";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 type ContactProps = {
   variant?: "section" | "page";
@@ -26,6 +28,26 @@ export default function Contact({ variant = "section" }: ContactProps) {
         throw new Error("All fields are required.");
       }
 
+      let submitted = false;
+
+      // 1. Attempt direct client write to Firestore 'inquiries' collection
+      try {
+        await addDoc(collection(db, "leads"), {
+          name: formData.name,
+          email: formData.email,
+          mobile: formData.mobile,
+          message: formData.message,
+          inquiryType: inquiryType,
+          sourcePage: isPage ? "contact_page" : "home_contact",
+          status: "new",
+          createdAt: serverTimestamp(),
+        });
+        submitted = true;
+      } catch (clientErr) {
+        console.warn("Direct client Firestore write encountered permission error, falling back to server API route:", clientErr);
+      }
+
+      // 2. Call server API route (/api/contact) to save to Firestore & send email notifications
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -39,16 +61,19 @@ export default function Contact({ variant = "section" }: ContactProps) {
         }),
       });
 
-      const data = (await res.json()) as { error?: string };
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to send message.");
+      if (res.ok) {
+        submitted = true;
+      } else if (!submitted) {
+        const data = (await res.json()) as { error?: string };
+        throw new Error(data.error || "Failed to submit inquiry. Please try again.");
       }
 
       setIsSuccess(true);
       setFormData({ name: "", email: "", mobile: "", message: "" });
       setTimeout(() => setIsSuccess(false), 5000);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to submit. Please try again.");
+      console.error("Error submitting inquiry: ", err);
+      setError(err instanceof Error ? err.message : "Failed to submit inquiry. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -210,15 +235,15 @@ export default function Contact({ variant = "section" }: ContactProps) {
               className="rounded-3xl border border-border bg-card/88 p-5 shadow-[0_24px_52px_-42px_rgba(0,0,0,0.58)] backdrop-blur-sm md:p-6"
             >
               <p className="inline-flex rounded-full border border-[#224bc3]/25 bg-card/90 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#224bc3]">
-                  Contact ZeptAI
+                Contact ZeptAI
               </p>
-                <h3 className="mt-3 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Start a research or product conversation</h3>
+              <h3 className="mt-3 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Start a research or product conversation</h3>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Reach out for research collaboration, product pilots, healthcare AI workflow discussions, or broader technical conversations.
+                Reach out for research collaboration, product pilots, healthcare AI workflow discussions, or broader technical conversations.
               </p>
 
               <div className="mt-4 flex flex-wrap gap-2">
-                  {["Academia", "Healthcare Teams", "Industry Partners"].map((item) => (
+                {["Academia", "Healthcare Teams", "Industry Partners"].map((item) => (
                   <span
                     key={item}
                     className="rounded-full border border-border bg-card/88 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground"

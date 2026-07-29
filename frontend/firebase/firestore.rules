@@ -121,9 +121,41 @@ service cloud.firestore {
       allow read, update, delete: if false;
     }
 
+    match /inquiries/{documentId} {
+      allow create: if
+        isString(request.resource.data.name) &&
+        request.resource.data.name.size() >= 2 &&
+        isString(request.resource.data.email) &&
+        request.resource.data.email.size() >= 5 &&
+        validMobile(request.resource.data.mobile) &&
+        isString(request.resource.data.message) &&
+        request.resource.data.message.size() >= 10 &&
+        request.resource.data.status == "new" &&
+        request.resource.data.createdAt is timestamp;
+
+      allow read, update, delete: if false;
+    }
+
+    match /leads/{documentId} {
+      allow create: if
+        isString(request.resource.data.name) &&
+        request.resource.data.name.size() >= 2 &&
+        isString(request.resource.data.email) &&
+        request.resource.data.email.size() >= 5 &&
+        validMobile(request.resource.data.mobile) &&
+        isString(request.resource.data.message) &&
+        request.resource.data.message.size() >= 10 &&
+        request.resource.data.status == "new" &&
+        request.resource.data.createdAt is timestamp;
+
+      allow read, update, delete: if false;
+    }
+
     // Deny everything else by default.
     match /{document=**} {
       allow read, write: if false;
     }
   }
 }
+
+
