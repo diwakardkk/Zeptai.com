@@ -83,6 +83,14 @@ export async function POST(req: Request) {
 
     try {
       const adminDb = getAdminDb();
+      await adminDb.collection("leads").add({
+        name,
+        email,
+        message: feedback,
+        sourcePage,
+        status: "new",
+        createdAt: adminServerTimestamp(),
+      });
       await adminDb.collection("demo_feedback_submissions").add({
         name,
         email,
@@ -98,16 +106,27 @@ export async function POST(req: Request) {
       }
 
       const { getClientDb: getFallbackDb } = await import("@/app/api/_firestore");
-      await addDoc(collection(getFallbackDb(), "demo_feedback_submissions"), {
-        name,
-        email,
-        feedback,
-        sourcePage,
-        conversationId: conversationId || null,
-        status: "new",
-        // Concrete timestamp for fallback writes so Firestore rules accept `createdAt is timestamp`.
-        createdAt: Timestamp.now(),
-      });
+      try {
+        await addDoc(collection(getFallbackDb(), "leads"), {
+          name,
+          email,
+          message: feedback,
+          sourcePage,
+          status: "new",
+          createdAt: Timestamp.now(),
+        });
+        await addDoc(collection(getFallbackDb(), "demo_feedback_submissions"), {
+          name,
+          email,
+          feedback,
+          sourcePage,
+          conversationId: conversationId || null,
+          status: "new",
+          createdAt: Timestamp.now(),
+        });
+      } catch (clientError) {
+        console.warn("[feedback] Client Firestore fallback write failed:", clientError);
+      }
     }
 
     return NextResponse.json({ ok: true });

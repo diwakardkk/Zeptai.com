@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { Timestamp, addDoc, collection } from "firebase/firestore";
 import {
@@ -155,6 +155,26 @@ export async function POST(req: Request) {
 
     try {
       const adminDb = getAdminDb();
+      await adminDb.collection("leads").add({
+        name,
+        email,
+        mobile,
+        message,
+        sourcePage,
+        inquiryType,
+        status: "new",
+        createdAt: adminServerTimestamp(),
+      });
+      await adminDb.collection("inquiries").add({
+        name,
+        email,
+        mobile,
+        message,
+        sourcePage,
+        inquiryType,
+        status: "new",
+        createdAt: adminServerTimestamp(),
+      });
       await adminDb.collection("contact_submissions").add({
         name,
         email,
@@ -170,17 +190,43 @@ export async function POST(req: Request) {
         throw adminError;
       }
 
-      await addDoc(collection(getClientDb(), "contact_submissions"), {
-        name,
-        email,
-        mobile,
-        message,
-        sourcePage,
-        inquiryType,
-        status: "new",
-        // Concrete timestamp for fallback writes so Firestore rules accept `createdAt is timestamp`.
-        createdAt: Timestamp.now(),
-      });
+      try {
+        await addDoc(collection(getClientDb(), "leads"), {
+          name,
+          email,
+          mobile,
+          message,
+          sourcePage,
+          inquiryType,
+          status: "new",
+          createdAt: Timestamp.now(),
+        });
+        await addDoc(collection(getClientDb(), "inquiries"), {
+          name,
+          email,
+          mobile,
+          message,
+          sourcePage,
+          inquiryType,
+          status: "new",
+          createdAt: Timestamp.now(),
+        });
+        await addDoc(collection(getClientDb(), "contact_submissions"), {
+          name,
+          email,
+          mobile,
+          message,
+          sourcePage,
+          inquiryType,
+          status: "new",
+          createdAt: Timestamp.now(),
+        });
+      } catch (clientError) {
+        console.warn(
+          `[contact][${reqId}] Client Firestore fallback write failed (requires FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in env or published rules):`,
+          clientError,
+        );
+      }
     }
 
     // Log a high-level success event.

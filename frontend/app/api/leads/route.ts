@@ -60,6 +60,14 @@ export async function POST(req: Request) {
 
     try {
       const adminDb = getAdminDb();
+      await adminDb.collection("leads").add({
+        name,
+        email,
+        mobile,
+        sourcePage,
+        status: "new",
+        createdAt: adminServerTimestamp(),
+      });
       await adminDb.collection("blog_leads").add({
         name,
         email,
@@ -72,13 +80,25 @@ export async function POST(req: Request) {
         throw adminError;
       }
 
-      await addDoc(collection(getClientDb(), "blog_leads"), {
-        name,
-        email,
-        mobile,
-        sourcePage,
-        createdAt: Timestamp.now(),
-      });
+      try {
+        await addDoc(collection(getClientDb(), "leads"), {
+          name,
+          email,
+          mobile,
+          sourcePage,
+          status: "new",
+          createdAt: Timestamp.now(),
+        });
+        await addDoc(collection(getClientDb(), "blog_leads"), {
+          name,
+          email,
+          mobile,
+          sourcePage,
+          createdAt: Timestamp.now(),
+        });
+      } catch (clientError) {
+        console.warn("[leads] Client Firestore fallback write failed:", clientError);
+      }
     }
 
     return NextResponse.json({ ok: true });
