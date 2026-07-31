@@ -15,6 +15,7 @@ import {
   normalizeMultilineText,
   normalizeText,
 } from "@/app/api/_validation";
+import { sendNotificationEmails } from "@/lib/mailer";
 
 export const runtime = "nodejs";
 
@@ -128,6 +129,22 @@ export async function POST(req: Request) {
     }
 
     console.log("Comment saved successfully:", docId);
+
+    const reqId = crypto.randomUUID().slice(0, 8);
+
+    // Dispatch admin notification email asynchronously.
+    sendNotificationEmails({
+      formType: "comment",
+      reqId,
+      name,
+      email,
+      mobile,
+      message: comment,
+      postSlug,
+    }).catch((err) =>
+      console.warn(`[comment][${reqId}] Background mailer dispatch error:`, err),
+    );
+
     return NextResponse.json({
       ok: true,
       id: docId,

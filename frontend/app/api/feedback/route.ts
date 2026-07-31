@@ -12,6 +12,7 @@ import {
   normalizeText,
   sanitizeSourcePage,
 } from "@/app/api/_validation";
+import { sendNotificationEmails } from "@/lib/mailer";
 
 export const runtime = "nodejs";
 
@@ -128,6 +129,22 @@ export async function POST(req: Request) {
         console.warn("[feedback] Client Firestore fallback write failed:", clientError);
       }
     }
+
+    const reqId = crypto.randomUUID().slice(0, 8);
+    console.log(`[feedback][${reqId}] Feedback stored — sourcePage=${sourcePage}`);
+
+    // Dispatch admin notification email asynchronously.
+    sendNotificationEmails({
+      formType: "feedback",
+      reqId,
+      name,
+      email,
+      message: feedback,
+      sourcePage,
+      conversationId,
+    }).catch((err) =>
+      console.warn(`[feedback][${reqId}] Background mailer dispatch error:`, err),
+    );
 
     return NextResponse.json({ ok: true });
   } catch (error) {

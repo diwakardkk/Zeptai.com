@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
 import { Timestamp, addDoc, collection } from "firebase/firestore";
 import {
   adminServerTimestamp,
@@ -17,6 +16,7 @@ import {
   normalizeText,
   sanitizeSourcePage,
 } from "@/app/api/_validation";
+import { sendNotificationEmails } from "@/lib/mailer";
 
 export const runtime = "nodejs";
 
@@ -155,72 +155,77 @@ export async function POST(req: Request) {
 
     try {
       const adminDb = getAdminDb();
-      await adminDb.collection("leads").add({
-        name,
-        email,
-        mobile,
-        message,
-        sourcePage,
-        inquiryType,
-        status: "new",
-        createdAt: adminServerTimestamp(),
-      });
-      await adminDb.collection("inquiries").add({
-        name,
-        email,
-        mobile,
-        message,
-        sourcePage,
-        inquiryType,
-        status: "new",
-        createdAt: adminServerTimestamp(),
-      });
-      await adminDb.collection("contact_submissions").add({
-        name,
-        email,
-        mobile,
-        message,
-        sourcePage,
-        inquiryType,
-        status: "new",
-        createdAt: adminServerTimestamp(),
-      });
+      await Promise.all([
+        adminDb.collection("leads").add({
+          name,
+          email,
+          mobile,
+          message,
+          sourcePage,
+          inquiryType,
+          status: "new",
+          createdAt: adminServerTimestamp(),
+        }),
+        adminDb.collection("inquiries").add({
+          name,
+          email,
+          mobile,
+          message,
+          sourcePage,
+          inquiryType,
+          status: "new",
+          createdAt: adminServerTimestamp(),
+        }),
+        adminDb.collection("contact_submissions").add({
+          name,
+          email,
+          mobile,
+          message,
+          sourcePage,
+          inquiryType,
+          status: "new",
+          createdAt: adminServerTimestamp(),
+        }),
+      ]);
     } catch (adminError) {
       if (!isMissingAdminCredentialError(adminError)) {
         throw adminError;
       }
 
       try {
-        await addDoc(collection(getClientDb(), "leads"), {
-          name,
-          email,
-          mobile,
-          message,
-          sourcePage,
-          inquiryType,
-          status: "new",
-          createdAt: Timestamp.now(),
-        });
-        await addDoc(collection(getClientDb(), "inquiries"), {
-          name,
-          email,
-          mobile,
-          message,
-          sourcePage,
-          inquiryType,
-          status: "new",
-          createdAt: Timestamp.now(),
-        });
-        await addDoc(collection(getClientDb(), "contact_submissions"), {
-          name,
-          email,
-          mobile,
-          message,
-          sourcePage,
-          inquiryType,
-          status: "new",
-          createdAt: Timestamp.now(),
-        });
+        const clientDb = getClientDb();
+        await Promise.all([
+          addDoc(collection(clientDb, "leads"), {
+            name,
+            email,
+            mobile,
+            message,
+            sourcePage,
+            inquiryType,
+            status: "new",
+            createdAt: Timestamp.now(),
+          }),
+          addDoc(collection(clientDb, "inquiries"), {
+            name,
+            email,
+            mobile,
+            message,
+            sourcePage,
+            inquiryType,
+            status: "new",
+            createdAt: Timestamp.now(),
+          }),
+          addDoc(collection(clientDb, "contact_submissions"), {
+            name,
+            email,
+            mobile,
+            message,
+            sourcePage,
+            inquiryType,
+            status: "new",
+            createdAt: Timestamp.now(),
+          }),
+        ]);
       } catch (clientError) {
         console.warn(
           `[contact][${reqId}] Client Firestore fallback write failed (requires FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON in env or published rules):`,
@@ -233,84 +238,22 @@ export async function POST(req: Request) {
     // Do NOT log name, email, mobile, or message body — these are patient/user PII.
     console.log(`[contact][${reqId}] Submission stored — inquiryType=${inquiryType} sourcePage=${sourcePage}`);
 
-    const smtpHost = process.env.SMTP_HOST ?? "smtp.gmail.com";
-    const smtpPort = Number(process.env.SMTP_PORT ?? "465");
-    const smtpSecure = (process.env.SMTP_SECURE ?? "true").toLowerCase() === "true";
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
-    const receiverEmail = process.env.CONTACT_RECEIVER_EMAIL ?? smtpUser;
-    const autoReplyFromName = process.env.CONTACT_AUTOREPLY_FROM_NAME ?? "ZeptAI Team";
+    // Dispatch email notifications asynchronously via the standalone AWS SES Mailer service.
+    // This allows the HTTP response to return instantly to the client (<150ms).
+    sendNotificationEmails({
+      formType: "contact",
+      reqId,
+      name,
+      email,
+      mobile,
+      message,
+      inquiryType,
+      sourcePage,
+    }).catch((err) =>
+      console.warn(`[contact][${reqId}] Background mailer dispatch error:`, err),
+    );
 
-    const hasPlaceholderValues =
-      smtpUser?.includes("your_gmail") ||
-      smtpPass?.includes("your_gmail_app_password") ||
-      receiverEmail?.includes("your_gmail");
-
-    let emailFailed = false;
-
-    try {
-      if (!smtpUser || !smtpPass || !receiverEmail || hasPlaceholderValues) {
-        throw new Error("SMTP credentials not configured");
-      }
-
-      const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: smtpPort,
-        secure: smtpSecure,
-        auth: {
-          user: smtpUser,
-          pass: smtpPass,
-        },
-      });
-
-      const safeName = escapeHtml(name);
-      const safeEmail = escapeHtml(email);
-      const safeMessage = escapeHtml(message).replace(/\r?\n/g, "<br/>");
-
-      await transporter.sendMail({
-        from: `"ZeptAI Contact" <${smtpUser}>`,
-        to: receiverEmail,
-        replyTo: email,
-        subject: `New Contact Message from ${name}`,
-        text: `Name: ${name}\nEmail: ${email}\nMobile: ${mobile}\n\nMessage:\n${message}`,
-        html: `
-          <h2>New Contact Message</h2>
-          <p><strong>Name:</strong> ${safeName}</p>
-          <p><strong>Email:</strong> ${safeEmail}</p>
-          <p><strong>Mobile:</strong> ${escapeHtml(mobile)}</p>
-          <p><strong>Message:</strong><br/>${safeMessage}</p>
-        `,
-      });
-
-      await transporter.sendMail({
-        from: `"${autoReplyFromName}" <${smtpUser}>`,
-        to: email,
-        replyTo: receiverEmail,
-        subject: "We received your message - ZeptAI",
-        text: `Hi ${name},\n\nThanks for contacting ZeptAI. We received your message and will get back to you soon.\n\nYour message:\n${message}\n\nRegards,\nZeptAI Team`,
-        html: `
-          <p>Hi ${safeName},</p>
-          <p>Thanks for contacting <strong>ZeptAI</strong>. We received your message and will get back to you soon.</p>
-          <p><strong>Your message:</strong><br/>${safeMessage}</p>
-          <p>Regards,<br/>ZeptAI Team</p>
-        `,
-      });
-
-      console.log(`[contact][${reqId}] Email notifications sent`);
-    } catch (emailError) {
-      // Log full error server-side for diagnostics.
-      // Do NOT forward error.message to the client — it may contain env var names or SMTP details.
-      console.error(`[contact][${reqId}] Email notification failed:`, emailError);
-      emailFailed = true;
-    }
-
-    return NextResponse.json({
-      ok: true,
-      // Use a generic warning — never expose internal error details to the client.
-      ...(emailFailed
-        ? { warning: "Your message has been recorded. Email confirmation may be delayed." }
-        : {}),
-    });
+    return NextResponse.json({ ok: true });
   } catch (error) {
     // Log full error server-side. Do NOT include stack trace or env details in the response.
     console.error(`[contact][${reqId}] Unhandled error:`, error);

@@ -14,6 +14,7 @@ import {
   normalizeText,
   sanitizeSourcePage,
 } from "@/app/api/_validation";
+import { sendNotificationEmails } from "@/lib/mailer";
 
 export const runtime = "nodejs";
 
@@ -100,6 +101,21 @@ export async function POST(req: Request) {
         console.warn("[leads] Client Firestore fallback write failed:", clientError);
       }
     }
+
+    const reqId = crypto.randomUUID().slice(0, 8);
+    console.log(`[lead][${reqId}] Lead stored — sourcePage=${sourcePage}`);
+
+    // Dispatch admin notification email asynchronously.
+    sendNotificationEmails({
+      formType: "lead",
+      reqId,
+      name,
+      email,
+      mobile,
+      sourcePage,
+    }).catch((err) =>
+      console.warn(`[lead][${reqId}] Background mailer dispatch error:`, err),
+    );
 
     return NextResponse.json({ ok: true });
   } catch (error) {
